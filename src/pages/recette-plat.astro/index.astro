@@ -1,0 +1,34 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Plat from "../../components/Plat.astro";
+import PlatFavoris from "../../components/PlatFavoris.astro";
+---
+
+<Layout>
+    <h1>Toutes les recettes</h1>
+
+    <div>
+        <h2>Nos favoriS du moments</h2>
+        <div>
+            <PlatFavoris />
+            <PlatFavoris />
+            <PlatFavoris />
+        </div>
+    </div>
+
+    <h2>D’autre recette a porter de main</h2>
+    <p>
+        Choisissez parmi une grande liste de plats celui qui vous correspond, et
+        lancer vous!
+    </p>
+    <!-- filtre -->
+    <!-- trier -->
+    <!-- barre de recherche -->
+
+    <div>
+        <Plat />
+        <!-- tous les plats -->
+    </div>
+
+    <!-- pages -->
+</Layout>
