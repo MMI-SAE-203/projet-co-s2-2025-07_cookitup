@@ -1,32 +1,95 @@
----                            
-import './src/styles/global.css' 
----  
+---
+import "./src/styles/global.css";
+
+// Valeur par défaut si aucune prop n'est passée
+const { title = "Cookit-UP" } = Astro.props;
+---
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
 	</head>
 	<body>
-		<header>
-			<nav>
-				<ul>
-					<li><a href="/">Home</a></li>
-					<li><a href="/about">About</a></li>
-					<li><a href="/blog">Blog</a></li>
-					<li><a href="/contact">Contact</a></li>
-				</ul>
+		<!-- Header Cookit-UP -->
+		<header
+			class="bg-white text-black px-6 py-4 flex items-center shadow-md"
+		>
+			<!-- Logo (à gauche) -->
+			<div class="flex items-center space-x-2">
+				<div class="h-8 w-8 bg-gray-300 rounded-full"></div>
+				<span class="font-bold text-lg">Cookit-UP</span>
+			</div>
+
+			<!-- NAV avec menus déroulants fonctionnels -->
+			<nav
+				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10 relative"
+			>
+				<!-- RECETTE -->
+				<div class="relative group">
+					<!-- Le conteneur hover englobe tout -->
+					<div class="cursor-pointer hover:underline">RECETTE</div>
+					<div
+						class="absolute left-0 mt-2 hidden group-hover:block bg-white text-black rounded shadow-lg py-2 z-50 min-w-[160px]"
+					>
+						<a
+							href="/recette/entree"
+							class="block px-4 py-2 hover:bg-gray-100">Entrée</a
+						>
+						<a
+							href="/recette/plat"
+							class="block px-4 py-2 hover:bg-gray-100">Plat</a
+						>
+						<a
+							href="/recette/dessert"
+							class="block px-4 py-2 hover:bg-gray-100">Dessert</a
+						>
+					</div>
+				</div>
+
+				<a href="/menu-semaine" class="hover:underline"
+					>MENU DE LA SEMAINE</a
+				>
+				<a href="/cookup" class="hover:underline">COOKUP</a>
+				<a href="/a-propos" class="hover:underline">A PROPOS</a>
+
+				<!-- COMMUNAUTE -->
+				<div class="relative group">
+					<div class="cursor-pointer hover:underline">COMMUNAUTE</div>
+					<div
+						class="absolute left-0 mt-2 hidden group-hover:block bg-white text-black rounded shadow-lg py-2 z-50 min-w-[200px]"
+					>
+						<a
+							href="/communaute/conseils"
+							class="block px-4 py-2 hover:bg-gray-100"
+							>Conseils nutritionnels</a
+						>
+						<a
+							href="/communaute/avis"
+							class="block px-4 py-2 hover:bg-gray-100"
+							>Formuler un avis</a
+						>
+					</div>
+				</div>
 			</nav>
+
+			<!-- Icônes à droite -->
+			<div class="flex items-center space-x-4 ml-6">
+				<div class="h-6 w-6 rounded-full border border-black"></div>
+				<div class="h-6 w-6 rounded-full border border-black"></div>
+			</div>
 		</header>
-		
-		<slot />
 
-		<footer>
+		<!-- Contenu de la page -->
+		<main class="mt-8">
+			<slot />
+		</main>
 
-		</footer>
+		<!-- Footer -->
+		<footer></footer>
 	</body>
 </html>
