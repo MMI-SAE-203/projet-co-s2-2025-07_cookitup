@@ -30,11 +30,17 @@ const { title = "Cookit-UP" } = Astro.props;
 				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10 relative"
 			>
 				<!-- RECETTE -->
-				<div class="relative group">
-					<!-- Le conteneur hover englobe tout -->
-					<div class="cursor-pointer hover:underline">RECETTE</div>
+				<div class="relative">
+					<!-- Déclencheur -->
+					<button
+						class="peer cursor-pointer hover:underline font-bold text-sm"
+					>
+						RECETTE
+					</button>
+
+					<!-- Menu déroulant -->
 					<div
-						class="absolute left-0 mt-2 hidden group-hover:block bg-white text-black rounded shadow-lg py-2 z-50 min-w-[160px]"
+						class="absolute left-0 mt-1 hidden peer-hover:flex hover:flex flex-col bg-white text-black rounded shadow-lg py-2 z-50 min-w-[160px]"
 					>
 						<a
 							href="/recette/entree"
@@ -58,10 +64,15 @@ const { title = "Cookit-UP" } = Astro.props;
 				<a href="/a-propos" class="hover:underline">A PROPOS</a>
 
 				<!-- COMMUNAUTE -->
-				<div class="relative group">
-					<div class="cursor-pointer hover:underline">COMMUNAUTE</div>
+				<div class="relative">
+					<button
+						class="peer cursor-pointer hover:underline font-bold text-sm"
+					>
+						COMMUNAUTE
+					</button>
+
 					<div
-						class="absolute left-0 mt-2 hidden group-hover:block bg-white text-black rounded shadow-lg py-2 z-50 min-w-[200px]"
+						class="absolute left-0 mt-1 hidden peer-hover:flex hover:flex flex-col bg-white text-black rounded shadow-lg py-2 z-50 min-w-[200px]"
 					>
 						<a
 							href="/communaute/conseils"
@@ -90,6 +101,109 @@ const { title = "Cookit-UP" } = Astro.props;
 		</main>
 
 		<!-- Footer -->
-		<footer></footer>
+		
+			<footer class="bg-black text-white text-sm">
+				<!-- Ligne jaune avec logo et bouton -->
+				<div
+					class="bg-yellow-500 text-white flex justify-between items-center px-6 py-4"
+				>
+					<!-- Logo du site -->
+					<div class="flex items-center space-x-2">
+						<div
+							class="h-10 w-10 bg-white rounded-full flex items-center justify-center"
+						>
+							<!-- Logo du site ici -->
+							<span class="text-black font-bold">Logo</span>
+						</div>
+						<span class="text-lg font-semibold">Cookit-UP</span>
+					</div>
+
+					<!-- Lien partenaires -->
+					<a
+						href="/partenaires"
+						class="font-bold uppercase hover:underline"
+					>
+						Voir nos partenaires
+					</a>
+				</div>
+
+				<!-- Menu principal + contact -->
+				<div
+					class="px-6 py-6 md:flex md:justify-between md:items-start bg-black text-white"
+				>
+					<!-- Navigation -->
+					<div
+						class="space-y-2 font-semibold uppercase tracking-wide"
+					>
+						<a href="/menu-semaine" class="block hover:underline"
+							>.Menu de la semaine</a
+						>
+						<a href="/cookup" class="block hover:underline"
+							>.Cookup</a
+						>
+						<a href="/a-propos" class="block hover:underline"
+							>.A propos</a
+						>
+						<a href="/communaute" class="block hover:underline"
+							>.Communaute</a
+						>
+					</div>
+
+					<!-- Contact -->
+					<div class="mt-6 md:mt-0">
+						<p class="uppercase font-bold mb-1">Nous contactez :</p>
+						<p class="font-semibold">01 23 45 67 89</p>
+						<p class="font-semibold">contact@cookit-up.com</p>
+					</div>
+				</div>
+
+				<hr class="border-gray-700 mx-6" />
+
+				<!-- Mentions légales + Réseaux sociaux -->
+				<div
+					class="px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center bg-black text-white text-xs space-y-4 md:space-y-0"
+				>
+					<!-- Mentions -->
+					<div class="space-x-2">
+						<span class="font-bold">© Cookit-UP 2025</span>
+						<a href="/confidentialite" class="hover:underline"
+							>Charte de confidentialité</a
+						>
+						<a href="/mentions-legales" class="hover:underline"
+							>Mentions légales</a
+						>
+						<a href="/cookies" class="hover:underline"
+							>Gestion des cookies</a
+						>
+						<a href="/cgu" class="hover:underline">CGU</a>
+					</div>
+
+					<!-- Icônes réseaux sociaux -->
+					<div class="flex space-x-4">
+						<a
+							href="#"
+							class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						>
+							<!-- Icône Facebook -->
+							FB
+						</a>
+						<a
+							href="#"
+							class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						>
+							<!-- Icône Instagram -->
+							IG
+						</a>
+						<a
+							href="#"
+							class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						>
+							<!-- Icône YouTube -->
+							YT
+						</a>
+					</div>
+				</div>
+			</footer>
+		
 	</body>
 </html>
