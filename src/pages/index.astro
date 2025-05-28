@@ -4,20 +4,28 @@ import Avis from "../components/Avis.astro";
 import { Image } from "astro:assets";
 import image_accueil from "../assets/img/accueil/img_page_accueil_hero_1x.webp";
 import image_montre from "../assets/img/accueil/image_montre.webp";
+import image_pieces from "../assets/img/accueil/image_pieces.webp";
+import image_plats from "../assets/img/accueil/plats_page_accueil.webp";
+import image_avis from "../assets/img/accueil/image_partager_avis.webp";
+import image_robot_ai from "../assets/img/accueil/image_robot_ia.webp";
+import image_entree from "../assets/img/accueil/image_entree_source.webp";
+import image_entree2 from "../assets/img/accueil/image_entree_layout.webp";
+import image_plat from "../assets/img/accueil/image_plat_source.webp";
+import image_dessert from "../assets/img/accueil/image_dessert_source.webp";
+import image_boisson from "../assets/img/accueil/image_boisson_source.webp";
+import image_menu_semaine from "../assets/img/accueil/image_menu_semaine_source.webp";
 ---
 
 <Layout>
-	<!-- Section bannière principale -->
-	<section class="relative w-full h-auto bg-black text-white">
-		<!-- Image d'arrière-plan -->
+	<section
+		class="relative w-full h-[300px] bg-black text-white overflow-hidden"
+	>
 		<Image
 			src={image_accueil}
 			alt="Image cuisine fond"
-			class="w-full h-auto object-cover"
+			class="w-full h-full object-cover"
 		/>
-
-		<!-- Texte superposé -->
-		<div class="absolute inset-0 flex items-center px-6 md:px-20 py-10">
+		<div class="absolute inset-0 flex items-center px-6 md:px-20 py-0">
 			<h1
 				class="text-3xl md:text-5xl font-bold font-koulen leading-tight"
 			>
@@ -55,8 +63,8 @@ import image_montre from "../assets/img/accueil/image_montre.webp";
 
 			<!-- Carte 2 -->
 			<div class="flex flex-col items-center bg-white rounded shadow p-4">
-				<img
-					src=""
+				<Image
+					src={image_pieces}
 					alt="recettes peu couteuses"
 					class="w-full h-40 object-cover rounded mb-4"
 				/>
@@ -73,8 +81,8 @@ import image_montre from "../assets/img/accueil/image_montre.webp";
 
 			<!-- Carte 3 -->
 			<div class="flex flex-col items-center bg-white rounded shadow p-4">
-				<img
-					src=""
+				<Image
+					src={image_plats}
 					alt="choix de recettes"
 					class="w-full h-40 object-cover rounded mb-4"
 				/>
@@ -90,8 +98,8 @@ import image_montre from "../assets/img/accueil/image_montre.webp";
 
 			<!-- Carte 4 -->
 			<div class="flex flex-col items-center bg-white rounded shadow p-4">
-				<img
-					src=""
+				<Image
+					src={image_avis}
 					alt="avis"
 					class="w-full h-40 object-cover rounded mb-4"
 				/>
@@ -107,70 +115,217 @@ import image_montre from "../assets/img/accueil/image_montre.webp";
 		</div>
 	</section>
 
-	<div>
-		<h2>Fais partie de l’aventure, abonne-toi !</h2>
-		<div>
-			<button>compte gratuit</button>
-			<ul>
-				<li>Trouvez des recettes avec les ingrédients du frigo.</li>
-				<li>Échangez recettes et astuces entre étudiants.</li>
-				<li>Liste de courses automatique selon vos besoins.</li>
-				<li>Repas variés et ajustables chaque semaine.</li>
-				<li>Réutilisez vos restes pour éviter le gaspillage.</li>
-				<li>Profitez de réductions chez nos partenaires locaux.</li>
-			</ul>
+	<!-- Section abonnement -->
+	<section class="bg-green-700 text-white py-12 px-6 text-center">
+		<h2 class="text-2xl md:text-3xl font-koulen uppercase mb-10">
+			Fais partie de l’aventure, abonne-toi !
+		</h2>
+
+		<div
+			class="flex flex-col md:flex-row justify-center gap-8 max-w-6xl mx-auto text-left"
+		>
+			<!-- Compte gratuit -->
+			<div
+				class="bg-green-700 border-2 border-white rounded-lg p-6 flex-1"
+			>
+				<button
+					class="bg-white text-green-700 font-bold py-2 px-4 rounded-full mb-4"
+				>
+					Compte gratuit
+				</button>
+				<ul
+					class="list-disc list-inside space-y-2 text-sm md:text-base"
+				>
+					<li>Trouvez des recettes avec les ingrédients du frigo.</li>
+					<li>Échangez recettes et astuces entre étudiants.</li>
+					<li>Liste de courses automatique selon vos besoins.</li>
+					<li>Repas variés et ajustables chaque semaine.</li>
+					<li>Réutilisez vos restes pour éviter le gaspillage.</li>
+					<li>Profitez de réductions chez nos partenaires locaux.</li>
+				</ul>
+			</div>
+
+			<!-- Pass CookUP -->
+			<div
+				class="bg-green-700 border-2 border-white rounded-lg p-6 flex-1"
+			>
+				<button
+					class="bg-white text-green-700 font-bold py-2 px-4 rounded-full mb-4"
+				>
+					Pass CooKUP
+				</button>
+				<ul
+					class="list-disc list-inside space-y-2 text-sm md:text-base"
+				>
+					<li>
+						Inclut toutes les fonctionnalités de la version
+						gratuite.
+					</li>
+					<li>Calcul automatique selon ingrédients et quantités.</li>
+					<li>Recommandations adaptées à vos objectifs.</li>
+					<li>Menu optimisé selon régime et préférences.</li>
+					<li>Accédez à des nutritionnistes partenaires.</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<!-- Section IA qui simplifie ta vie -->
+	<section class="py-16 px-6 md:px-20 bg-white">
+		<div
+			class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10"
+		>
+			<!-- Texte -->
+			<div class="flex-1 text-left">
+				<h2
+					class="text-green-700 text-xl md:text-2xl font-koulen uppercase mb-6"
+				>
+					L’IA QUI SIMPLIFIE TA VIE
+				</h2>
+				<p
+					class="text-black text-base md:text-lg leading-relaxed font-semibold"
+				>
+					Notre IA t’accompagne dans ton suivi nutritionnel en créant
+					un planning détaillé de tes repas pour la semaine. Elle
+					optimise tes ingrédients restants et s’adapte à ton budget,
+					tout en te proposant des conseils personnalisés. Plus besoin
+					de te creuser la tête, elle planifie pour toi !
+				</p>
+			</div>
+
+			<!-- Image (à compléter) -->
+			<div class="flex-1">
+				<!-- Remplace src par ton image Astro ou Web-compatible -->
+				<Image
+					src={image_robot_ai}
+					alt="Illustration IA robot cuisinier"
+					class="w-full h-auto max-w-sm rounded-xl shadow-md mx-auto"
+				/>
+			</div>
+		</div>
+	</section>
+	<!-- Section Recettes avec les catégories -->
+	<section class="py-12 px-6 bg-white text-center">
+		<h2 class="text-2xl md:text-3xl font-koulen uppercase mb-10">
+			Découvrez nos recettes
+		</h2>
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+			<!-- 🥗 Entrée -->
+			<div class="relative overflow-hidden rounded shadow h-[400px]">
+				<Image
+					src={image_entree}
+					alt="Entrée"
+					class="w-full h-full object-cover"
+				/>
+				<span
+					class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold bg-opacity-40 p-4 tracking-widest"
+				>
+					<span class="leading-tight text-left">
+						{
+							`E\nN\nT\nR\nÉ\nE`.split("\n").map((char) => (
+								<span>
+									{char}
+									<br />
+								</span>
+							))
+						}
+					</span>
+				</span>
+			</div>
+
+			<!-- 🍽 Plat -->
+			<div class="relative overflow-hidden rounded shadow h-[400px]">
+				<Image
+					src={image_plat}
+					alt="Plat"
+					class="w-full h-full object-cover"
+				/>
+				<span
+					class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold bg-opacity-40 p-4 tracking-widest"
+				>
+					<span class="leading-tight text-left">
+						{
+							`P\nL\nA\nT`.split("\n").map((char) => (
+								<span>
+									{char}
+									<br />
+								</span>
+							))
+						}
+					</span>
+				</span>
+			</div>
+
+			<!-- 🍰 Dessert -->
+			<div class="relative overflow-hidden rounded shadow h-[400px]">
+				<Image
+					src={image_dessert}
+					alt="Dessert"
+					class="w-full h-full object-cover"
+				/>
+				<span
+					class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold bg-opacity-40 p-4 tracking-widest"
+				>
+					<span class="leading-tight text-left">
+						{
+							`D\nE\nS\nS\nE\nR\nT`.split("\n").map((char) => (
+								<span>
+									{char}
+									<br />
+								</span>
+							))
+						}
+					</span>
+				</span>
+			</div>
+
+			<!-- 🧃 Boisson -->
+			<div class="relative overflow-hidden rounded shadow h-[400px]">
+				<Image
+					src={image_boisson}
+					alt="Boisson"
+					class="w-full h-full object-cover"
+				/>
+				<span
+					class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold bg-opacity-40 p-4 tracking-widest"
+				>
+					<span class="leading-tight text-left">
+						{
+							`B\nO\nI\nS\nS\nO\nN`.split("\n").map((char) => (
+								<span>
+									{char}
+									<br />
+								</span>
+							))
+						}
+					</span>
+				</span>
+			</div>
 		</div>
 
-		<div>
-			<button>pass cookup</button>
-			<ul>
-				<li>
-					Inclut toutes les fonctionnalités de la version gratuite.
-				</li>
-				<li>Calcul automatique selon ingrédients et quantités.</li>
-				<li>Recommandations adaptées à vos objectifs.</li>
-				<li>Menu optimisé selon régime et préférences.</li>
-				<li>Accédez à des nutritionnistes partenaires.</li>
-			</ul>
-		</div>
-	</div>
+		<!-- Menu de la semaine avec superposition sombre + texte centré gauche -->
+		<div class="relative mt-12">
+			<!-- Image de fond -->
+			<Image
+				src={image_menu_semaine}
+				alt="Menu de la semaine"
+				class="w-full h-96 object-cover rounded"
+			/>
 
-	<div>
-		<h2>L’IA qui simplifie ta vie</h2>
-		<p>
-			Notre IA t’accompagne dans ton suivi nutritionnel en créant un
-			planning détaillé de tes repas pour la semaine. Elle optimise tes
-			ingrédients restants et s’adapte à ton budget, tout en te proposant
-			des conseils personnalisés. Plus besoin de te creuser la tête, elle
-			planifie pour toi !
-		</p>
-		<img src="" alt="" />
-	</div>
+			<!-- Overlay sombre (assombrissement) -->
+			<div
+				class="absolute top-0 left-0 w-full h-full bg-black/40 rounded z-10"
+			>
+			</div>
 
-	<h2>Decouvrez nos recettes</h2>
-
-	<div>
-		<div>
-			<p>Entree</p>
-			<img src="" alt="" />
+			<!-- Texte superposé -->
+			<div
+				class="absolute top-1/2 left-6 transform -translate-y-1/2 text-white text-xl md:text-2xl font-bold text-left uppercase z-20 max-w-md"
+			>
+				Menu de la semaine équilibré & économique
+			</div>
 		</div>
-		<div>
-			<p>Plat</p>
-			<img src="" alt="" />
-		</div>
-		<div>
-			<p>Dessert</p>
-			<img src="" alt="" />
-		</div>
-		<div>
-			<p>Boisson</p>
-			<img src="" alt="" />
-		</div>
-	</div>
-	<div>
-		<p>Menu de la semaine</p>
-		<img src="" alt="" />
-	</div>
+	</section>
 
 	<Avis />
 </Layout>

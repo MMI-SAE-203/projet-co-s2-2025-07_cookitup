@@ -1,0 +1,96 @@
+---
+// ✅ ADAPTÉE À VOTRE STRUCTURE POCKETBASE
+export interface Props {
+    id?: string;
+    nom?: string; // ← CHANGE: correspond à votre champ "nom"
+    img?: string; // ← CHANGE: correspond à votre champ "image"
+    temps_prep?: string; // ← CHANGE: correspond à votre champ "temps de préparation"
+    favori?: boolean; // ← CHANGE: correspond à votre champ "favori" (booléen)
+    sponsorise?: any; // ← CHANGE: correspond à votre relation "sponsorisé"
+}
+
+const {
+    id = "1",
+    nom = "Recette par défaut",
+    img = "/placeholder.svg?height=200&width=300",
+    temps_prep = "30 min",
+    favori = false,
+    sponsorise = null,
+} = Astro.props;
+
+// ✅ GESTION DE L'IMAGE POCKETBASE
+// Si l'image vient de PocketBase, construisez l'URL complète
+const imageUrl = img
+    ? `http://127.0.0.1:8090/api/files/recettes/${id}/${img}`
+    : "/placeholder.svg";
+// ← CHANGE: Remplacez "http://127.0.0.1:8090" par votre URL PocketBase
+---
+
+<div
+    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+>
+    <div class="relative">
+        <!-- ✅ UTILISE L'URL POCKETBASE POUR L'IMAGE -->
+        <img
+            src={imageUrl || "/placeholder.svg"}
+            alt={nom}
+            class="w-full h-48 object-cover"
+        />
+
+        <!-- ✅ BOUTON FAVORIS ADAPTÉ À VOTRE STRUCTURE -->
+        <button
+            class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition"
+            data-favoris-btn
+            data-recette-id={id}
+        >
+            <svg
+                class="w-5 h-5 text-gray-600"
+                fill={favori ? "red" : "none"}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                ></path>
+            </svg>
+        </button>
+
+        <!-- ✅ BADGE SPONSORISÉ SI APPLICABLE -->
+        {
+            sponsorise && (
+                <div class="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
+                    SPONSORISÉ
+                </div>
+            )
+        }
+    </div>
+
+    <div class="p-4">
+        <!-- ✅ UTILISE VOTRE CHAMP "nom" -->
+        <h3 class="font-bold text-lg mb-2 uppercase">{nom}</h3>
+
+        <div class="flex justify-between items-center text-sm text-gray-600">
+            <!-- ✅ UTILISE VOTRE CHAMP "temps_preparation" -->
+            <span>⏱️ {temps_prep}</span>
+
+            <!-- ✅ BADGE FAVORIS -->
+            {
+                favori && (
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded">
+                        ❤️ Favoris
+                    </span>
+                )
+            }
+        </div>
+
+        <a
+            href={`/recette-plat/${id}`}
+            class="block mt-3 bg-yellow-500 hover:bg-yellow-600 text-white text-center py-2 rounded transition font-medium"
+        >
+            VOIR LA RECETTE
+        </a>
+    </div>
+</div>

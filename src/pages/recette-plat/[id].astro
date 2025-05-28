@@ -1,0 +1,242 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+    getRecetteById,
+    getRecettesSimilaires,
+    getAllRecettes,
+} from "../../js/backend.mjs";
+import Plat from "../../components/Plat.astro";
+
+// ✅ FONCTION OBLIGATOIRE pour les routes dynamiques
+export async function getStaticPaths() {
+    try {
+        // Récupère toutes les recettes pour générer les pages statiques
+        const recettes = await getAllRecettes();
+
+        console.log(
+            "📋 Génération des pages statiques pour",
+            recettes.length,
+            "recettes",
+        );
+
+        // Retourne un tableau avec tous les paramètres possibles
+        return recettes.map((recette) => ({
+            params: {
+                id: recette.id,
+            },
+            // Optionnel : passer les données pour éviter un second appel API
+            props: {
+                recette: recette,
+            },
+        }));
+    } catch (error) {
+        console.error(
+            "Erreur lors de la génération des chemins statiques:",
+            error,
+        );
+        return [];
+    }
+}
+
+// Récupération des paramètres
+const { id } = Astro.params;
+const { recette: recetteProp } = Astro.props;
+
+let recette;
+let recettesSimilaires = [];
+
+// Si on a déjà les données depuis getStaticPaths, on les utilise
+if (recetteProp) {
+    recette = recetteProp;
+    console.log("✅ Utilisation des données depuis getStaticPaths");
+} else {
+    // Sinon, on fait l'appel API (fallback)
+    console.log("📡 Récupération des données via API...");
+    try {
+        recette = await getRecetteById(id);
+        if (!recette) {
+            Astro.redirect("/recette-plat", 302);
+            return;
+        }
+    } catch (error) {
+        console.error(" Erreur:", error);
+        Astro.redirect("/recette-plat", 302);
+        return;
+    }
+}
+
+// Récupération des recettes similaires
+try {
+    recettesSimilaires = await getRecettesSimilaires(id, 4);
+} catch (error) {
+    console.error(" Erreur recettes similaires:", error);
+}
+
+// Construction de l'URL image PocketBase
+const imageUrl = recette.image
+    ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}`
+    : "/placeholder.svg";
+---
+
+<Layout>
+    <!-- Hero de la recette -->
+    <section class="relative w-full h-[500px]">
+        <img
+            src={imageUrl || "/placeholder.svg"}
+            alt={recette.nom}
+            class="w-full h-full object-cover"
+        />
+        <div
+            class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+        >
+            <div class="text-center text-white px-4">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4 uppercase">
+                    {recette.nom}
+                </h1>
+                <div class="flex justify-center gap-6 text-lg">
+                    <span>⏱️ {recette.temps_preparation}</span>
+                    {
+                        recette.favori && (
+                            <span class="bg-red-500 px-3 py-1 rounded">
+                                ❤️ Favoris
+                            </span>
+                        )
+                    }
+                    {
+                        recette.expand?.sponsorise && (
+                            <span class="bg-yellow-500 px-3 py-1 rounded">
+                                🌟 Sponsorisé
+                            </span>
+                        )
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu de la recette -->
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Ingrédients -->
+            <div class="lg:col-span-1">
+                <div class="bg-gray-50 p-6 rounded-lg sticky top-6">
+                    <h2 class="text-2xl font-bold mb-6">Ingrédients</h2>
+
+                    {
+                        recette.expand?.ingredients &&
+                        recette.expand.ingredients.length > 0 ? (
+                            <ul class="space-y-3">
+                                {recette.expand.ingredients.map(
+                                    (ingredient) => (
+                                        <li class="flex items-center">
+                                            <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3" />
+                                            <span>
+                                                {ingredient.nom ||
+                                                    ingredient.name}
+                                            </span>
+                                        </li>
+                                    ),
+                                )}
+                            </ul>
+                        ) : (
+                            <p class="text-gray-500">
+                                Aucun ingrédient spécifié
+                            </p>
+                        )
+                    }
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold mb-6">Préparation</h2>
+
+                <div class="prose max-w-none">
+                    <div class="text-gray-800 whitespace-pre-line">
+                        {
+                            recette.texte_cuisine ||
+                                recette.instructions ||
+                                "Instructions de cuisson non disponibles"
+                        }
+                    </div>
+                </div>
+
+                {
+                    recette.expand?.sponsorise && (
+                        <div class="mt-12 p-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg">
+                            <h3 class="font-bold text-lg mb-3">
+                                🌟 Recette sponsorisée
+                            </h3>
+                            <p class="text-gray-700">
+                                Cette recette est sponsorisée par{" "}
+                                {recette.expand.sponsorise.nom ||
+                                    "notre partenaire"}
+                            </p>
+                        </div>
+                    )
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <section class="py-8 px-6 border-t border-gray-200">
+        <div class="max-w-6xl mx-auto flex justify-center gap-4">
+            <button
+                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition font-medium"
+                id="toggleFavoris"
+            >
+                {
+                    recette.favori
+                        ? "❤️ Retirer des favoris"
+                        : "🤍 Ajouter aux favoris"
+                }
+            </button>
+            <button
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition font-medium"
+                id="printRecette"
+            >
+                🖨️ Imprimer la recette
+            </button>
+            <button
+                class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition font-medium"
+                id="shareRecette"
+            >
+                📤 Partager
+            </button>
+        </div>
+    </section>
+
+    <!-- Recettes similaires -->
+    {
+        recettesSimilaires.length > 0 && (
+            <section class="bg-gray-50 py-12 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-8">
+                        Recettes similaires
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {recettesSimilaires.map((recette) => (
+                            <Plat
+                                id={recette.id}
+                                nom={recette.nom}
+                                img={recette.image}
+                                temps_prep={recette.temps_preparation}
+                                favori={recette.favori}
+                                sponsorise={recette.expand?.sponsorise}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+        )
+    }
+</Layout>
+
+<script define:vars={{ recetteId: id }}>
+    import { initRecetteInteractions } from "../../scripts/recette-interactions.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        initRecetteInteractions(recetteId);
+    });
+</script>
