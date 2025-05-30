@@ -2,7 +2,7 @@
 export interface Props {
     id?: string;
     nom?: string;
-    image?: string;
+    img?: string;
     temps_preparation?: string;
     favori?: boolean;
     sponsorise?: any;
@@ -12,15 +12,16 @@ export interface Props {
 const {
     id = "1",
     nom = "Recette par défaut",
-    image = "/placeholder.svg",
+    img = "/placeholder.svg",
     temps_preparation = "30 min",
     favori = false,
     sponsorise = null,
     categorie = "plat",
 } = Astro.props;
 
-const imageUrl = image
-    ? `http://127.0.0.1:8090/api/files/recettes/${id}/${image}`
+// ✅ CORRECTION : Utiliser "img" au lieu de "image"
+const imageUrl = img
+    ? `http://127.0.0.1:8090/api/files/recettes/${id}/${img}`
     : "/placeholder.svg";
 
 // Couleurs par catégorie

@@ -2,13 +2,14 @@
 export interface Props {
     id?: string;
     nom?: string;
-    image?: string;
+    img?: string;
 }
 
-const { id = "1", nom = "RECETTE", image = "/placeholder.svg" } = Astro.props;
+const { id = "1", nom = "RECETTE", img = "/placeholder.svg" } = Astro.props;
 
-const imageUrl = image
-    ? `http://127.0.0.1:8090/api/files/recettes/${id}/${image}`
+// ✅ CORRECTION : Utiliser "img" au lieu de "image"
+const imageUrl = img
+    ? `http://127.0.0.1:8090/api/files/recettes/${id}/${img}`
     : "/placeholder.svg";
 ---
 

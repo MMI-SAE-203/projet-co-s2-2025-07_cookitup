@@ -10,7 +10,6 @@ import Plat from "../../components/Plat.astro";
 // ✅ FONCTION OBLIGATOIRE pour les routes dynamiques
 export async function getStaticPaths() {
     try {
-        // Récupère toutes les recettes pour générer les pages statiques
         const recettes = await getAllRecettes();
 
         console.log(
@@ -19,62 +18,54 @@ export async function getStaticPaths() {
             "recettes",
         );
 
-        // Retourne un tableau avec tous les paramètres possibles
         return recettes.map((recette) => ({
             params: {
                 id: recette.id,
             },
-            // Optionnel : passer les données pour éviter un second appel API
             props: {
                 recette: recette,
             },
         }));
     } catch (error) {
         console.error(
-            "Erreur lors de la génération des chemins statiques:",
+            "❌ Erreur lors de la génération des chemins statiques:",
             error,
         );
         return [];
     }
 }
 
-// Récupération des paramètres
 const { id } = Astro.params;
 const { recette: recetteProp } = Astro.props;
 
 let recette;
 let recettesSimilaires = [];
 
-// Si on a déjà les données depuis getStaticPaths, on les utilise
 if (recetteProp) {
     recette = recetteProp;
     console.log("✅ Utilisation des données depuis getStaticPaths");
 } else {
-    // Sinon, on fait l'appel API (fallback)
     console.log("📡 Récupération des données via API...");
     try {
         recette = await getRecetteById(id);
         if (!recette) {
-            Astro.redirect("/recette-plat", 302);
-            return;
+            return Astro.redirect("/recette-plat", 302);
         }
     } catch (error) {
-        console.error(" Erreur:", error);
-        Astro.redirect("/recette-plat", 302);
-        return;
+        console.error("❌ Erreur:", error);
+        return Astro.redirect("/recette-plat", 302);
     }
 }
 
-// Récupération des recettes similaires
 try {
     recettesSimilaires = await getRecettesSimilaires(id, 4);
 } catch (error) {
-    console.error(" Erreur recettes similaires:", error);
+    console.error("❌ Erreur recettes similaires:", error);
 }
 
-// Construction de l'URL image PocketBase
-const imageUrl = recette.image
-    ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}`
+// ✅ CORRECTION : Utiliser "img" au lieu de "image"
+const imageUrl = recette.img
+    ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
     : "/placeholder.svg";
 ---
 
@@ -93,8 +84,15 @@ const imageUrl = recette.image
                 <h1 class="text-4xl md:text-6xl font-bold mb-4 uppercase">
                     {recette.nom}
                 </h1>
-                <div class="flex justify-center gap-6 text-lg">
+                <div class="flex justify-center gap-6 text-lg flex-wrap">
                     <span>⏱️ {recette.temps_preparation}</span>
+                    {
+                        recette.categorie && (
+                            <span class="bg-blue-500 px-3 py-1 rounded">
+                                📂 {recette.categorie}
+                            </span>
+                        )
+                    }
                     {
                         recette.favori && (
                             <span class="bg-red-500 px-3 py-1 rounded">
@@ -152,11 +150,15 @@ const imageUrl = recette.image
                 <h2 class="text-2xl font-bold mb-6">Préparation</h2>
 
                 <div class="prose max-w-none">
-                    <div class="text-gray-800 whitespace-pre-line">
+                    {
+                        /* ✅ CORRECTION : Utiliser "preparation" au lieu de "texte_cuisine" ou "instructions" */
+                    }
+                    <div
+                        class="text-gray-800 whitespace-pre-line leading-relaxed"
+                    >
                         {
-                            recette.texte_cuisine ||
-                                recette.instructions ||
-                                "Instructions de cuisson non disponibles"
+                            recette.preparation ||
+                                "Instructions de préparation non disponibles"
                         }
                     </div>
                 </div>
@@ -181,10 +183,10 @@ const imageUrl = recette.image
 
     <!-- Actions -->
     <section class="py-8 px-6 border-t border-gray-200">
-        <div class="max-w-6xl mx-auto flex justify-center gap-4">
+        <div class="max-w-6xl mx-auto flex justify-center gap-4 flex-wrap">
             <button
-                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition font-medium"
-                id="toggleFavoris"
+                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition font-medium js-favori-btn"
+                data-id={recette.id}
             >
                 {
                     recette.favori
@@ -194,13 +196,13 @@ const imageUrl = recette.image
             </button>
             <button
                 class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition font-medium"
-                id="printRecette"
+                onclick="window.print()"
             >
                 🖨️ Imprimer la recette
             </button>
             <button
                 class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition font-medium"
-                id="shareRecette"
+                onclick="navigator.share ? navigator.share({title: document.title, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
             >
                 📤 Partager
             </button>
@@ -220,10 +222,11 @@ const imageUrl = recette.image
                             <Plat
                                 id={recette.id}
                                 nom={recette.nom}
-                                image={recette.image}
+                                img={recette.img}
                                 temps_preparation={recette.temps_preparation}
                                 favori={recette.favori}
                                 sponsorise={recette.expand?.sponsorise}
+                                categorie={recette.categorie}
                             />
                         ))}
                     </div>
@@ -233,10 +236,14 @@ const imageUrl = recette.image
     }
 </Layout>
 
-<script define:vars={{ recetteId: id }}>
-    import { initRecetteInteractions } from "../../scripts/recette-interactions.js";
+<script>
+    import { toggleFavori } from "../../js/favoris.js";
 
     document.addEventListener("DOMContentLoaded", () => {
-        initRecetteInteractions(recetteId);
+        // Gestion du bouton favori sur la page de détail
+        const favoriBtn = document.querySelector(".js-favori-btn");
+        if (favoriBtn) {
+            favoriBtn.addEventListener("click", toggleFavori);
+        }
     });
 </script>
