@@ -2,8 +2,9 @@
 export function initSearchAndFilters() {
     const searchInput = document.getElementById("searchInput")
     const recettesGrid = document.getElementById("recettesGrid")
-    const filterSelect = document.querySelector('select[placeholder="Filtre"]')
-    const sortSelect = document.querySelector('select[placeholder="Trier"]')
+    const filterSelect = document.getElementById("filterSelect")
+    const sortSelect = document.getElementById("sortSelect")
+    const categorieSelect = document.getElementById("categorieSelect")
 
     let allRecettes = []
 
@@ -12,39 +13,42 @@ export function initSearchAndFilters() {
         allRecettes = Array.from(recettesGrid.children).map((card) => ({
             element: card,
             nom: card.querySelector("h3")?.textContent.toLowerCase() || "",
-            difficulte: card.querySelector(".bg-green-100")?.textContent || "",
+            categorie: card.dataset.categorie || "",
+            favori: card.querySelector(".bg-red-100") !== null,
+            sponsorise: card.querySelector(".bg-yellow-500") !== null,
             temps: card.querySelector('[class*="⏱️"]')?.textContent || "",
         }))
     }
 
     function filterRecettes() {
         const searchTerm = searchInput?.value.toLowerCase() || ""
-        const selectedFilter = filterSelect?.value || ""
-        const selectedSort = sortSelect?.value || ""
+        const selectedFilter = filterSelect?.value || "tous"
+        const selectedSort = sortSelect?.value || "default"
+        const selectedCategorie = categorieSelect?.value || "tous"
 
         const filteredRecettes = allRecettes.filter((recette) => {
             const matchesSearch = recette.nom.includes(searchTerm)
-            const matchesFilter =
-                !selectedFilter ||
-                selectedFilter === "Filtre" ||
-                recette.difficulte.toLowerCase().includes(selectedFilter.toLowerCase())
 
-            return matchesSearch && matchesFilter
+            // Filtre par type
+            const matchesFilter =
+                selectedFilter === "tous" ||
+                (selectedFilter === "favoris" && recette.favori) ||
+                (selectedFilter === "sponsorises" && recette.sponsorise)
+
+            // Filtre par catégorie
+            const matchesCategorie = selectedCategorie === "tous" || recette.categorie.toLowerCase() === selectedCategorie
+
+            return matchesSearch && matchesFilter && matchesCategorie
         })
 
         // Tri
-        if (selectedSort && selectedSort !== "Trier") {
+        if (selectedSort && selectedSort !== "default") {
             filteredRecettes.sort((a, b) => {
                 switch (selectedSort) {
-                    case "Nom A-Z":
+                    case "nom":
                         return a.nom.localeCompare(b.nom)
-                    case "Temps de préparation":
+                    case "temps":
                         return Number.parseInt(a.temps) - Number.parseInt(b.temps)
-                    case "Difficulté":
-                        const difficultyOrder = { facile: 1, moyen: 2, difficile: 3 }
-                        return (
-                            (difficultyOrder[a.difficulte.toLowerCase()] || 0) - (difficultyOrder[b.difficulte.toLowerCase()] || 0)
-                        )
                     default:
                         return 0
                 }
@@ -91,6 +95,10 @@ export function initSearchAndFilters() {
     if (sortSelect) {
         sortSelect.addEventListener("change", filterRecettes)
     }
+
+    if (categorieSelect) {
+        categorieSelect.addEventListener("change", filterRecettes)
+    }
 }
 
 // Fonction debounce pour éviter trop d'appels lors de la saisie
@@ -105,44 +113,4 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait)
     }
 }
-
-// Gestion des favoris dans la grille
-export function initFavorisToggle() {
-    const favorisButtons = document.querySelectorAll("[data-favoris-btn]")
-
-    favorisButtons.forEach((button) => {
-        button.addEventListener("click", async (e) => {
-            e.preventDefault()
-            e.stopPropagation()
-
-            const recetteId = button.dataset.recetteId
-            const heartIcon = button.querySelector("svg")
-
-            try {
-                const response = await fetch(`/api/favoris/${recetteId}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-
-                if (response.ok) {
-                    const result = await response.json()
-
-                    // Mettre à jour l'icône
-                    heartIcon.setAttribute("fill", result.isFavoris ? "red" : "none")
-
-                    // Animation
-                    button.style.transform = "scale(1.2)"
-                    setTimeout(() => {
-                        button.style.transform = "scale(1)"
-                    }, 150)
-                } else {
-                    throw new Error("Erreur lors de la mise à jour")
-                }
-            } catch (error) {
-                console.error("Erreur favoris:", error)
-            }
-        })
-    })
-  }
+  

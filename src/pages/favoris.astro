@@ -1,0 +1,337 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Plat from "../components/Plat.astro";
+import { getAllRecettes } from "../js/backend.mjs";
+
+// Récupérer toutes les recettes et filtrer les favoris
+const recettes = await getAllRecettes();
+const favoris = recettes.filter((recette) => recette.favori === true);
+
+// Grouper par catégorie
+const entrees = favoris.filter(
+    (recette) => recette.categorie?.toLowerCase() === "entree",
+);
+const plats = favoris.filter(
+    (recette) => recette.categorie?.toLowerCase() === "plat",
+);
+const desserts = favoris.filter(
+    (recette) => recette.categorie?.toLowerCase() === "dessert",
+);
+const autres = favoris.filter(
+    (recette) =>
+        !recette.categorie ||
+        !["entree", "plat", "dessert"].includes(
+            recette.categorie.toLowerCase(),
+        ),
+);
+---
+
+<Layout title="Mes Recettes Favorites">
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Mes Recettes Favorites</h1>
+            <a
+                href="/recette-plat"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
+            >
+                Retour aux recettes
+            </a>
+        </div>
+
+        <!-- Onglets de catégories -->
+        <div class="mb-8 border-b border-gray-200">
+            <ul
+                class="flex flex-wrap -mb-px text-sm font-medium text-center"
+                id="categoriesTabs"
+                role="tablist"
+            >
+                <li class="mr-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 border-yellow-500 rounded-t-lg active"
+                        id="all-tab"
+                        data-tabs-target="#all"
+                        type="button"
+                        role="tab"
+                        aria-controls="all"
+                        aria-selected="true"
+                    >
+                        Tous ({favoris.length})
+                    </button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                        id="entrees-tab"
+                        data-tabs-target="#entrees"
+                        type="button"
+                        role="tab"
+                        aria-controls="entrees"
+                        aria-selected="false"
+                    >
+                        Entrées ({entrees.length})
+                    </button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                        id="plats-tab"
+                        data-tabs-target="#plats"
+                        type="button"
+                        role="tab"
+                        aria-controls="plats"
+                        aria-selected="false"
+                    >
+                        Plats ({plats.length})
+                    </button>
+                </li>
+                <li class="mr-2" role="presentation">
+                    <button
+                        class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                        id="desserts-tab"
+                        data-tabs-target="#desserts"
+                        type="button"
+                        role="tab"
+                        aria-controls="desserts"
+                        aria-selected="false"
+                    >
+                        Desserts ({desserts.length})
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <div id="categoriesContent">
+            <!-- Tous les favoris -->
+            <div
+                class="block"
+                id="all"
+                role="tabpanel"
+                aria-labelledby="all-tab"
+            >
+                {
+                    favoris.length > 0 ? (
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {favoris.map((recette) => (
+                                <Plat
+                                    id={recette.id}
+                                    nom={recette.nom}
+                                    image={recette.image}
+                                    temps_preparation={
+                                        recette.temps_preparation
+                                    }
+                                    favori={recette.favori}
+                                    sponsorise={recette.expand?.sponsorise}
+                                    categorie={recette.categorie}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div class="text-center py-16 bg-gray-50 rounded-lg">
+                            <div class="text-6xl mb-4">❤️</div>
+                            <h2 class="text-2xl font-bold mb-2">
+                                Aucune recette favorite
+                            </h2>
+                            <p class="text-gray-600 mb-6">
+                                Vous n'avez pas encore ajouté de recettes à vos
+                                favoris.
+                            </p>
+                            <a
+                                href="/recette-plat"
+                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                            >
+                                Découvrir des recettes
+                            </a>
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Entrées -->
+            <div
+                class="hidden"
+                id="entrees"
+                role="tabpanel"
+                aria-labelledby="entrees-tab"
+            >
+                {
+                    entrees.length > 0 ? (
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {entrees.map((recette) => (
+                                <Plat
+                                    id={recette.id}
+                                    nom={recette.nom}
+                                    image={recette.image}
+                                    temps_preparation={
+                                        recette.temps_preparation
+                                    }
+                                    favori={recette.favori}
+                                    sponsorise={recette.expand?.sponsorise}
+                                    categorie={recette.categorie}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div class="text-center py-16 bg-gray-50 rounded-lg">
+                            <h2 class="text-xl font-bold mb-2">
+                                Aucune entrée favorite
+                            </h2>
+                            <p class="text-gray-600">
+                                Vous n'avez pas encore ajouté d'entrées à vos
+                                favoris.
+                            </p>
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Plats -->
+            <div
+                class="hidden"
+                id="plats"
+                role="tabpanel"
+                aria-labelledby="plats-tab"
+            >
+                {
+                    plats.length > 0 ? (
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {plats.map((recette) => (
+                                <Plat
+                                    id={recette.id}
+                                    nom={recette.nom}
+                                    image={recette.image}
+                                    temps_preparation={
+                                        recette.temps_preparation
+                                    }
+                                    favori={recette.favori}
+                                    sponsorise={recette.expand?.sponsorise}
+                                    categorie={recette.categorie}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div class="text-center py-16 bg-gray-50 rounded-lg">
+                            <h2 class="text-xl font-bold mb-2">
+                                Aucun plat favori
+                            </h2>
+                            <p class="text-gray-600">
+                                Vous n'avez pas encore ajouté de plats à vos
+                                favoris.
+                            </p>
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Desserts -->
+            <div
+                class="hidden"
+                id="desserts"
+                role="tabpanel"
+                aria-labelledby="desserts-tab"
+            >
+                {
+                    desserts.length > 0 ? (
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {desserts.map((recette) => (
+                                <Plat
+                                    id={recette.id}
+                                    nom={recette.nom}
+                                    image={recette.image}
+                                    temps_preparation={
+                                        recette.temps_preparation
+                                    }
+                                    favori={recette.favori}
+                                    sponsorise={recette.expand?.sponsorise}
+                                    categorie={recette.categorie}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div class="text-center py-16 bg-gray-50 rounded-lg">
+                            <h2 class="text-xl font-bold mb-2">
+                                Aucun dessert favori
+                            </h2>
+                            <p class="text-gray-600">
+                                Vous n'avez pas encore ajouté de desserts à vos
+                                favoris.
+                            </p>
+                        </div>
+                    )
+                }
+            </div>
+        </div>
+
+        <!-- Section d'aide -->
+        <div class="mt-16 p-6 bg-green-50 rounded-lg border border-green-100">
+            <h2 class="text-xl font-bold mb-4">Comment gérer vos favoris ?</h2>
+            <ul class="space-y-2 text-gray-700">
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">•</span>
+                    <span
+                        >Cliquez sur l'icône ❤️ sur une recette pour l'ajouter
+                        ou la retirer de vos favoris</span
+                    >
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">•</span>
+                    <span
+                        >Retrouvez toutes vos recettes favorites sur cette page</span
+                    >
+                </li>
+                <li class="flex items-start">
+                    <span class="text-green-500 mr-2">•</span>
+                    <span
+                        >Utilisez les onglets pour filtrer par type de plat</span
+                    >
+                </li>
+            </ul>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { toggleFavori } from "../js/favoris.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('[role="tab"]');
+        const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+
+        tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                // Désactiver tous les onglets
+                tabButtons.forEach((btn) => {
+                    btn.classList.remove("border-yellow-500");
+                    btn.classList.add(
+                        "border-transparent",
+                        "hover:border-gray-300",
+                    );
+                    btn.setAttribute("aria-selected", "false");
+                });
+
+                // Cacher tous les panneaux
+                tabPanels.forEach((panel) => {
+                    panel.classList.add("hidden");
+                    panel.classList.remove("block");
+                });
+
+                // Activer l'onglet cliqué
+                button.classList.remove(
+                    "border-transparent",
+                    "hover:border-gray-300",
+                );
+                button.classList.add("border-yellow-500");
+                button.setAttribute("aria-selected", "true");
+
+                // Afficher le panneau correspondant
+                const targetId = button
+                    .getAttribute("data-tabs-target")
+                    .substring(1);
+                const targetPanel = document.getElementById(targetId);
+                targetPanel.classList.remove("hidden");
+                targetPanel.classList.add("block");
+            });
+        });
+    });
+</script>

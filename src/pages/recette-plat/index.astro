@@ -3,16 +3,14 @@ import Layout from "../../layouts/Layout.astro";
 import Plat from "../../components/Plat.astro";
 import PlatFavoris from "../../components/PlatFavoris.astro";
 import { Image } from "astro:assets";
-// ✅ CHANGEZ LE CHEMIN VERS VOTRE IMAGE
-import imagePouletRoti from "../../assets/img/recettes/poulet_roti.png"; // ← CHANGE: votre vraie image
-import { getAllRecettes, getFavorisRecettes } from "../../js/backend.mjs";
+import imagePouletRoti from "../../assets/img/recettes/poulet_roti.png";
+import { getAllRecettes, getRecettesSponsors } from "../../js/backend.mjs";
 
-// ✅ RÉCUPÉRATION DES DONNÉES DEPUIS VOTRE POCKETBASE
 const recettes = await getAllRecettes();
-const favoris = await getFavorisRecettes();
+const recettesSponsors = await getRecettesSponsors();
 
-console.log("Recettes récupérées:", recettes.length); // ← DEBUG: pour vérifier
-console.log("Favoris récupérés:", favoris.length); // ← DEBUG: pour vérifier
+console.log("📊 Recettes récupérées:", recettes.length);
+console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
 ---
 
 <Layout>
@@ -36,70 +34,45 @@ console.log("Favoris récupérés:", favoris.length); // ← DEBUG: pour vérifi
                 </a>
             </div>
         </div>
-
-        <!-- Navigation du slider -->
-        <button
-            class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white p-2 rounded-full hover:bg-gray-100 transition"
-            id="prevSlide"
-        >
-            <span>&lt;</span>
-        </button>
-        <button
-            class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white p-2 rounded-full hover:bg-gray-100 transition"
-            id="nextSlide"
-        >
-            <span>&gt;</span>
-        </button>
-
-        <div class="absolute bottom-4 w-full flex justify-center gap-2">
-            <div class="w-3 h-3 rounded-full bg-black slider-dot"></div>
-            <div class="w-3 h-3 rounded-full bg-white opacity-60 slider-dot">
-            </div>
-        </div>
     </section>
 
-    <!-- Section Favoris -->
+    <!-- Section Recettes en vedette -->
     <section class="bg-[#C2584F] text-white py-12 px-6 relative">
         <h2 class="text-xl md:text-3xl font-bold uppercase mb-8">
-            Nos favoris du moments
+            Recettes en vedette
         </h2>
 
         <div
             class="flex gap-4 overflow-x-auto snap-x pb-4"
-            id="favorisContainer"
+            id="vedettesContainer"
         >
-            <!-- ✅ UTILISE VOS DONNÉES POCKETBASE -->
             {
-                favoris.map((plat) => (
-                    <PlatFavoris
-                        id={plat.id}
-                        nom={plat.nom}
-                        img={plat.image}
-                    />
-                ))
+                recettesSponsors.length > 0
+                    ? recettesSponsors
+                          .slice(0, 6)
+                          .map((plat) => (
+                              <PlatFavoris
+                                  id={plat.id}
+                                  nom={plat.nom}
+                                  image={plat.image}
+                              />
+                          ))
+                    : recettes
+                          .slice(0, 6)
+                          .map((plat) => (
+                              <PlatFavoris
+                                  id={plat.id}
+                                  nom={plat.nom}
+                                  image={plat.image}
+                              />
+                          ))
             }
         </div>
-
-        <!-- Navigation favoris -->
-        <button
-            class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full shadow-lg hover:bg-gray-100 transition"
-            id="prevFavoris"
-        >
-            &lt;
-        </button>
-        <button
-            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full shadow-lg hover:bg-gray-100 transition"
-            id="nextFavoris"
-        >
-            &gt;
-        </button>
     </section>
 
     <!-- Section Autres recettes -->
     <section class="py-12 px-6">
-        <h2 class="text-xl md:text-3xl font-bold mb-4">
-            D'autre recette à portée de main
-        </h2>
+        <h2 class="text-xl md:text-3xl font-bold mb-4">Toutes nos recettes</h2>
         <p class="mb-6 text-gray-600">
             Choisissez parmi une grande liste de plats celui qui vous
             correspond, et lancez-vous !
@@ -110,70 +83,101 @@ console.log("Favoris récupérés:", favoris.length); // ← DEBUG: pour vérifi
             <div class="flex-1">
                 <input
                     type="text"
-                    placeholder="Trouvez une recette"
+                    placeholder="Rechercher une recette..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     id="searchInput"
                 />
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 flex-wrap">
+                <!-- Filtre par catégorie -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="categorieSelect"
+                >
+                    <option value="tous">Toutes les catégories</option>
+                    <option value="entree">Entrées</option>
+                    <option value="plat">Plats</option>
+                    <option value="dessert">Desserts</option>
+                </select>
+
+                <!-- Autres filtres -->
                 <select
                     class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     id="filterSelect"
                 >
-                    <option>Tous les types</option>
-                    <option>Favoris seulement</option>
-                    <option>Sponsorisés</option>
+                    <option value="tous">Tous les types</option>
+                    <option value="sponsorises">Sponsorisés</option>
+                    <option value="favoris">Favoris</option>
                 </select>
+
+                <!-- Tri -->
                 <select
                     class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     id="sortSelect"
                 >
-                    <option>Trier par</option>
-                    <option>Nom A-Z</option>
-                    <option>Plus récent</option>
-                    <option>Temps de préparation</option>
+                    <option value="default">Trier par</option>
+                    <option value="nom">Nom A-Z</option>
+                    <option value="recent">Plus récent</option>
+                    <option value="temps">Temps de préparation</option>
                 </select>
             </div>
         </div>
 
-        <!-- ✅ GRILLE DES RECETTES AVEC VOS DONNÉES -->
         <div
             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             id="recettesGrid"
         >
             {
-                recettes.map((plat) => (
-                    <Plat
-                        id={plat.id}
-                        nom={plat.nom}
-                        img={plat.image}
-                        temps_prep={plat.temps_preparation}
-                        favori={plat.favori}
-                        sponsorise={plat.expand?.sponsorise}
-                    />
-                ))
+                recettes.length > 0 ? (
+                    recettes.map((plat) => (
+                        <Plat
+                            id={plat.id}
+                            nom={plat.nom}
+                            image={plat.image}
+                            temps_preparation={plat.temps_preparation}
+                            favori={plat.favori}
+                            sponsorise={plat.expand?.sponsorise}
+                            categorie={plat.categorie}
+                        />
+                    ))
+                ) : (
+                    <div class="col-span-full text-center py-12 bg-gray-100 rounded-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">
+                            Aucune recette trouvée
+                        </h3>
+                        <p class="text-gray-600">
+                            Vérifiez que PocketBase est démarré et contient des
+                            données
+                        </p>
+                    </div>
+                )
             }
         </div>
-
-        <!-- Container pour la pagination -->
-        <div class="pagination-container"></div>
     </section>
 
-    <!-- Section Favoris en bas -->
+    <!-- Section CTA -->
     <section class="bg-green-600 text-white py-12 px-6 text-center">
         <h2 class="text-2xl md:text-3xl font-bold mb-4">
-            RETROUVEZ VOS FAVORIS ICI
+            DÉCOUVREZ NOS RECETTES
         </h2>
         <p class="mb-6">
-            Retrouvez toutes vos recettes favorites ici et régalez-vous avec des
-            plats savoureux et faciles à réaliser !
+            Explorez notre collection de recettes délicieuses et faciles à
+            réaliser !
         </p>
-        <a
-            href="/favoris"
-            class="inline-block bg-white text-green-600 font-bold px-6 py-3 rounded-full hover:bg-gray-100 transition"
-        >
-            Visitez vos favoris
-        </a>
+        <div class="flex justify-center gap-4 flex-wrap">
+            <a
+                href="#recettesGrid"
+                class="inline-block bg-white text-green-600 font-bold px-6 py-3 rounded-full hover:bg-gray-100 transition"
+            >
+                Voir toutes les recettes
+            </a>
+            <a
+                href="/favoris"
+                class="inline-block bg-red-500 text-white font-bold px-6 py-3 rounded-full hover:bg-red-600 transition"
+            >
+                Mes recettes favorites
+            </a>
+        </div>
     </section>
 </Layout>
 
@@ -182,18 +186,36 @@ console.log("Favoris récupérés:", favoris.length); // ← DEBUG: pour vérifi
         initMainSlider,
         initFavorisCarousel,
     } from "../../js/recettes/slider-carousel.js";
-    import {
-        initSearchAndFilters,
-        initFavorisToggle,
-    } from "../../js/recettes/search-filters.js";
+    import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
     import { initPagination } from "../../js/recettes/pagination.js";
+    import { toggleFavori } from "../../js/favoris.js";
 
-    // ✅ INITIALISATION QUAND LE DOM EST CHARGÉ
     document.addEventListener("DOMContentLoaded", () => {
         initMainSlider();
         initFavorisCarousel();
         initSearchAndFilters();
-        initFavorisToggle();
         initPagination();
+
+        // Filtre par catégorie
+        const categorieSelect = document.getElementById("categorieSelect");
+        if (categorieSelect) {
+            categorieSelect.addEventListener("change", function () {
+                const categorie = this.value;
+                const recettes = document.querySelectorAll(
+                    "#recettesGrid > div",
+                );
+
+                recettes.forEach((recette) => {
+                    if (
+                        categorie === "tous" ||
+                        recette.dataset.categorie === categorie
+                    ) {
+                        recette.style.display = "block";
+                    } else {
+                        recette.style.display = "none";
+                    }
+                });
+            });
+        }
     });
 </script>
