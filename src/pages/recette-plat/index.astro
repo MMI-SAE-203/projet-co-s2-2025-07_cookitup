@@ -134,7 +134,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                             id={plat.id}
                             nom={plat.nom}
                             img={plat.img}
-                            temps_preparation={plat.temps_preparation}
+                            temps_prep={plat.temps_prep}
                             isFavorite={plat.isFavorite}
                             sponsorise={plat.expand?.sponsorise}
                             categorie={plat.categorie}
@@ -190,7 +190,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
     import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
     import { initPagination } from "../../js/recettes/pagination.js";
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         // Initialiser la gestion des favoris
         initFavorisButtons();
 
@@ -198,6 +198,9 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         initFavorisCarousel();
         initSearchAndFilters();
         initPagination();
+
+        // ✅ NOUVEAU : Initialiser l'état des cœurs après chargement
+        await initFavoriteStates();
 
         // Filtre par catégorie
         const categorieSelect = document.getElementById("categorieSelect");
@@ -221,4 +224,62 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
             });
         }
     });
+
+    // ✅ NOUVELLE FONCTION : Initialiser l'état des favoris
+    async function initFavoriteStates() {
+        // Importer PocketBase
+        const { default: pb } = await import("../../lib/pocketbase.js");
+
+        if (!pb.authStore.isValid) {
+            console.log(
+                "⚠️ Utilisateur non connecté, pas de favoris à charger",
+            );
+            return;
+        }
+
+        try {
+            console.log("🔄 Chargement de l'état des favoris...");
+
+            // Récupérer tous les favoris de l'utilisateur
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${pb.authStore.model.id}"`,
+            });
+
+            const favoriteIds = favoris.map((favori) => favori.recette);
+            console.log("❤️ IDs des favoris:", favoriteIds);
+
+            // Mettre à jour tous les boutons de favoris
+            const favorisButtons = document.querySelectorAll(".js-favori-btn");
+            favorisButtons.forEach((button) => {
+                const recetteId = button.dataset.id;
+                const heartIcon = button.querySelector("svg");
+
+                if (favoriteIds.includes(recetteId)) {
+                    // Cette recette est favorite
+                    if (heartIcon) {
+                        heartIcon.setAttribute("fill", "red");
+                        heartIcon.style.color = "red";
+                    }
+                    console.log(
+                        `❤️ Recette ${recetteId} marquée comme favorite`,
+                    );
+                } else {
+                    // Cette recette n'est pas favorite
+                    if (heartIcon) {
+                        heartIcon.setAttribute("fill", "none");
+                        heartIcon.style.color = "currentColor";
+                    }
+                }
+            });
+
+            console.log(
+                `✅ État des favoris initialisé pour ${favorisButtons.length} boutons`,
+            );
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de l'initialisation des favoris:",
+                error,
+            );
+        }
+    }
 </script>

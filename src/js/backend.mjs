@@ -28,32 +28,6 @@ export async function getAllRecettes() {
     }
 }
 
-// ✅ RÉCUPÈRE TOUTES LES RECETTES AVEC STATUT FAVORI POUR L'UTILISATEUR CONNECTÉ
-export async function getAllRecettesWithFavorites() {
-    try {
-        const recettes = await getAllRecettes();
-
-        if (!pb.authStore.isValid) {
-            return recettes.map(recette => ({ ...recette, isFavorite: false }));
-        }
-
-        // Récupérer les favoris de l'utilisateur
-        const favoris = await pb.collection('favoris').getFullList({
-            filter: `user = "${pb.authStore.model.id}"`,
-        });
-
-        const favoriteIds = favoris.map(favori => favori.recette);
-
-        return recettes.map(recette => ({
-            ...recette,
-            isFavorite: favoriteIds.includes(recette.id)
-        }));
-    } catch (error) {
-        console.error('❌ Erreur getAllRecettesWithFavorites:', error);
-        return [];
-    }
-}
-
 // ✅ RÉCUPÈRE UNE RECETTE PAR ID
 export async function getRecetteById(id) {
     try {
@@ -78,15 +52,30 @@ export async function getRecetteById(id) {
     }
 }
 
-// ✅ RECETTES SIMILAIRES
+// ✅ RECETTES SIMILAIRES AVEC STATUT FAVORI
 export async function getRecettesSimilaires(recetteId, limit = 4) {
     try {
-        return await pb.collection('recettes').getFullList({
+        const recettes = await pb.collection('recettes').getFullList({
             filter: `id != "${recetteId}"`,
             sort: '-created',
             limit: limit,
             expand: 'ingredients,sponsorise'
         });
+
+        // Ajouter le statut favori pour chaque recette
+        if (pb.authStore.isValid) {
+            const favoris = await pb.collection('favoris').getFullList({
+                filter: `user = "${pb.authStore.model.id}"`,
+            });
+            const favoriteIds = favoris.map(favori => favori.recette);
+
+            return recettes.map(recette => ({
+                ...recette,
+                isFavorite: favoriteIds.includes(recette.id)
+            }));
+        } else {
+            return recettes.map(recette => ({ ...recette, isFavorite: false }));
+        }
     } catch (error) {
         console.error('❌ Erreur getRecettesSimilaires:', error);
         return [];
@@ -138,13 +127,32 @@ export async function getUserFavorites() {
     if (!pb.authStore.isValid) return [];
 
     try {
+        console.log("🔍 Récupération des favoris pour l'utilisateur:", pb.authStore.model.id);
+
         const favoris = await pb.collection('favoris').getFullList({
             filter: `user = "${pb.authStore.model.id}"`,
             expand: 'recette,recette.ingredients,recette.sponsorise',
             sort: '-created'
         });
 
-        return favoris.map(favori => favori.expand.recette).filter(Boolean);
+        console.log(`📊 Nombre de favoris trouvés: ${favoris.length}`);
+
+        // Extraire les recettes des favoris et ajouter isFavorite=true
+        const recettes = favoris
+            .map(favori => {
+                if (!favori.expand?.recette) {
+                    console.warn("⚠️ Favori sans recette associée:", favori.id);
+                    return null;
+                }
+                return {
+                    ...favori.expand.recette,
+                    isFavorite: true
+                };
+            })
+            .filter(Boolean);
+
+        console.log(`📊 Nombre de recettes favorites valides: ${recettes.length}`);
+        return recettes;
     } catch (error) {
         console.error('❌ Erreur getUserFavorites:', error);
         return [];

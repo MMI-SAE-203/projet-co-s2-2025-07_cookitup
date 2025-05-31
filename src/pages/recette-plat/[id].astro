@@ -49,11 +49,13 @@ if (recetteProp) {
     try {
         recette = await getRecetteById(id);
         if (!recette) {
-            return Astro.redirect("/recette-plat", 302);
+            Astro.redirect("/recette-plat", 302);
+            return;
         }
     } catch (error) {
         console.error("❌ Erreur:", error);
-        return Astro.redirect("/recette-plat", 302);
+        Astro.redirect("/recette-plat", 302);
+        return;
     }
 }
 
@@ -85,7 +87,7 @@ const imageUrl = recette.img
                     {recette.nom}
                 </h1>
                 <div class="flex justify-center gap-6 text-lg flex-wrap">
-                    <span>⏱️ {recette.temps_preparation}</span>
+                    <span>⏱️ {recette.temps_prep}</span>
                     {
                         recette.categorie && (
                             <span class="bg-blue-500 px-3 py-1 rounded">
@@ -94,7 +96,7 @@ const imageUrl = recette.img
                         )
                     }
                     {
-                        recette.favori && (
+                        recette.isFavorite && (
                             <span class="bg-red-500 px-3 py-1 rounded">
                                 ❤️ Favoris
                             </span>
@@ -225,8 +227,8 @@ const imageUrl = recette.img
                                 id={recette.id}
                                 nom={recette.nom}
                                 img={recette.img}
-                                temps_preparation={recette.temps_preparation}
-                                favori={recette.favori}
+                                temps_prep={recette.temps_prep}
+                                isFavorite={recette.isFavorite}
                                 sponsorise={recette.expand?.sponsorise}
                                 categorie={recette.categorie}
                             />
@@ -241,8 +243,67 @@ const imageUrl = recette.img
 <script>
     import { initFavorisButtons } from "../../js/favoris.js";
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         // Initialiser la gestion des favoris
         initFavorisButtons();
+
+        // ✅ NOUVEAU : Initialiser l'état des cœurs
+        await initFavoriteState();
     });
+
+    // ✅ NOUVELLE FONCTION : Initialiser l'état du favori pour cette recette
+    async function initFavoriteState() {
+        // Importer PocketBase
+        const { default: pb } = await import("../../lib/pocketbase.js");
+
+        if (!pb.authStore.isValid) {
+            console.log("⚠️ Utilisateur non connecté, pas de favori à charger");
+            return;
+        }
+
+        try {
+            // Récupérer l'ID de la recette depuis l'URL
+            const recetteId = window.location.pathname.split("/").pop();
+            console.log(
+                "🔍 Vérification du favori pour la recette:",
+                recetteId,
+            );
+
+            // Vérifier si cette recette est favorite
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${pb.authStore.model.id}" && recette = "${recetteId}"`,
+            });
+
+            const isFavorite = favoris.length > 0;
+            console.log("❤️ Recette favorite:", isFavorite);
+
+            // Mettre à jour le bouton de favori
+            const favorisButton = document.querySelector(".js-favori-btn");
+            const heartIcon = favorisButton?.querySelector("svg");
+            const buttonText = favorisButton?.querySelector(".button-text");
+
+            if (favorisButton && heartIcon) {
+                if (isFavorite) {
+                    heartIcon.setAttribute("fill", "red");
+                    heartIcon.style.color = "red";
+                    if (buttonText) {
+                        buttonText.textContent = "❤️ Retirer des favoris";
+                    }
+                    console.log("❤️ Bouton marqué comme favori");
+                } else {
+                    heartIcon.setAttribute("fill", "none");
+                    heartIcon.style.color = "currentColor";
+                    if (buttonText) {
+                        buttonText.textContent = "🤍 Ajouter aux favoris";
+                    }
+                    console.log("🤍 Bouton marqué comme non favori");
+                }
+            }
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de l'initialisation du favori:",
+                error,
+            );
+        }
+    }
 </script>
