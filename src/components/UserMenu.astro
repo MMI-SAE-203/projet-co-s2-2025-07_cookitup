@@ -1,0 +1,130 @@
+---
+
+---
+
+<div class="relative" id="userMenuContainer">
+    <!-- Bouton de profil -->
+    <button
+        id="userMenuButton"
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+        aria-expanded="false"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-gray-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            ></path>
+        </svg>
+    </button>
+
+    <!-- Menu déroulant (caché par défaut) -->
+    <div
+        id="userMenu"
+        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden"
+    >
+        <!-- Menu pour utilisateur non connecté -->
+        <div id="guestMenu">
+            <a
+                href="/connexion"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Se connecter</a
+            >
+            <a
+                href="/inscription"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >S'inscrire</a
+            >
+        </div>
+
+        <!-- Menu pour utilisateur connecté (caché par défaut) -->
+        <div id="authMenu" class="hidden">
+            <span
+                id="userEmail"
+                class="block px-4 py-2 text-sm text-gray-500 border-b border-gray-200"
+            ></span>
+            <a
+                href="/profil"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Mon profil</a
+            >
+            <a
+                href="/favoris"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Mes favoris</a
+            >
+            <button
+                id="logoutButton"
+                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >Se déconnecter</button
+            >
+        </div>
+    </div>
+</div>
+
+<script>
+    import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const userMenuButton = document.getElementById("userMenuButton");
+        const userMenu = document.getElementById("userMenu");
+        const guestMenu = document.getElementById("guestMenu");
+        const authMenu = document.getElementById("authMenu");
+        const userEmail = document.getElementById("userEmail");
+        const logoutButton = document.getElementById("logoutButton");
+
+        // Fonction pour mettre à jour l'interface selon l'état de connexion
+        function updateAuthUI() {
+            if (isLoggedIn()) {
+                const user = getCurrentUser();
+                if (userEmail) userEmail.textContent = user.email || "";
+
+                if (guestMenu) guestMenu.classList.add("hidden");
+                if (authMenu) authMenu.classList.remove("hidden");
+            } else {
+                if (guestMenu) guestMenu.classList.remove("hidden");
+                if (authMenu) authMenu.classList.add("hidden");
+            }
+        }
+
+        // Initialiser l'interface
+        updateAuthUI();
+
+        // Gérer le clic sur le bouton de menu
+        userMenuButton?.addEventListener("click", () => {
+            const expanded =
+                userMenuButton.getAttribute("aria-expanded") === "true";
+            userMenuButton.setAttribute("aria-expanded", !expanded);
+            userMenu?.classList.toggle("hidden");
+        });
+
+        // Fermer le menu si on clique ailleurs
+        document.addEventListener("click", (event) => {
+            const container = document.getElementById("userMenuContainer");
+            if (container && !container.contains(event.target)) {
+                userMenu?.classList.add("hidden");
+                userMenuButton?.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Gérer la déconnexion
+        logoutButton?.addEventListener("click", () => {
+            logout();
+            updateAuthUI();
+            userMenu?.classList.add("hidden");
+            window.location.href = "/";
+        });
+
+        // Écouter les événements d'authentification
+        document.addEventListener("userLogin", updateAuthUI);
+        document.addEventListener("userLogout", updateAuthUI);
+        document.addEventListener("userUpdate", updateAuthUI);
+    });
+</script>

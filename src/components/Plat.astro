@@ -4,7 +4,7 @@ export interface Props {
     nom?: string;
     img?: string;
     temps_preparation?: string;
-    favori?: boolean;
+    isFavorite?: boolean;
     sponsorise?: any;
     categorie?: string;
 }
@@ -14,7 +14,7 @@ const {
     nom = "Recette par défaut",
     img = "/placeholder.svg",
     temps_preparation = "30 min",
-    favori = false,
+    isFavorite = false,
     sponsorise = null,
     categorie = "plat",
 } = Astro.props;
@@ -74,10 +74,11 @@ const categorieColor =
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill={favori ? "red" : "none"}
+                fill={isFavorite ? "red" : "none"}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 class="w-6 h-6"
+                style={isFavorite ? "color: red;" : ""}
             >
                 <path
                     stroke-linecap="round"
@@ -95,7 +96,7 @@ const categorieColor =
         <div class="flex justify-between items-center text-sm text-gray-600">
             <span>⏱️ {temps_preparation}</span>
             {
-                favori && (
+                isFavorite && (
                     <span class="bg-red-100 text-red-800 px-2 py-1 rounded">
                         ❤️ Favoris
                     </span>

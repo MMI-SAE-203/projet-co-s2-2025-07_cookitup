@@ -17,11 +17,14 @@ const { title = "Cookit-UP" } = Astro.props;
 		<header
 			class="bg-white text-black px-6 py-4 flex items-center shadow-md"
 		>
-			<!-- Logo (à gauche) -->
-			<div class="flex items-center space-x-2">
+			<!-- Logo (à gauche) - Cliquable vers l'accueil -->
+			<a
+				href="/"
+				class="flex items-center space-x-2 hover:opacity-80 transition"
+			>
 				<div class="h-8 w-8 bg-gray-300 rounded-full"></div>
 				<span class="font-bold text-lg">Cookit-UP</span>
-			</div>
+			</a>
 
 			<!-- NAV avec menus déroulants fonctionnels -->
 			<nav
@@ -31,7 +34,7 @@ const { title = "Cookit-UP" } = Astro.props;
 				<div class="relative">
 					<!-- Lien cliquable -->
 					<a
-						href="recette-plat"
+						href="/recette-plat"
 						class="peer cursor-pointer hover:underline font-bold text-sm block"
 					>
 						RECETTES
@@ -89,8 +92,204 @@ const { title = "Cookit-UP" } = Astro.props;
 
 			<!-- Icônes à droite -->
 			<div class="flex items-center space-x-4 ml-6">
-				<div class="h-6 w-6 rounded-full border border-black"></div>
-				<div class="h-6 w-6 rounded-full border border-black"></div>
+				<!-- Première icône - Menu utilisateur -->
+				<div class="relative" id="userMenuContainer">
+					<button
+						id="userMenuButton"
+						class="h-6 w-6 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
+						aria-expanded="false"
+						title="Menu utilisateur"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-4 w-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+							></path>
+						</svg>
+					</button>
+
+					<!-- Menu déroulant utilisateur -->
+					<div
+						id="userMenu"
+						class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 hidden border border-gray-200"
+					>
+						<!-- Menu pour utilisateur non connecté -->
+						<div id="guestMenu">
+							<div class="px-4 py-3 border-b border-gray-200">
+								<p class="text-sm text-gray-600">
+									Vous n'êtes pas connecté
+								</p>
+							</div>
+							<a
+								href="/connexion"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+									></path>
+								</svg>
+								Se connecter
+							</a>
+							<a
+								href="/inscription"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+									></path>
+								</svg>
+								S'inscrire
+							</a>
+						</div>
+
+						<!-- Menu pour utilisateur connecté -->
+						<div id="authMenu" class="hidden">
+							<div class="px-4 py-3 border-b border-gray-200">
+								<p
+									class="text-sm font-medium text-gray-900"
+									id="userDisplayName"
+								>
+									Utilisateur
+								</p>
+								<p class="text-sm text-gray-500" id="userEmail">
+									email@example.com
+								</p>
+							</div>
+							<a
+								href="/profil"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+									></path>
+								</svg>
+								Mon profil
+							</a>
+							<a
+								href="/favoris"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+									></path>
+								</svg>
+								Mes favoris
+							</a>
+							<a
+								href="/mes-recettes"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+									></path>
+								</svg>
+								Mes recettes
+							</a>
+							<div class="border-t border-gray-200 mt-2 pt-2">
+								<button
+									id="logoutButton"
+									class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="h-4 w-4 mr-2"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+										></path>
+									</svg>
+									Se déconnecter
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Deuxième icône - Favoris -->
+				<a
+					href="/favoris"
+					class="h-6 w-6 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
+					title="Mes favoris"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-4 w-4"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+						></path>
+					</svg>
+				</a>
 			</div>
 		</header>
 
@@ -100,14 +299,16 @@ const { title = "Cookit-UP" } = Astro.props;
 		</main>
 
 		<!-- Footer -->
-
 		<footer class="bg-black text-white text-sm">
 			<!-- Ligne jaune avec logo et bouton -->
 			<div
 				class="bg-yellow-500 text-white flex justify-between items-center px-6 py-4"
 			>
 				<!-- Logo du site -->
-				<div class="flex items-center space-x-2">
+				<a
+					href="/"
+					class="flex items-center space-x-2 hover:opacity-80 transition"
+				>
 					<div
 						class="h-10 w-10 bg-white rounded-full flex items-center justify-center"
 					>
@@ -115,7 +316,7 @@ const { title = "Cookit-UP" } = Astro.props;
 						<span class="text-black font-bold">Logo</span>
 					</div>
 					<span class="text-lg font-semibold">Cookit-UP</span>
-				</div>
+				</a>
 
 				<!-- Lien partenaires -->
 				<a
@@ -177,21 +378,24 @@ const { title = "Cookit-UP" } = Astro.props;
 				<div class="flex space-x-4">
 					<a
 						href="#"
-						class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
+						title="Facebook"
 					>
 						<!-- Icône Facebook -->
 						FB
 					</a>
 					<a
 						href="#"
-						class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
+						title="Instagram"
 					>
 						<!-- Icône Instagram -->
 						IG
 					</a>
 					<a
 						href="#"
-						class="h-8 w-8 rounded-full border border-white flex items-center justify-center"
+						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
+						title="YouTube"
 					>
 						<!-- Icône YouTube -->
 						YT
@@ -199,5 +403,83 @@ const { title = "Cookit-UP" } = Astro.props;
 				</div>
 			</div>
 		</footer>
+
+		<!-- Script pour la gestion de l'authentification -->
+		<script>
+			import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
+
+			// Fonction pour mettre à jour l'interface selon l'état de connexion
+			function updateAuthUI() {
+				const guestMenu = document.getElementById("guestMenu");
+				const authMenu = document.getElementById("authMenu");
+				const userDisplayName =
+					document.getElementById("userDisplayName");
+				const userEmail = document.getElementById("userEmail");
+
+				if (isLoggedIn()) {
+					const user = getCurrentUser();
+
+					// Afficher le nom et email de l'utilisateur
+					if (userDisplayName) {
+						userDisplayName.textContent =
+							user.name ||
+							`${user.prenom || ""} ${user.nom || ""}`.trim() ||
+							"Utilisateur";
+					}
+					if (userEmail && user.email) {
+						userEmail.textContent = user.email;
+					}
+
+					// Afficher le menu utilisateur connecté
+					if (guestMenu) guestMenu.classList.add("hidden");
+					if (authMenu) authMenu.classList.remove("hidden");
+				} else {
+					// Afficher le menu invité
+					if (guestMenu) guestMenu.classList.remove("hidden");
+					if (authMenu) authMenu.classList.add("hidden");
+				}
+			}
+
+			document.addEventListener("DOMContentLoaded", () => {
+				const userMenuButton =
+					document.getElementById("userMenuButton");
+				const userMenu = document.getElementById("userMenu");
+				const logoutButton = document.getElementById("logoutButton");
+
+				// Initialiser l'interface
+				updateAuthUI();
+
+				// Gérer le clic sur le bouton de menu utilisateur
+				userMenuButton?.addEventListener("click", (e) => {
+					e.stopPropagation();
+					const expanded =
+						userMenuButton.getAttribute("aria-expanded") === "true";
+					userMenuButton.setAttribute("aria-expanded", !expanded);
+					userMenu?.classList.toggle("hidden");
+				});
+
+				// Fermer le menu si on clique ailleurs
+				document.addEventListener("click", (event) => {
+					const container =
+						document.getElementById("userMenuContainer");
+					if (container && !container.contains(event.target)) {
+						userMenu?.classList.add("hidden");
+						userMenuButton?.setAttribute("aria-expanded", "false");
+					}
+				});
+
+				// Gérer la déconnexion
+				logoutButton?.addEventListener("click", (e) => {
+					e.preventDefault();
+					logout();
+					window.location.href = "/";
+				});
+
+				// Écouter les événements d'authentification personnalisés
+				document.addEventListener("userLogin", updateAuthUI);
+				document.addEventListener("userLogout", updateAuthUI);
+				document.addEventListener("userUpdate", updateAuthUI);
+			});
+		</script>
 	</body>
 </html>

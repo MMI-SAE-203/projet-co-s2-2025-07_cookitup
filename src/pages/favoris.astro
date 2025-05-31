@@ -1,11 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Plat from "../components/Plat.astro";
-import { getAllRecettes } from "../js/backend.mjs";
+import { getUserFavorites } from "../js/backend.mjs";
 
-// Récupérer toutes les recettes et filtrer les favoris
-const recettes = await getAllRecettes();
-const favoris = recettes.filter((recette) => recette.favori === true);
+// Récupérer les favoris de l'utilisateur connecté
+const favoris = await getUserFavorites();
 
 // Grouper par catégorie
 const entrees = favoris.filter(
@@ -120,7 +119,7 @@ const autres = favoris.filter(
                                     temps_preparation={
                                         recette.temps_preparation
                                     }
-                                    favori={recette.favori}
+                                    isFavorite={true}
                                     sponsorise={recette.expand?.sponsorise}
                                     categorie={recette.categorie}
                                 />
@@ -165,7 +164,7 @@ const autres = favoris.filter(
                                     temps_preparation={
                                         recette.temps_preparation
                                     }
-                                    favori={recette.favori}
+                                    isFavorite={true}
                                     sponsorise={recette.expand?.sponsorise}
                                     categorie={recette.categorie}
                                 />
@@ -203,7 +202,7 @@ const autres = favoris.filter(
                                     temps_preparation={
                                         recette.temps_preparation
                                     }
-                                    favori={recette.favori}
+                                    isFavorite={true}
                                     sponsorise={recette.expand?.sponsorise}
                                     categorie={recette.categorie}
                                 />
@@ -241,7 +240,7 @@ const autres = favoris.filter(
                                     temps_preparation={
                                         recette.temps_preparation
                                     }
-                                    favori={recette.favori}
+                                    isFavorite={true}
                                     sponsorise={recette.expand?.sponsorise}
                                     categorie={recette.categorie}
                                 />
@@ -291,9 +290,12 @@ const autres = favoris.filter(
 </Layout>
 
 <script>
-    import { toggleFavori } from "../js/favoris.js";
+    import { initFavorisButtons } from "../js/favoris.js";
 
     document.addEventListener("DOMContentLoaded", () => {
+        // Initialiser la gestion des favoris
+        initFavorisButtons();
+
         // Gestion des onglets
         const tabButtons = document.querySelectorAll('[role="tab"]');
         const tabPanels = document.querySelectorAll('[role="tabpanel"]');

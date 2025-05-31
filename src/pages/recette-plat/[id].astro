@@ -188,11 +188,13 @@ const imageUrl = recette.img
                 class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition font-medium js-favori-btn"
                 data-id={recette.id}
             >
-                {
-                    recette.favori
-                        ? "❤️ Retirer des favoris"
-                        : "🤍 Ajouter aux favoris"
-                }
+                <span class="button-text">
+                    {
+                        recette.isFavorite
+                            ? "❤️ Retirer des favoris"
+                            : "🤍 Ajouter aux favoris"
+                    }
+                </span>
             </button>
             <button
                 class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition font-medium"
@@ -237,13 +239,10 @@ const imageUrl = recette.img
 </Layout>
 
 <script>
-    import { toggleFavori } from "../../js/favoris.js";
+    import { initFavorisButtons } from "../../js/favoris.js";
 
     document.addEventListener("DOMContentLoaded", () => {
-        // Gestion du bouton favori sur la page de détail
-        const favoriBtn = document.querySelector(".js-favori-btn");
-        if (favoriBtn) {
-            favoriBtn.addEventListener("click", toggleFavori);
-        }
+        // Initialiser la gestion des favoris
+        initFavorisButtons();
     });
 </script>

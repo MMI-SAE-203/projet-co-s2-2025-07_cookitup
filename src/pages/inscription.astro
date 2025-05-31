@@ -1,0 +1,221 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Inscription | Cookit-UP">
+    <div class="bg-emerald-700 min-h-screen py-12">
+        <div
+            class="max-w-md mx-auto bg-white rounded-lg overflow-hidden shadow-lg"
+        >
+            <div class="p-8">
+                <h2 class="text-2xl font-bold mb-6">Inscription</h2>
+
+                <!-- Bouton Google -->
+                <button
+                    class="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-full py-2 px-4 mb-6 hover:bg-gray-50 transition"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                    >
+                        <path
+                            d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"
+                        ></path>
+                    </svg>
+                    <span>Continuer avec Google</span>
+                </button>
+
+                <!-- Séparateur -->
+                <div class="flex items-center my-6">
+                    <div class="flex-1 border-t border-gray-300"></div>
+                    <span class="px-4 text-gray-500 text-sm">ou</span>
+                    <div class="flex-1 border-t border-gray-300"></div>
+                </div>
+
+                <!-- Formulaire d'inscription -->
+                <form id="registerForm" class="space-y-4">
+                    <div>
+                        <label
+                            for="nom"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Nom</label
+                        >
+                        <input
+                            type="text"
+                            id="nom"
+                            name="nom"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            placeholder="Nom"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            for="prenom"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Prénom</label
+                        >
+                        <input
+                            type="text"
+                            id="prenom"
+                            name="prenom"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            placeholder="Prénom"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            for="telephone"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Numéro de téléphone</label
+                        >
+                        <input
+                            type="tel"
+                            id="telephone"
+                            name="telephone"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            placeholder="Numéro de téléphone"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            for="email"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Adresse email</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            placeholder="Adresse email"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            for="password"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                            >Mot de passe</label
+                        >
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                            placeholder="Mot de passe"
+                        />
+                    </div>
+
+                    <div class="flex items-start">
+                        <input
+                            type="checkbox"
+                            id="newsletter"
+                            name="newsletter"
+                            class="mt-1 h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-300 rounded"
+                        />
+                        <label
+                            for="newsletter"
+                            class="ml-2 block text-sm text-gray-700"
+                        >
+                            Oui je souhaite recevoir des réductions, offres
+                            fidélité et infos.
+                        </label>
+                    </div>
+
+                    <!-- Message d'erreur -->
+                    <div id="errorMessage" class="text-red-500 text-sm hidden">
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full transition"
+                    >
+                        Créer un compte
+                    </button>
+                </form>
+
+                <p class="mt-6 text-center text-sm text-gray-600">
+                    Vous avez déjà un compte ? <a
+                        href="/connexion"
+                        class="text-yellow-500 hover:text-yellow-600 font-medium"
+                        >Se connecter</a
+                    >
+                </p>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    import { register } from "../js/auth.js";
+
+    // Validation du formulaire
+    const form = document.getElementById("registerForm");
+    const errorMessage = document.getElementById("errorMessage");
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (errorMessage) {
+            errorMessage.textContent = "";
+            errorMessage.classList.add("hidden");
+        }
+
+        try {
+            // Récupérer les données du formulaire
+            const formData = new FormData(form);
+            const userData = {
+                nom: formData.get("nom"),
+                prenom: formData.get("prenom"),
+                telephone: formData.get("telephone"),
+                email: formData.get("email"),
+                password: formData.get("password"),
+                newsletter: formData.get("newsletter") === "on",
+            };
+
+            // Vérifications basiques
+            if (
+                !userData.email ||
+                !userData.password ||
+                !userData.nom ||
+                !userData.prenom
+            ) {
+                throw new Error(
+                    "Veuillez remplir tous les champs obligatoires",
+                );
+            }
+
+            if (userData.password.length < 8) {
+                throw new Error(
+                    "Le mot de passe doit contenir au moins 8 caractères",
+                );
+            }
+
+            // Enregistrer l'utilisateur
+            await register(userData);
+
+            // Redirection en cas de succès
+            window.location.href = "/recette-plat";
+        } catch (error) {
+            console.error("Erreur d'inscription:", error);
+
+            // Afficher le message d'erreur
+            if (errorMessage) {
+                errorMessage.textContent =
+                    error.message ||
+                    "Une erreur est survenue lors de l'inscription";
+                errorMessage.classList.remove("hidden");
+            }
+        }
+    });
+</script>

@@ -135,7 +135,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                             nom={plat.nom}
                             img={plat.img}
                             temps_preparation={plat.temps_preparation}
-                            favori={plat.favori}
+                            isFavorite={plat.isFavorite}
                             sponsorise={plat.expand?.sponsorise}
                             categorie={plat.categorie}
                         />
@@ -182,15 +182,18 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
 </Layout>
 
 <script>
+    import { initFavorisButtons } from "../../js/favoris.js";
     import {
         initMainSlider,
         initFavorisCarousel,
     } from "../../js/recettes/slider-carousel.js";
     import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
     import { initPagination } from "../../js/recettes/pagination.js";
-    import { toggleFavori } from "../../js/favoris.js";
 
     document.addEventListener("DOMContentLoaded", () => {
+        // Initialiser la gestion des favoris
+        initFavorisButtons();
+
         initMainSlider();
         initFavorisCarousel();
         initSearchAndFilters();
