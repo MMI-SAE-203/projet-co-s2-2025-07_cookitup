@@ -24,6 +24,17 @@ try {
 } catch (error) {
     console.error('Erreur lors de la récupération des avis:', error);
 }
+
+// Fonction pour générer un avatar par défaut basé sur le pseudo
+function getAvatarUrl(user, userId) {
+    if (user?.avatar) {
+        return `http://127.0.0.1:8090/api/files/users/${userId}/${user.avatar}`;
+    }
+    // Avatar par défaut avec initiales
+    const pseudo = user?.pseudo || 'U';
+    const initials = pseudo.charAt(0).toUpperCase();
+    return `https://ui-avatars.com/api/?name=${initials}&background=ef4444&color=fff&size=64&bold=true`;
+}
 ---
 
 <Layout>
@@ -41,7 +52,8 @@ try {
 		
 		<div class="absolute inset-0 flex items-center px-6 md:px-20 py-0">
 			<h1
-				class="text-4xl md:text-6xl lg:text-7xl font-bold font-koulen leading-tight relative z-10"
+				class="text-4xl md:text-6xl lg:text-7xl font-bold hero-main-text leading-tight relative z-10"
+				style="font-family: 'Koulen', sans-serif !important;"
 			>
 				<span class="block text-white mb-2">NOTRE BUT</span>
 				<span class="block text-yellow-400 mb-2">PREMIER VOUS,</span>
@@ -52,7 +64,7 @@ try {
 
 	<!-- Section "Simplifie ta vie culinaire" -->
 	<section class="py-16 px-6 text-center bg-white">
-		<h2 class="text-3xl md:text-4xl font-koulen uppercase mb-12 text-black">
+		<h2 class="text-3xl md:text-4xl font-koulen mb-12 text-black">
 			Simplifie ta vie culinaire
 		</h2>
 
@@ -131,7 +143,7 @@ try {
 
 	<!-- Section abonnement -->
 <section class="bg-teal-600 text-white py-16 px-6 text-center">
-	<h2 class="text-3xl md:text-4xl font-koulen uppercase mb-12">
+	<h2 class="text-3xl md:text-4xl font-koulen mb-12">
 		Fais partie de l'aventure, abonne-toi !
 	</h2>
 
@@ -190,7 +202,7 @@ try {
 			<!-- Texte -->
 			<div class="flex-1 text-left">
 				<h2
-					class="text-emerald-600 text-3xl md:text-4xl font-koulen uppercase mb-6"
+					class="text-emerald-600 text-3xl md:text-4xl font-koulen mb-6"
 				>
 					L'IA QUI SIMPLIFIE TA VIE
 				</h2>
@@ -222,23 +234,25 @@ try {
 
 	<!-- Section Recettes avec les catégories (SANS BOISSON) -->
 <section class="py-12 px-6 bg-white text-center">
-	<h2 class="text-2xl md:text-3xl font-koulen uppercase mb-10">
+	<h2 class="text-2xl md:text-3xl font-koulen mb-10">
 		Découvrez nos recettes
 	</h2>
 	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 		<!-- 🥗 Entrée -->
-		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transform transition-transform hover:scale-105">
+		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transition-shadow duration-300 hover:shadow-2xl">
 			<Image
 				src={image_entree || "/placeholder.svg"}
 				alt="Entrée"
-				class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 			/>
-			<!-- Filtre sombre -->
+			<!-- Filtre sombre avec animation -->
 			<div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300 rounded-xl"></div>
+			<!-- Overlay avec effet de brillance au hover -->
+			<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full"></div>
 			<span
-				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10"
+				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10 transition-all duration-300 group-hover:text-yellow-300"
 			>
-				<span class="leading-tight text-left drop-shadow-lg">
+				<span class="leading-tight text-left drop-shadow-lg transform transition-transform duration-300 group-hover:scale-110">
 					{
 						`E\nN\nT\nR\nÉ\nE`.split("\n").map((char) => (
 							<span>
@@ -252,18 +266,20 @@ try {
 		</a>
 
 		<!-- 🍽 Plat -->
-		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transform transition-transform hover:scale-105">
+		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transition-shadow duration-300 hover:shadow-2xl">
 			<Image
 				src={image_plat || "/placeholder.svg"}
 				alt="Plat"
-				class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 			/>
-			<!-- Filtre sombre -->
+			<!-- Filtre sombre avec animation -->
 			<div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300 rounded-xl"></div>
+			<!-- Overlay avec effet de brillance au hover -->
+			<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full"></div>
 			<span
-				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10"
+				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10 transition-all duration-300 group-hover:text-yellow-300"
 			>
-				<span class="leading-tight text-left drop-shadow-lg">
+				<span class="leading-tight text-left drop-shadow-lg transform transition-transform duration-300 group-hover:scale-110">
 					{
 						`P\nL\nA\nT`.split("\n").map((char) => (
 							<span>
@@ -277,18 +293,20 @@ try {
 		</a>
 
 		<!-- 🍰 Dessert -->
-		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transform transition-transform hover:scale-105">
+		<a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transition-shadow duration-300 hover:shadow-2xl">
 			<Image
 				src={image_dessert || "/placeholder.svg"}
 				alt="Dessert"
-				class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 			/>
-			<!-- Filtre sombre -->
+			<!-- Filtre sombre avec animation -->
 			<div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300 rounded-xl"></div>
+			<!-- Overlay avec effet de brillance au hover -->
+			<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full"></div>
 			<span
-				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10"
+				class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10 transition-all duration-300 group-hover:text-yellow-300"
 			>
-				<span class="leading-tight text-left drop-shadow-lg">
+				<span class="leading-tight text-left drop-shadow-lg transform transition-transform duration-300 group-hover:scale-110">
 					{
 						`D\nE\nS\nS\nE\nR\nT`.split("\n").map((char) => (
 							<span>
@@ -302,50 +320,79 @@ try {
 		</a>
 	</div>
 
-	<!-- Menu de la semaine avec superposition sombre + texte centré gauche -->
-	<a href="/menu-semaine" class="group relative mt-12 block overflow-hidden rounded-xl shadow-lg cursor-pointer transform transition-transform hover:scale-105">
+	<!-- Menu de la semaine avec superposition sombre + texte centré gauche + effets améliorés -->
+	<a href="/menu-semaine" class="group relative mt-12 block overflow-hidden rounded-xl shadow-lg cursor-pointer transition-shadow duration-300 hover:shadow-2xl">
 		<!-- Image de fond -->
 		<Image
 			src={image_menu_semaine || "/placeholder.svg"}
 			alt="Menu de la semaine"
-			class="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-110"
+			class="w-full h-96 object-cover transition-transform duration-500 group-hover:scale-110"
 		/>
 
-		<!-- Overlay sombre (assombrissement) -->
+		<!-- Overlay sombre (assombrissement) avec animation -->
 		<div
 			class="absolute top-0 left-0 w-full h-full bg-black/50 group-hover:bg-black/40 transition-all duration-300 rounded-xl z-10"
 		>
 		</div>
 
-		<!-- Texte superposé -->
+		<!-- Overlay avec effet de brillance au hover -->
+		<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full z-15"></div>
+
+		<!-- Texte superposé avec animation -->
 		<div
-			class="absolute top-1/2 left-6 transform -translate-y-1/2 text-white text-xl md:text-2xl font-bold text-left uppercase z-20 max-w-md drop-shadow-lg"
+			class="absolute top-1/2 left-6 transform -translate-y-1/2 text-white text-xl md:text-2xl font-bold text-left uppercase z-20 max-w-md drop-shadow-lg transition-all duration-300 group-hover:text-yellow-300 group-hover:scale-110"
 		>
 			Menu de la semaine équilibré & économique
 		</div>
 	</a>
 </section>
 
-	<!-- Carrousel d'avis (remplace le composant Avis) -->
+	<!-- Carrousel d'avis amélioré -->
 	{avisSite.length > 0 && (
-		<section class="bg-red-400 text-white py-16 px-6 mb-16">
-			<div class="max-w-4xl mx-auto">
+		<section class="bg-red-400 text-white py-16 px-6">
+			<div class="max-w-6xl mx-auto">
+				<h2 class="text-3xl md:text-4xl font-koulen mb-12 text-center">
+					CE QUE DISENT NOS UTILISATEURS
+				</h2>
+				
 				<div class="relative">
 					<!-- Conteneur du carrousel -->
-					<div id="avisCarousel" class="overflow-hidden">
+					<div class="overflow-hidden rounded-lg">
 						<div id="avisContainer" class="flex transition-transform duration-500 ease-in-out">
 							{avisSite.map((avis, index) => {
 								const user = avis.expand?.user;
-								const userName = user?.name || `${user?.prenom || ''} ${user?.pseudo || ''}`.trim() || 'Utilisateur anonyme';
+								const pseudo = user?.pseudo || 'Utilisateur anonyme';
+								const avatarUrl = getAvatarUrl(user, user?.id);
 								
 								return (
-									<div class="w-full flex-shrink-0 px-8" data-slide={index}>
-										<h3 class="text-3xl md:text-4xl font-bold mb-6 uppercase text-left">
-											{userName}
-										</h3>
-										<p class="text-lg md:text-xl leading-relaxed italic text-left">
-											{avis.comment}
-										</p>
+									<div class="w-full flex-shrink-0 px-4" data-slide={index}>
+										<div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mx-4">
+											<!-- En-tête avec avatar et pseudo -->
+											<div class="flex items-center mb-6">
+												<img 
+													src={avatarUrl || "/placeholder.svg"}
+													alt={`Avatar de ${pseudo}`}
+													class="w-16 h-16 rounded-full border-3 border-white/30 mr-4 object-cover"
+												/>
+												<div>
+													<h3 class="text-xl font-bold text-white">
+														{pseudo}
+													</h3>
+													<div class="flex text-yellow-300 text-sm">
+														{'★'.repeat(5)}
+													</div>
+												</div>
+											</div>
+											
+											<!-- Commentaire -->
+											<blockquote class="text-lg leading-relaxed italic text-white/90 relative">
+												<span class="text-4xl text-white/30 absolute -top-2 -left-2">"</span>
+												<p class="relative z-10 pl-6">
+													{avis.comment}
+												</p>
+												<span class="text-4xl text-white/30 absolute -bottom-4 right-0">"</span>
+											</blockquote>
+										</div>
 									</div>
 								);
 							})}
@@ -353,10 +400,10 @@ try {
 					</div>
 					
 					<!-- Boutons de navigation -->
-					<div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-3">
+					<div class="flex justify-center mt-8 space-x-4">
 						<button 
 							id="prevAvis"
-							class="bg-white/20 hover:bg-white/30 rounded-full p-3 transition"
+							class="bg-white/20 hover:bg-white/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
 							aria-label="Avis précédent"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -366,7 +413,7 @@ try {
 						
 						<button 
 							id="nextAvis"
-							class="bg-white/20 hover:bg-white/30 rounded-full p-3 transition"
+							class="bg-white/20 hover:bg-white/30 rounded-full p-3 transition-all duration-300 hover:scale-110"
 							aria-label="Avis suivant"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -374,17 +421,17 @@ try {
 							</svg>
 						</button>
 					</div>
-				</div>
-				
-				<!-- Indicateurs (masqués pour correspondre à la capture d'écran) -->
-				<div class="hidden">
-					{avisSite.map((_, index) => (
-						<button 
-							class="avis-indicator w-3 h-3 rounded-full bg-white/40 hover:bg-white/60 transition"
-							data-slide={index}
-							aria-label={`Aller à l'avis ${index + 1}`}
-						></button>
-					))}
+					
+					<!-- Indicateurs -->
+					<div class="flex justify-center mt-6 space-x-2">
+						{avisSite.map((_, index) => (
+							<button 
+								class="avis-indicator w-3 h-3 rounded-full bg-white/40 hover:bg-white/60 transition-all duration-300"
+								data-slide={index}
+								aria-label={`Aller à l'avis ${index + 1}`}
+							></button>
+						))}
+					</div>
 				</div>
 			</div>
 		</section>
@@ -408,6 +455,8 @@ try {
 		let currentSlide = 0;
 		const slides = document.querySelectorAll('[data-slide]');
 		const totalSlides = slides.length;
+		
+		if (totalSlides === 0) return;
 		
 		function updateCarousel() {
 			// Déplacer le conteneur
@@ -449,10 +498,41 @@ try {
 			indicator.addEventListener('click', () => goToSlide(index));
 		});
 		
-		// Auto-play (optionnel)
-		setInterval(nextSlide, 5000);
+		// Auto-play (optionnel - désactivé pour une meilleure UX)
+		// setInterval(nextSlide, 5000);
 		
 		// Initialiser
 		updateCarousel();
+		
+		// Support du swipe sur mobile
+		let startX = 0;
+		let isDragging = false;
+		
+		container.addEventListener('touchstart', (e) => {
+			startX = e.touches[0].clientX;
+			isDragging = true;
+		});
+		
+		container.addEventListener('touchmove', (e) => {
+			if (!isDragging) return;
+			e.preventDefault();
+		});
+		
+		container.addEventListener('touchend', (e) => {
+			if (!isDragging) return;
+			
+			const endX = e.changedTouches[0].clientX;
+			const diffX = startX - endX;
+			
+			if (Math.abs(diffX) > 50) { // Seuil minimum pour déclencher le swipe
+				if (diffX > 0) {
+					nextSlide();
+				} else {
+					prevSlide();
+				}
+			}
+			
+			isDragging = false;
+		});
 	}
 </script>

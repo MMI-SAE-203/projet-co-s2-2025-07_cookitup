@@ -3,9 +3,17 @@ export interface Props {
     id?: string;
     nom?: string;
     img?: string;
+    calories?: number;
+    regime?: string[];
 }
 
-const { id = "1", nom = "RECETTE", img = "/placeholder.svg" } = Astro.props;
+const {
+    id = "1",
+    nom = "RECETTE",
+    img = "/placeholder.svg",
+    calories = null,
+    regime = [],
+} = Astro.props;
 
 // ✅ CORRECTION : Utiliser "img" au lieu de "image"
 const imageUrl = img
@@ -23,7 +31,37 @@ const imageUrl = img
     />
     <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end">
         <div class="p-4 w-full">
-            <h3 class="text-white font-bold text-lg uppercase">{nom}</h3>
+            <h3 class="text-white font-bold text-lg uppercase mb-2">{nom}</h3>
+
+            <div class="flex flex-wrap gap-1 mb-2">
+                {
+                    calories && (
+                        <span class="bg-orange-500/80 text-white px-2 py-1 rounded text-xs font-medium">
+                            🔥 {calories} cal
+                        </span>
+                    )
+                }
+
+                {
+                    regime &&
+                        regime.length > 0 &&
+                        regime.slice(0, 2).map((regimeType) => {
+                            const regimeConfig = {
+                                végétarien: "🌱",
+                                végan: "🌿",
+                                "sans-gluten": "🌾",
+                                halal: "☪️",
+                            };
+                            const icon = regimeConfig[regimeType] || "🍽️";
+
+                            return (
+                                <span class="bg-white/20 text-white px-2 py-1 rounded text-xs font-medium">
+                                    {icon}
+                                </span>
+                            );
+                        })
+                }
+            </div>
         </div>
     </div>
 

@@ -7,6 +7,8 @@ export interface Props {
     isFavorite?: boolean;
     sponsorise?: any;
     categorie?: string;
+    calories?: number;
+    regime?: string[];
 }
 
 const {
@@ -17,6 +19,8 @@ const {
     isFavorite = false,
     sponsorise = null,
     categorie = "plat",
+    calories = null,
+    regime = [],
 } = Astro.props;
 
 // ✅ CORRECTION : Utiliser "img" au lieu de "image"
@@ -92,11 +96,60 @@ const categorieColor =
     <div class="p-4">
         <h3 class="font-bold text-lg mb-2 uppercase">{nom}</h3>
 
-        <div class="flex justify-between items-center text-sm text-gray-600">
-            <span>⏱️ {temps_prep}</span>
+        <div class="space-y-2 text-sm text-gray-600 mb-3">
+            <div class="flex justify-between items-center">
+                <span>⏱️ {temps_prep}</span>
+                {
+                    calories && (
+                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-medium">
+                            🔥 {calories} cal
+                        </span>
+                    )
+                }
+            </div>
+
+            {
+                regime && regime.length > 0 && (
+                    <div class="flex flex-wrap gap-1">
+                        {regime.map((regimeType) => {
+                            const regimeConfig = {
+                                végétarien: {
+                                    icon: "🌱",
+                                    color: "bg-green-100 text-green-800",
+                                },
+                                végan: {
+                                    icon: "🌿",
+                                    color: "bg-green-100 text-green-800",
+                                },
+                                "sans-gluten": {
+                                    icon: "🌾",
+                                    color: "bg-blue-100 text-blue-800",
+                                },
+                                halal: {
+                                    icon: "☪️",
+                                    color: "bg-purple-100 text-purple-800",
+                                },
+                            };
+                            const config = regimeConfig[regimeType] || {
+                                icon: "🍽️",
+                                color: "bg-gray-100 text-gray-800",
+                            };
+
+                            return (
+                                <span
+                                    class={`${config.color} px-2 py-1 rounded text-xs font-medium`}
+                                >
+                                    {config.icon} {regimeType}
+                                </span>
+                            );
+                        })}
+                    </div>
+                )
+            }
+
             {
                 isFavorite && (
-                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded">
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">
                         ❤️ Favoris
                     </span>
                 )

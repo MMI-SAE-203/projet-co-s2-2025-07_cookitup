@@ -422,9 +422,7 @@ const { title = "Cookit-UP" } = Astro.props;
 					// Afficher le nom et email de l'utilisateur
 					if (userDisplayName) {
 						userDisplayName.textContent =
-							user.name ||
-							`${user.prenom || ""} ${user.pseudo || ""}`.trim() ||
-							"Utilisateur";
+							user.pseudo || "Utilisateur";
 					}
 					if (userEmail && user.email) {
 						userEmail.textContent = user.email;

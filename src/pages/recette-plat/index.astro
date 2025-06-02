@@ -2,39 +2,47 @@
 import Layout from "../../layouts/Layout.astro";
 import Plat from "../../components/Plat.astro";
 import PlatFavoris from "../../components/PlatFavoris.astro";
-import { Image } from "astro:assets";
-import imagePouletRoti from "../../assets/img/recettes/poulet_roti.png";
+import Hero from "../../components/Hero.astro";
 import { getAllRecettes, getRecettesSponsors } from "../../backend.mjs";
 
 const recettes = await getAllRecettes();
 const recettesSponsors = await getRecettesSponsors();
+const totalRecettes = recettes.length;
 
 console.log("📊 Recettes récupérées:", recettes.length);
 console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
 ---
 
 <Layout>
-    <!-- Slider principal -->
-    <section class="relative w-full">
-        <div class="slider-slide">
-            <Image
-                src={imagePouletRoti || "/placeholder.svg"}
-                alt="Poulet rôti"
-                class="w-full h-[400px] object-cover"
-            />
-            <div
-                class="absolute inset-0 flex flex-col items-center justify-center text-white bg-black bg-opacity-40 px-4"
+    <!-- Hero Section -->
+    <Hero
+        title="Nos Recettes"
+        subtitle="DECOUVREZ"
+        description="UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS"
+        backgroundImage="/placeholder.svg?height=600&width=1200"
+        stats={[
+            { number: totalRecettes.toString(), label: "Recettes", icon: "🍽️" },
+            { number: "12", label: "CATEGORIES", icon: "📂" },
+            { number: "4.8", label: "NOTE MOYENNE", icon: "⭐" },
+            { number: "1000+", label: "Avis", icon: "💬" },
+        ]}
+    >
+        <!-- Boutons d'action dans le hero -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button
+                class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105 shadow-lg"
+                onclick="document.getElementById('recettes-section').scrollIntoView({ behavior: 'smooth' })"
             >
-                <h2 class="text-3xl md:text-5xl font-bold mb-4">POULET ROTI</h2>
-                <a
-                    href="/recette-plat/poulet-roti"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 rounded-full text-sm shadow-md transition"
-                >
-                    VOIR LA RECETTE
-                </a>
-            </div>
+                🔍 Explorer les recettes
+            </button>
+            <button
+                class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                onclick="window.location.href = '/favoris'"
+            >
+                ❤️ Mes favoris
+            </button>
         </div>
-    </section>
+    </Hero>
 
     <!-- Section Recettes en vedette -->
     <section class="bg-[#C2584F] text-white py-12 px-6 relative">
@@ -55,6 +63,8 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                                   id={plat.id}
                                   nom={plat.nom}
                                   img={plat.img}
+                                  calories={plat.calories}
+                                  regime={plat.regime}
                               />
                           ))
                     : recettes
@@ -64,6 +74,8 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                                   id={plat.id}
                                   nom={plat.nom}
                                   img={plat.img}
+                                  calories={plat.calories}
+                                  regime={plat.regime}
                               />
                           ))
             }
@@ -71,7 +83,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
     </section>
 
     <!-- Section Autres recettes -->
-    <section class="py-12 px-6">
+    <section id="recettes-section" class="py-12 px-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl md:text-3xl font-bold">Toutes nos recettes</h2>
             <div class="text-sm text-gray-600">
@@ -125,6 +137,18 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                     <option value="recent">Plus récent</option>
                     <option value="temps">Temps de préparation</option>
                 </select>
+
+                <!-- Filtre par régime -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="regimeSelect"
+                >
+                    <option value="tous">Tous les régimes</option>
+                    <option value="végétarien">🌱 Végétarien</option>
+                    <option value="végan">🌿 Végan</option>
+                    <option value="sans-gluten">🌾 Sans gluten</option>
+                    <option value="halal">☪️ Halal</option>
+                </select>
             </div>
         </div>
 
@@ -158,6 +182,8 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                             isFavorite={plat.isFavorite}
                             sponsorise={plat.expand?.sponsorise}
                             categorie={plat.categorie}
+                            calories={plat.calories}
+                            regime={plat.regime}
                         />
                     ))
                 ) : (
@@ -183,11 +209,11 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
     <!-- Section CTA -->
     <section class="bg-green-600 text-white py-12 px-6 text-center">
         <h2 class="text-2xl md:text-3xl font-bold mb-4">
-            DÉCOUVREZ NOS RECETTES
+            DECOUVREZ NOS RECETTES
         </h2>
         <p class="mb-6">
-            Explorez notre collection de recettes délicieuses et faciles à
-            réaliser !
+            Explorez notre collection de recettes delicieuses et faciles a
+            realiser !
         </p>
         <div class="flex justify-center gap-4 flex-wrap">
             <a
@@ -205,395 +231,3 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         </div>
     </section>
 </Layout>
-
-<script>
-    import { initFavorisButtons } from "../../js/favoris.js";
-    import {
-        initMainSlider,
-        initFavorisCarousel,
-    } from "../../js/recettes/slider-carousel.js";
-    import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
-
-    document.addEventListener("DOMContentLoaded", async () => {
-        // Initialiser la gestion des favoris
-        initFavorisButtons();
-
-        initMainSlider();
-        initFavorisCarousel();
-        initSearchAndFilters();
-
-        // ✅ NOUVEAU : Initialiser la pagination améliorée
-        initAdvancedPagination();
-
-        // ✅ NOUVEAU : Initialiser l'état des cœurs après chargement
-        await initFavoriteStates();
-
-        // Filtre par catégorie
-        const categorieSelect = document.getElementById("categorieSelect");
-        if (categorieSelect) {
-            categorieSelect.addEventListener("change", function () {
-                const categorie = this.value;
-                filterAndPaginate();
-            });
-        }
-
-        // Autres filtres
-        const filterSelect = document.getElementById("filterSelect");
-        const sortSelect = document.getElementById("sortSelect");
-        const searchInput = document.getElementById("searchInput");
-
-        if (filterSelect) {
-            filterSelect.addEventListener("change", filterAndPaginate);
-        }
-
-        if (sortSelect) {
-            sortSelect.addEventListener("change", filterAndPaginate);
-        }
-
-        if (searchInput) {
-            searchInput.addEventListener(
-                "input",
-                debounce(filterAndPaginate, 300),
-            );
-        }
-    });
-
-    // Variables globales pour la pagination
-    let allRecettes = [];
-    let filteredRecettes = [];
-    let currentPage = 1;
-    const itemsPerPage = 12;
-
-    // Initialiser la pagination avancée
-    function initAdvancedPagination() {
-        // Récupérer toutes les recettes depuis le DOM
-        const recettesGrid = document.getElementById("recettesGrid");
-        if (!recettesGrid) return;
-
-        allRecettes = Array.from(recettesGrid.children).map((card, index) => ({
-            element: card,
-            index: index,
-            nom: card.querySelector("h3")?.textContent.toLowerCase() || "",
-            categorie: card.dataset.categorie || "",
-            temps: card.querySelector('[class*="⏱️"]')?.textContent || "",
-            isFavorite: card.querySelector(".bg-red-100") !== null,
-            isSponsored: card.querySelector(".bg-yellow-500") !== null,
-        }));
-
-        filteredRecettes = [...allRecettes];
-
-        console.log(
-            `📊 ${allRecettes.length} recettes chargées pour la pagination`,
-        );
-
-        // Initialiser l'affichage
-        updatePaginationDisplay();
-    }
-
-    // Fonction de filtrage et pagination combinée
-    function filterAndPaginate() {
-        const searchTerm =
-            document.getElementById("searchInput")?.value.toLowerCase() || "";
-        const selectedCategorie =
-            document.getElementById("categorieSelect")?.value || "tous";
-        const selectedFilter =
-            document.getElementById("filterSelect")?.value || "tous";
-        const selectedSort =
-            document.getElementById("sortSelect")?.value || "default";
-
-        // Filtrer les recettes
-        filteredRecettes = allRecettes.filter((recette) => {
-            const matchesSearch = recette.nom.includes(searchTerm);
-            const matchesCategorie =
-                selectedCategorie === "tous" ||
-                recette.categorie.toLowerCase() === selectedCategorie;
-            const matchesFilter =
-                selectedFilter === "tous" ||
-                (selectedFilter === "favoris" && recette.isFavorite) ||
-                (selectedFilter === "sponsorises" && recette.isSponsored);
-
-            return matchesSearch && matchesCategorie && matchesFilter;
-        });
-
-        // Trier les recettes
-        if (selectedSort !== "default") {
-            filteredRecettes.sort((a, b) => {
-                switch (selectedSort) {
-                    case "nom":
-                        return a.nom.localeCompare(b.nom);
-                    case "recent":
-                        return b.index - a.index; // Plus récent = index plus élevé
-                    case "temps":
-                        const timeA = parseInt(a.temps) || 0;
-                        const timeB = parseInt(b.temps) || 0;
-                        return timeA - timeB;
-                    default:
-                        return 0;
-                }
-            });
-        }
-
-        // Réinitialiser à la première page
-        currentPage = 1;
-
-        // Mettre à jour l'affichage
-        updatePaginationDisplay();
-    }
-
-    // Mettre à jour l'affichage de la pagination
-    function updatePaginationDisplay() {
-        const totalRecettes = filteredRecettes.length;
-        const totalPages = Math.ceil(totalRecettes / itemsPerPage);
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = Math.min(startIndex + itemsPerPage, totalRecettes);
-
-        // Masquer toutes les recettes
-        allRecettes.forEach((recette) => {
-            recette.element.style.display = "none";
-        });
-
-        // Afficher les recettes de la page actuelle
-        const currentPageRecettes = filteredRecettes.slice(
-            startIndex,
-            endIndex,
-        );
-        currentPageRecettes.forEach((recette) => {
-            recette.element.style.display = "block";
-        });
-
-        // Mettre à jour les informations de pagination
-        document.getElementById("currentRangeStart").textContent =
-            totalRecettes > 0 ? startIndex + 1 : 0;
-        document.getElementById("currentRangeEnd").textContent = endIndex;
-        document.getElementById("totalRecettes").textContent = totalRecettes;
-        document.getElementById("currentPageDisplay").textContent = currentPage;
-        document.getElementById("totalPagesDisplay").textContent = Math.max(
-            totalPages,
-            1,
-        );
-        document.getElementById("recettesCount").textContent = totalRecettes;
-
-        // Générer les boutons de pagination
-        generatePaginationButtons(totalPages);
-
-        // Afficher message si aucun résultat
-        showNoResultsMessage(totalRecettes === 0);
-
-        // Scroll vers le haut de la grille
-        if (currentPage > 1) {
-            document.getElementById("recettesGrid").scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-            });
-        }
-    }
-
-    // Générer les boutons de pagination
-    function generatePaginationButtons(totalPages) {
-        const paginationContainer = document.getElementById(
-            "paginationContainer",
-        );
-        if (!paginationContainer || totalPages <= 1) {
-            paginationContainer.innerHTML = "";
-            return;
-        }
-
-        let html =
-            '<div class="flex justify-center items-center gap-2 flex-wrap">';
-
-        // Bouton Première page
-        if (currentPage > 1) {
-            html += `<button onclick="goToPage(1)" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-sm">
-                        Première
-                     </button>`;
-        }
-
-        // Bouton Précédent
-        if (currentPage > 1) {
-            html += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">
-                        ‹
-                     </button>`;
-        }
-
-        // Numéros de page
-        const startPage = Math.max(1, currentPage - 2);
-        const endPage = Math.min(totalPages, currentPage + 2);
-
-        if (startPage > 1) {
-            html += `<button onclick="goToPage(1)" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">1</button>`;
-            if (startPage > 2) {
-                html += `<span class="px-2 py-2 text-gray-500">...</span>`;
-            }
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            const isActive = i === currentPage;
-            html += `<button onclick="goToPage(${i})" class="px-3 py-2 rounded transition ${
-                isActive
-                    ? "bg-yellow-500 text-white font-bold"
-                    : "border border-gray-300 hover:bg-gray-100"
-            }">${i}</button>`;
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                html += `<span class="px-2 py-2 text-gray-500">...</span>`;
-            }
-            html += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">${totalPages}</button>`;
-        }
-
-        // Bouton Suivant
-        if (currentPage < totalPages) {
-            html += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">
-                        ›
-                     </button>`;
-        }
-
-        // Bouton Dernière page
-        if (currentPage < totalPages) {
-            html += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-sm">
-                        Dernière
-                     </button>`;
-        }
-
-        html += "</div>";
-
-        // Sélecteur de nombre d'éléments par page
-        html += `
-            <div class="mt-4 text-center">
-                <label for="itemsPerPageSelect" class="text-sm text-gray-600 mr-2">Recettes par page:</label>
-                <select id="itemsPerPageSelect" class="px-3 py-1 border border-gray-300 rounded text-sm" onchange="changeItemsPerPage(this.value)">
-                    <option value="12" ${itemsPerPage === 12 ? "selected" : ""}>12</option>
-                    <option value="24" ${itemsPerPage === 24 ? "selected" : ""}>24</option>
-                    <option value="48" ${itemsPerPage === 48 ? "selected" : ""}>48</option>
-                    <option value="all" ${itemsPerPage === 999999 ? "selected" : ""}>Toutes</option>
-                </select>
-            </div>
-        `;
-
-        paginationContainer.innerHTML = html;
-    }
-
-    // Aller à une page spécifique
-    window.goToPage = function (page) {
-        const totalPages = Math.ceil(filteredRecettes.length / itemsPerPage);
-        if (page >= 1 && page <= totalPages) {
-            currentPage = page;
-            updatePaginationDisplay();
-        }
-    };
-
-    // Changer le nombre d'éléments par page
-    window.changeItemsPerPage = function (value) {
-        if (value === "all") {
-            itemsPerPage = 999999; // Afficher toutes les recettes
-        } else {
-            itemsPerPage = parseInt(value);
-        }
-        currentPage = 1;
-        updatePaginationDisplay();
-    };
-
-    // Afficher un message si aucun résultat
-    function showNoResultsMessage(show) {
-        let noResultsMsg = document.getElementById("noResultsMessage");
-
-        if (show && !noResultsMsg) {
-            noResultsMsg = document.createElement("div");
-            noResultsMsg.id = "noResultsMessage";
-            noResultsMsg.className =
-                "col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-lg";
-            noResultsMsg.innerHTML = `
-                <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-xl font-bold mb-2">Aucune recette trouvée</h3>
-                <p>Essayez de modifier vos critères de recherche ou de filtrage</p>
-                <button onclick="resetFilters()" class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition">
-                    Réinitialiser les filtres
-                </button>
-            `;
-            document.getElementById("recettesGrid").appendChild(noResultsMsg);
-        } else if (!show && noResultsMsg) {
-            noResultsMsg.remove();
-        }
-    }
-
-    // Réinitialiser les filtres
-    window.resetFilters = function () {
-        document.getElementById("searchInput").value = "";
-        document.getElementById("categorieSelect").value = "tous";
-        document.getElementById("filterSelect").value = "tous";
-        document.getElementById("sortSelect").value = "default";
-        filterAndPaginate();
-    };
-
-    // Fonction debounce pour éviter trop d'appels lors de la saisie
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    // ✅ NOUVELLE FONCTION : Initialiser l'état des favoris
-    async function initFavoriteStates() {
-        // Importer PocketBase
-        const { default: pb } = await import("../../lib/pocketbase.js");
-
-        if (!pb.authStore.isValid) {
-            console.log(
-                "⚠️ Utilisateur non connecté, pas de favoris à charger",
-            );
-            return;
-        }
-
-        try {
-            console.log("🔄 Chargement de l'état des favoris...");
-
-            // Récupérer tous les favoris de l'utilisateur
-            const favoris = await pb.collection("favoris").getFullList({
-                filter: `user = "${pb.authStore.model.id}"`,
-            });
-
-            const favoriteIds = favoris.map((favori) => favori.recette);
-            console.log("❤️ IDs des favoris:", favoriteIds);
-
-            // Mettre à jour tous les boutons de favoris
-            const favorisButtons = document.querySelectorAll(".js-favori-btn");
-            favorisButtons.forEach((button) => {
-                const recetteId = button.dataset.id;
-                const heartIcon = button.querySelector("svg");
-
-                if (favoriteIds.includes(recetteId)) {
-                    // Cette recette est favorite
-                    if (heartIcon) {
-                        heartIcon.setAttribute("fill", "red");
-                        heartIcon.style.color = "red";
-                    }
-                    console.log(
-                        `❤️ Recette ${recetteId} marquée comme favorite`,
-                    );
-                } else {
-                    // Cette recette n'est pas favorite
-                    if (heartIcon) {
-                        heartIcon.setAttribute("fill", "none");
-                        heartIcon.style.color = "currentColor";
-                    }
-                }
-            });
-
-            console.log(
-                `✅ État des favoris initialisé pour ${favorisButtons.length} boutons`,
-            );
-        } catch (error) {
-            console.error(
-                "❌ Erreur lors de l'initialisation des favoris:",
-                error,
-            );
-        }
-    }
-</script>

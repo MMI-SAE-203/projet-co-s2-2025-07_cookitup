@@ -5,6 +5,7 @@ export function initSearchAndFilters() {
     const filterSelect = document.getElementById("filterSelect")
     const sortSelect = document.getElementById("sortSelect")
     const categorieSelect = document.getElementById("categorieSelect")
+    const regimeSelect = document.getElementById("regimeSelect")
 
     let allRecettes = []
 
@@ -17,6 +18,8 @@ export function initSearchAndFilters() {
             favori: card.querySelector(".bg-red-100") !== null,
             sponsorise: card.querySelector(".bg-yellow-500") !== null,
             temps: card.querySelector('[class*="⏱️"]')?.textContent || "",
+            calories: card.dataset.calories ? Number.parseInt(card.dataset.calories) : null,
+            regime: card.dataset.regime ? card.dataset.regime.split(",") : [],
         }))
     }
 
@@ -25,6 +28,7 @@ export function initSearchAndFilters() {
         const selectedFilter = filterSelect?.value || "tous"
         const selectedSort = sortSelect?.value || "default"
         const selectedCategorie = categorieSelect?.value || "tous"
+        const selectedRegime = regimeSelect?.value || "tous"
 
         const filteredRecettes = allRecettes.filter((recette) => {
             const matchesSearch = recette.nom.includes(searchTerm)
@@ -38,7 +42,10 @@ export function initSearchAndFilters() {
             // Filtre par catégorie
             const matchesCategorie = selectedCategorie === "tous" || recette.categorie.toLowerCase() === selectedCategorie
 
-            return matchesSearch && matchesFilter && matchesCategorie
+            // Filtre par régime
+            const matchesRegime = selectedRegime === "tous" || recette.regime.includes(selectedRegime)
+
+            return matchesSearch && matchesFilter && matchesCategorie && matchesRegime
         })
 
         // Tri
@@ -98,6 +105,10 @@ export function initSearchAndFilters() {
 
     if (categorieSelect) {
         categorieSelect.addEventListener("change", filterRecettes)
+    }
+
+    if (regimeSelect) {
+        regimeSelect.addEventListener("change", filterRecettes)
     }
 }
 

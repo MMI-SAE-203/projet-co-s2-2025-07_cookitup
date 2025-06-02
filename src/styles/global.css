@@ -1,10 +1,80 @@
 @import "tailwindcss";
 
 @import "@fontsource/koulen";
+@import "@fontsource/inter";
 
-h1 {
-    font-family: 'Koulen', sans-serif; 
+/* Police Koulen pour les titres principaux */
+h1,
+h2,
+h4,
+h5,
+h6,
+.title,
+.heading,
+.section-title,
+.hero-title {
+    font-family: "Koulen", sans-serif;
 }
 
+/* Police Inter pour le reste du contenu et les titres des cartes */
+body,
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select,
+label,
+.text,
+.content,
+.description,
+/* Titres des cartes spécifiquement en Inter */
+.card h3,
+.card-title,
+[class*="plat"] h3,
+[class*="recette"] h3,
+.plat h3,
+.card-recette h3 {
+    font-family: "Inter", sans-serif;
+}
 
+/* Ajustement de l'espacement pour Koulen */
+h1,
+.hero-title {
+    letter-spacing: 0.01em;
+}
 
+h2,
+.section-title {
+    letter-spacing: 0.005em;
+}
+
+/* Style spécifique pour les titres des cartes */
+.card h3,
+.card-title,
+[class*="plat"] h3,
+[class*="recette"] h3 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* Optimisation de la lisibilité pour Inter */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Classe spécifique pour le texte du hero de la page d'accueil */
+.hero-main-text {
+    font-family: "Koulen", sans-serif !important;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+
+/* Forcer Koulen sur le hero principal */
+.hero-main-text,
+.hero-main-text * {
+    font-family: "Koulen", sans-serif !important;
+}
