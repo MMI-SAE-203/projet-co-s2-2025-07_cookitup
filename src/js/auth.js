@@ -60,12 +60,9 @@ export async function register(userData) {
             email: userData.email,
             password: userData.password,
             passwordConfirm: userData.password,
-            name: `${userData.prenom} ${userData.nom}`,
-            // Autres champs personnalisés
+            name: `${userData.prenom} ${userData.pseudo}`.trim(),
             prenom: userData.prenom,
-            nom: userData.nom,
-            telephone: userData.telephone || "",
-            newsletter: userData.newsletter || false,
+            pseudo: userData.pseudo || userData.nom, // Fallback pour la compatibilité
         }
 
         const createdUser = await pb.collection("users").create(data)

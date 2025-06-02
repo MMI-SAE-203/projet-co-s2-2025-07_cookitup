@@ -92,17 +92,35 @@ const { title = "Cookit-UP" } = Astro.props;
 
 			<!-- Icônes à droite -->
 			<div class="flex items-center space-x-4 ml-6">
+				<!-- Badge Cookup Pass -->
+				<div id="cookupBadge" class="hidden">
+					<div
+						class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold"
+					>
+						⭐ COOKUP
+					</div>
+				</div>
+
 				<!-- Première icône - Menu utilisateur -->
 				<div class="relative" id="userMenuContainer">
 					<button
 						id="userMenuButton"
-						class="h-6 w-6 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
+						class="h-8 w-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition overflow-hidden"
 						aria-expanded="false"
 						title="Menu utilisateur"
 					>
+						<!-- Avatar utilisateur (caché par défaut) -->
+						<img
+							id="headerUserAvatar"
+							src="/placeholder.svg"
+							alt="Avatar"
+							class="w-full h-full object-cover rounded-full hidden"
+						/>
+						<!-- Icône par défaut -->
 						<svg
+							id="headerUserIcon"
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-4 w-4"
+							class="h-5 w-5"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -173,15 +191,36 @@ const { title = "Cookit-UP" } = Astro.props;
 						<!-- Menu pour utilisateur connecté -->
 						<div id="authMenu" class="hidden">
 							<div class="px-4 py-3 border-b border-gray-200">
-								<p
-									class="text-sm font-medium text-gray-900"
-									id="userDisplayName"
-								>
-									Utilisateur
-								</p>
-								<p class="text-sm text-gray-500" id="userEmail">
-									email@example.com
-								</p>
+								<div class="flex items-center space-x-3">
+									<img
+										id="menuUserAvatar"
+										src="/placeholder.svg"
+										alt="Avatar"
+										class="w-10 h-10 rounded-full object-cover"
+									/>
+									<div>
+										<p
+											class="text-sm font-medium text-gray-900"
+											id="userDisplayName"
+										>
+											Utilisateur
+										</p>
+										<p
+											class="text-sm text-gray-500"
+											id="userEmail"
+										>
+											email@example.com
+										</p>
+									</div>
+								</div>
+								<!-- Badge Cookup dans le menu -->
+								<div id="userCookupStatus" class="mt-2 hidden">
+									<span
+										class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
+									>
+										⭐ Cookup Pass
+									</span>
+								</div>
 							</div>
 							<a
 								href="/profil"
@@ -272,12 +311,12 @@ const { title = "Cookit-UP" } = Astro.props;
 				<!-- Deuxième icône - Favoris -->
 				<a
 					href="/favoris"
-					class="h-6 w-6 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
+					class="h-8 w-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
 					title="Mes favoris"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="h-4 w-4"
+						class="h-5 w-5"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -294,7 +333,7 @@ const { title = "Cookit-UP" } = Astro.props;
 		</header>
 
 		<!-- Contenu de la page -->
-		<main class="mt-8">
+		<main>
 			<slot />
 		</main>
 
@@ -415,6 +454,15 @@ const { title = "Cookit-UP" } = Astro.props;
 				const userDisplayName =
 					document.getElementById("userDisplayName");
 				const userEmail = document.getElementById("userEmail");
+				const cookupBadge = document.getElementById("cookupBadge");
+				const userCookupStatus =
+					document.getElementById("userCookupStatus");
+				const headerUserAvatar =
+					document.getElementById("headerUserAvatar");
+				const headerUserIcon =
+					document.getElementById("headerUserIcon");
+				const menuUserAvatar =
+					document.getElementById("menuUserAvatar");
 
 				if (isLoggedIn()) {
 					const user = getCurrentUser();
@@ -423,11 +471,52 @@ const { title = "Cookit-UP" } = Astro.props;
 					if (userDisplayName) {
 						userDisplayName.textContent =
 							user.name ||
-							`${user.prenom || ""} ${user.nom || ""}`.trim() ||
+							`${user.prenom || ""} ${user.pseudo || ""}`.trim() ||
 							"Utilisateur";
 					}
 					if (userEmail && user.email) {
 						userEmail.textContent = user.email;
+					}
+
+					// Gérer l'avatar dans le header
+					if (user.avatar && headerUserAvatar && headerUserIcon) {
+						const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+						headerUserAvatar.src = avatarUrl;
+						headerUserAvatar.classList.remove("hidden");
+						headerUserIcon.classList.add("hidden");
+					} else if (headerUserAvatar && headerUserIcon) {
+						headerUserAvatar.classList.add("hidden");
+						headerUserIcon.classList.remove("hidden");
+					}
+
+					// Gérer l'avatar dans le menu
+					if (menuUserAvatar) {
+						if (user.avatar) {
+							const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+							menuUserAvatar.src = avatarUrl;
+						} else {
+							menuUserAvatar.src = "/placeholder.svg";
+						}
+					}
+
+					// Afficher le statut Cookup
+					if (user.cookup) {
+						// Badge dans le header
+						if (cookupBadge) {
+							cookupBadge.classList.remove("hidden");
+						}
+						// Badge dans le menu
+						if (userCookupStatus) {
+							userCookupStatus.classList.remove("hidden");
+						}
+					} else {
+						// Cacher les badges Cookup
+						if (cookupBadge) {
+							cookupBadge.classList.add("hidden");
+						}
+						if (userCookupStatus) {
+							userCookupStatus.classList.add("hidden");
+						}
 					}
 
 					// Afficher le menu utilisateur connecté
@@ -437,6 +526,17 @@ const { title = "Cookit-UP" } = Astro.props;
 					// Afficher le menu invité
 					if (guestMenu) guestMenu.classList.remove("hidden");
 					if (authMenu) authMenu.classList.add("hidden");
+
+					// Cacher l'avatar et afficher l'icône
+					if (headerUserAvatar && headerUserIcon) {
+						headerUserAvatar.classList.add("hidden");
+						headerUserIcon.classList.remove("hidden");
+					}
+
+					// Cacher les badges Cookup
+					if (cookupBadge) cookupBadge.classList.add("hidden");
+					if (userCookupStatus)
+						userCookupStatus.classList.add("hidden");
 				}
 			}
 

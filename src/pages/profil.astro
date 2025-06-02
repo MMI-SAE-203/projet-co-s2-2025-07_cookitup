@@ -1,0 +1,888 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Mon Profil | Cookit-UP">
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- État de chargement -->
+        <div id="loadingState" class="text-center py-16">
+            <div class="text-4xl mb-4">⏳</div>
+            <h2 class="text-xl font-bold mb-2">Chargement du profil...</h2>
+        </div>
+
+        <!-- État non connecté -->
+        <div
+            id="notLoggedInState"
+            class="text-center py-16 bg-gray-50 rounded-lg hidden"
+        >
+            <div class="text-6xl mb-4">🔒</div>
+            <h2 class="text-2xl font-bold mb-2">Accès restreint</h2>
+            <p class="text-gray-600 mb-6">
+                Vous devez être connecté pour accéder à votre profil.
+            </p>
+            <a
+                href="/connexion"
+                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+            >
+                Se connecter
+            </a>
+        </div>
+
+        <!-- Contenu principal -->
+        <div id="mainContent" class="hidden">
+            <!-- En-tête du profil -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <div
+                    class="flex flex-col md:flex-row items-center md:items-start gap-6"
+                >
+                    <!-- Photo de profil -->
+                    <div class="relative">
+                        <div
+                            class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg"
+                        >
+                            <img
+                                id="profileAvatar"
+                                src="/placeholder.svg"
+                                alt="Photo de profil"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                        <button
+                            id="changeAvatarBtn"
+                            class="absolute bottom-0 right-0 bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full shadow-lg transition"
+                            title="Changer la photo"
+                        >
+                            📷
+                        </button>
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            accept="image/*"
+                            class="hidden"
+                        />
+                    </div>
+
+                    <!-- Informations utilisateur -->
+                    <div class="flex-1 text-center md:text-left">
+                        <h1 id="userName" class="text-3xl font-bold mb-2">
+                            Chargement...
+                        </h1>
+                        <p id="userEmail" class="text-gray-600 mb-4">
+                            email@example.com
+                        </p>
+
+                        <!-- Statut Cookup -->
+                        <div id="cookupStatus" class="mb-4">
+                            <!-- Sera rempli dynamiquement -->
+                        </div>
+
+                        <!-- Statistiques -->
+                        <div
+                            class="flex justify-center md:justify-start gap-6 text-sm"
+                        >
+                            <div class="text-center">
+                                <div
+                                    id="commentCount"
+                                    class="text-2xl font-bold text-yellow-500"
+                                >
+                                    0
+                                </div>
+                                <div class="text-gray-600">Commentaires</div>
+                            </div>
+                            <div class="text-center">
+                                <div
+                                    id="favoriteCount"
+                                    class="text-2xl font-bold text-red-500"
+                                >
+                                    0
+                                </div>
+                                <div class="text-gray-600">Favoris</div>
+                            </div>
+                            <div class="text-center">
+                                <div
+                                    class="text-2xl font-bold text-green-500"
+                                    id="memberSince"
+                                >
+                                    2024
+                                </div>
+                                <div class="text-gray-600">Membre depuis</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Cookup Pass -->
+            <div
+                id="cookupCTA"
+                class="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg shadow-lg p-8 mb-8 text-white hidden"
+            >
+                <div
+                    class="flex flex-col md:flex-row items-center justify-between"
+                >
+                    <div class="mb-4 md:mb-0">
+                        <h2 class="text-2xl font-bold mb-2">
+                            🌟 Découvrez le Pass Cookup
+                        </h2>
+                        <p class="text-yellow-100">
+                            Accédez à des recettes exclusives, des cours de
+                            cuisine et bien plus encore !
+                        </p>
+                    </div>
+                    <button
+                        id="getCookupPass"
+                        class="bg-white text-orange-500 font-bold px-8 py-3 rounded-lg hover:bg-gray-100 transition whitespace-nowrap"
+                    >
+                        Obtenir le Pass Cookup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Onglets -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <!-- Navigation des onglets -->
+                <div class="border-b border-gray-200">
+                    <nav class="flex">
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-yellow-500 text-yellow-600 bg-yellow-50"
+                            data-tab="profile"
+                        >
+                            👤 Informations personnelles
+                        </button>
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="comments"
+                        >
+                            💬 Mes commentaires
+                        </button>
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="security"
+                        >
+                            🔒 Sécurité
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Contenu des onglets -->
+                <div class="p-8">
+                    <!-- Onglet Informations personnelles -->
+                    <div id="profileTab" class="tab-content">
+                        <h2 class="text-xl font-bold mb-6">
+                            Informations personnelles
+                        </h2>
+
+                        <form id="profileForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        for="prenom"
+                                        class="block text-sm font-medium text-gray-700 mb-2"
+                                        >Prénom</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="prenom"
+                                        name="prenom"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="pseudo"
+                                        class="block text-sm font-medium text-gray-700 mb-2"
+                                        >Pseudo</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="pseudo"
+                                        name="pseudo"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    for="email"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Email</label
+                                >
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+
+                            <!-- Message d'erreur/succès -->
+                            <div id="profileMessage" class="hidden"></div>
+
+                            <div class="flex gap-4">
+                                <button
+                                    type="submit"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 rounded-lg transition"
+                                >
+                                    💾 Sauvegarder les modifications
+                                </button>
+                                <button
+                                    type="button"
+                                    onclick="loadUserProfile()"
+                                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-6 py-2 rounded-lg transition"
+                                >
+                                    🔄 Annuler
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Onglet Commentaires -->
+                    <div id="commentsTab" class="tab-content hidden">
+                        <h2 class="text-xl font-bold mb-6">Mes commentaires</h2>
+
+                        <!-- État de chargement des commentaires -->
+                        <div id="commentsLoading" class="text-center py-8">
+                            <div class="text-2xl mb-2">⏳</div>
+                            <p class="text-gray-600">
+                                Chargement de vos commentaires...
+                            </p>
+                        </div>
+
+                        <!-- Liste des commentaires -->
+                        <div id="userCommentsList" class="space-y-4 hidden">
+                            <!-- Les commentaires seront ajoutés ici -->
+                        </div>
+
+                        <!-- État vide -->
+                        <div
+                            id="noUserComments"
+                            class="text-center py-12 hidden"
+                        >
+                            <div class="text-6xl mb-4">💭</div>
+                            <h3 class="text-xl font-bold mb-2">
+                                Aucun commentaire
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                Vous n'avez pas encore laissé de commentaires
+                                sur nos recettes.
+                            </p>
+                            <a
+                                href="/recette-plat"
+                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                            >
+                                Découvrir les recettes
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Sécurité -->
+                    <div id="securityTab" class="tab-content hidden">
+                        <h2 class="text-xl font-bold mb-6">
+                            Sécurité du compte
+                        </h2>
+
+                        <form id="passwordForm" class="space-y-6">
+                            <div>
+                                <label
+                                    for="currentPassword"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Mot de passe actuel</label
+                                >
+                                <input
+                                    type="password"
+                                    id="currentPassword"
+                                    name="currentPassword"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    for="newPassword"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Nouveau mot de passe</label
+                                >
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    name="newPassword"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    for="confirmPassword"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Confirmer le nouveau mot de passe</label
+                                >
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                />
+                            </div>
+
+                            <!-- Message d'erreur/succès -->
+                            <div id="passwordMessage" class="hidden"></div>
+
+                            <button
+                                type="submit"
+                                class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2 rounded-lg transition"
+                            >
+                                🔒 Changer le mot de passe
+                            </button>
+                        </form>
+
+                        <!-- Section suppression de compte -->
+                        <div
+                            class="mt-12 p-6 bg-red-50 border border-red-200 rounded-lg"
+                        >
+                            <h3 class="text-lg font-bold text-red-800 mb-2">
+                                Zone dangereuse
+                            </h3>
+                            <p class="text-red-600 mb-4">
+                                La suppression de votre compte est irréversible.
+                            </p>
+                            <button
+                                onclick="deleteAccount()"
+                                class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2 rounded-lg transition"
+                            >
+                                🗑️ Supprimer mon compte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import pb from "../lib/pocketbase.js";
+    import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
+
+    let currentUser = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        await initProfile();
+    });
+
+    // Initialiser la page profil
+    async function initProfile() {
+        const loadingState = document.getElementById("loadingState");
+        const notLoggedInState = document.getElementById("notLoggedInState");
+        const mainContent = document.getElementById("mainContent");
+
+        try {
+            // Vérifier la connexion
+            if (!isLoggedIn()) {
+                loadingState.classList.add("hidden");
+                notLoggedInState.classList.remove("hidden");
+                return;
+            }
+
+            currentUser = getCurrentUser();
+
+            // Charger le profil
+            await loadUserProfile();
+            await loadUserStats();
+
+            // Initialiser les événements
+            initTabs();
+            initAvatarUpload();
+            initForms();
+
+            // Afficher le contenu
+            loadingState.classList.add("hidden");
+            mainContent.classList.remove("hidden");
+        } catch (error) {
+            console.error("Erreur lors de l'initialisation du profil:", error);
+            loadingState.classList.add("hidden");
+            showError("Erreur lors du chargement du profil");
+        }
+    }
+
+    // Charger les informations utilisateur
+    async function loadUserProfile() {
+        try {
+            // Récupérer les données utilisateur à jour
+            const user = await pb.collection("users").getOne(currentUser.id);
+            currentUser = user;
+
+            // Mettre à jour l'affichage
+            document.getElementById("userName").textContent =
+                user.name ||
+                `${user.prenom || ""} ${user.pseudo || ""}`.trim() ||
+                "Utilisateur";
+            document.getElementById("userEmail").textContent = user.email;
+
+            // Avatar
+            const avatarImg = document.getElementById("profileAvatar");
+            if (user.avatar) {
+                avatarImg.src = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+            } else {
+                avatarImg.src = "/placeholder.svg";
+            }
+
+            // Statut Cookup
+            const cookupStatus = document.getElementById("cookupStatus");
+            const cookupCTA = document.getElementById("cookupCTA");
+
+            if (user.cookup) {
+                cookupStatus.innerHTML = `
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                        ⭐ Membre Cookup Pass
+                    </div>
+                `;
+                cookupCTA.classList.add("hidden");
+            } else {
+                cookupStatus.innerHTML = `
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+                        👤 Membre standard
+                    </div>
+                `;
+                cookupCTA.classList.remove("hidden");
+            }
+
+            // Remplir le formulaire
+            document.getElementById("prenom").value = user.prenom || "";
+            document.getElementById("pseudo").value = user.pseudo || "";
+            document.getElementById("email").value = user.email || "";
+
+            // Date de création
+            const memberSince = new Date(user.created).getFullYear();
+            document.getElementById("memberSince").textContent = memberSince;
+        } catch (error) {
+            console.error("Erreur lors du chargement du profil:", error);
+            throw error;
+        }
+    }
+
+    // Charger les statistiques utilisateur
+    async function loadUserStats() {
+        try {
+            // Compter les commentaires
+            const comments = await pb.collection("commentaires").getFullList({
+                filter: `user = "${currentUser.id}"`,
+            });
+            document.getElementById("commentCount").textContent =
+                comments.length;
+
+            // Compter les favoris
+            const favorites = await pb.collection("favoris").getFullList({
+                filter: `user = "${currentUser.id}"`,
+            });
+            document.getElementById("favoriteCount").textContent =
+                favorites.length;
+        } catch (error) {
+            console.error("Erreur lors du chargement des statistiques:", error);
+        }
+    }
+
+    // Initialiser les onglets
+    function initTabs() {
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const targetTab = button.dataset.tab;
+
+                // Désactiver tous les onglets
+                tabButtons.forEach((btn) => {
+                    btn.classList.remove(
+                        "border-yellow-500",
+                        "text-yellow-600",
+                        "bg-yellow-50",
+                    );
+                    btn.classList.add("border-transparent", "text-gray-500");
+                });
+
+                // Cacher tous les contenus
+                tabContents.forEach((content) => {
+                    content.classList.add("hidden");
+                });
+
+                // Activer l'onglet cliqué
+                button.classList.remove("border-transparent", "text-gray-500");
+                button.classList.add(
+                    "border-yellow-500",
+                    "text-yellow-600",
+                    "bg-yellow-50",
+                );
+
+                // Afficher le contenu correspondant
+                const targetContent = document.getElementById(
+                    targetTab + "Tab",
+                );
+                if (targetContent) {
+                    targetContent.classList.remove("hidden");
+
+                    // Charger les commentaires si nécessaire
+                    if (targetTab === "comments") {
+                        loadUserComments();
+                    }
+                }
+            });
+        });
+    }
+
+    // Initialiser l'upload d'avatar
+    function initAvatarUpload() {
+        const changeAvatarBtn = document.getElementById("changeAvatarBtn");
+        const avatarInput = document.getElementById("avatarInput");
+        const profileAvatar = document.getElementById("profileAvatar");
+
+        changeAvatarBtn.addEventListener("click", () => {
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Vérifications
+            if (!file.type.startsWith("image/")) {
+                showError("Veuillez sélectionner une image valide");
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                // 5MB
+                showError("L'image ne doit pas dépasser 5MB");
+                return;
+            }
+
+            try {
+                changeAvatarBtn.textContent = "⏳";
+                changeAvatarBtn.disabled = true;
+
+                // Créer FormData
+                const formData = new FormData();
+                formData.append("avatar", file);
+
+                // Mettre à jour l'avatar
+                const updatedUser = await pb
+                    .collection("users")
+                    .update(currentUser.id, formData);
+
+                // Mettre à jour l'affichage
+                profileAvatar.src = `http://127.0.0.1:8090/api/files/users/${updatedUser.id}/${updatedUser.avatar}`;
+
+                showSuccess("Photo de profil mise à jour !");
+
+                // Déclencher l'événement pour mettre à jour le header
+                document.dispatchEvent(new CustomEvent("userUpdate"));
+            } catch (error) {
+                console.error("Erreur lors de l'upload:", error);
+                showError("Erreur lors de la mise à jour de la photo");
+            } finally {
+                changeAvatarBtn.textContent = "📷";
+                changeAvatarBtn.disabled = false;
+            }
+        });
+    }
+
+    // Initialiser les formulaires
+    function initForms() {
+        // Formulaire profil
+        const profileForm = document.getElementById("profileForm");
+        profileForm.addEventListener("submit", handleProfileUpdate);
+
+        // Formulaire mot de passe
+        const passwordForm = document.getElementById("passwordForm");
+        passwordForm.addEventListener("submit", handlePasswordChange);
+
+        // CTA Cookup Pass
+        const getCookupPass = document.getElementById("getCookupPass");
+        getCookupPass?.addEventListener("click", () => {
+            // TODO: Rediriger vers la page Cookup Pass
+            alert("Redirection vers la page Cookup Pass (à implémenter)");
+        });
+    }
+
+    // Gérer la mise à jour du profil
+    async function handleProfileUpdate(e) {
+        e.preventDefault();
+
+        const profileMessage = document.getElementById("profileMessage");
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "⏳ Sauvegarde...";
+
+            const formData = new FormData(e.target);
+            const updateData = {
+                prenom: formData.get("prenom"),
+                pseudo: formData.get("pseudo"),
+                email: formData.get("email"),
+                name: `${formData.get("prenom")} ${formData.get("pseudo")}`.trim(),
+            };
+
+            await pb.collection("users").update(currentUser.id, updateData);
+
+            showSuccess("Profil mis à jour avec succès !", profileMessage);
+
+            // Recharger les données
+            await loadUserProfile();
+
+            // Déclencher l'événement pour mettre à jour le header
+            document.dispatchEvent(new CustomEvent("userUpdate"));
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour:", error);
+            showError(
+                "Erreur lors de la mise à jour du profil",
+                profileMessage,
+            );
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "💾 Sauvegarder les modifications";
+        }
+    }
+
+    // Gérer le changement de mot de passe
+    async function handlePasswordChange(e) {
+        e.preventDefault();
+
+        const passwordMessage = document.getElementById("passwordMessage");
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        try {
+            const formData = new FormData(e.target);
+            const currentPassword = formData.get("currentPassword");
+            const newPassword = formData.get("newPassword");
+            const confirmPassword = formData.get("confirmPassword");
+
+            // Vérifications
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                throw new Error("Tous les champs sont obligatoires");
+            }
+
+            if (newPassword !== confirmPassword) {
+                throw new Error(
+                    "Les nouveaux mots de passe ne correspondent pas",
+                );
+            }
+
+            if (newPassword.length < 8) {
+                throw new Error(
+                    "Le nouveau mot de passe doit contenir au moins 8 caractères",
+                );
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "⏳ Modification...";
+
+            // Changer le mot de passe
+            await pb.collection("users").update(currentUser.id, {
+                oldPassword: currentPassword,
+                password: newPassword,
+                passwordConfirm: newPassword,
+            });
+
+            showSuccess("Mot de passe modifié avec succès !", passwordMessage);
+
+            // Réinitialiser le formulaire
+            e.target.reset();
+        } catch (error) {
+            console.error("Erreur lors du changement de mot de passe:", error);
+            showError(
+                error.message || "Erreur lors du changement de mot de passe",
+                passwordMessage,
+            );
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🔒 Changer le mot de passe";
+        }
+    }
+
+    // Charger les commentaires de l'utilisateur
+    async function loadUserComments() {
+        const commentsLoading = document.getElementById("commentsLoading");
+        const userCommentsList = document.getElementById("userCommentsList");
+        const noUserComments = document.getElementById("noUserComments");
+
+        try {
+            commentsLoading.classList.remove("hidden");
+            userCommentsList.classList.add("hidden");
+            noUserComments.classList.add("hidden");
+
+            const comments = await pb.collection("commentaires").getFullList({
+                filter: `user = "${currentUser.id}"`,
+                expand: "recette",
+                sort: "-created",
+            });
+
+            commentsLoading.classList.add("hidden");
+
+            if (comments.length === 0) {
+                noUserComments.classList.remove("hidden");
+                return;
+            }
+
+            userCommentsList.innerHTML = comments
+                .map(createUserCommentHTML)
+                .join("");
+            userCommentsList.classList.remove("hidden");
+        } catch (error) {
+            console.error("Erreur lors du chargement des commentaires:", error);
+            commentsLoading.classList.add("hidden");
+            showError("Erreur lors du chargement des commentaires");
+        }
+    }
+
+    // Créer le HTML d'un commentaire utilisateur
+    function createUserCommentHTML(comment) {
+        const recette = comment.expand?.recette;
+        const recetteName = recette?.nom || "Recette supprimée";
+        const recetteLink = recette ? `/recette-plat/${recette.id}` : "#";
+
+        const createdDate = new Date(comment.created).toLocaleDateString(
+            "fr-FR",
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            },
+        );
+
+        const stars = comment.note ? "⭐".repeat(comment.note) : "";
+
+        // Générer l'avatar
+        let avatarHTML = "";
+        if (currentUser?.avatar) {
+            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${currentUser.id}/${currentUser.avatar}`;
+            avatarHTML = `<img src="${avatarUrl}" alt="Mon avatar" class="w-12 h-12 rounded-full object-cover" />`;
+        } else {
+            const userName =
+                currentUser?.name ||
+                `${currentUser?.prenom || ""} ${currentUser?.pseudo || ""}`.trim() ||
+                "Utilisateur";
+            const userInitials = userName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2);
+            avatarHTML = `<div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">${userInitials}</div>`;
+        }
+
+        return `
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <div class="flex items-start space-x-4">
+                    <!-- Avatar -->
+                    ${avatarHTML}
+                    
+                    <!-- Contenu -->
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-bold text-lg">
+                                    <a href="${recetteLink}" class="text-yellow-600 hover:text-yellow-800 transition">
+                                        ${recetteName}
+                                    </a>
+                                </h4>
+                                <p class="text-sm text-gray-500">${createdDate}</p>
+                            </div>
+                            ${stars ? `<div class="text-lg">${stars}</div>` : ""}
+                        </div>
+                        
+                        <p class="text-gray-800 leading-relaxed">${comment.contenu}</p>
+                        
+                        <div class="mt-4 flex gap-2">
+                            ${
+                                recette
+                                    ? `
+                                <a href="${recetteLink}" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition">
+                                    👁️ Voir la recette
+                                </a>
+                            `
+                                    : ""
+                            }
+                            <button 
+                                onclick="deleteUserComment('${comment.id}')"
+                                class="text-red-600 hover:text-red-800 text-sm font-medium transition"
+                            >
+                                🗑️ Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Supprimer un commentaire utilisateur
+    window.deleteUserComment = async function (commentId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
+            return;
+        }
+
+        try {
+            await pb.collection("commentaires").delete(commentId);
+            await loadUserComments();
+            await loadUserStats();
+            showSuccess("Commentaire supprimé 🗑️");
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression du commentaire");
+        }
+    };
+
+    // Supprimer le compte
+    window.deleteAccount = async function () {
+        const confirmation = prompt(
+            'Pour confirmer la suppression de votre compte, tapez "SUPPRIMER" :',
+        );
+
+        if (confirmation !== "SUPPRIMER") {
+            return;
+        }
+
+        try {
+            await pb.collection("users").delete(currentUser.id);
+            logout();
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Erreur lors de la suppression du compte:", error);
+            showError("Erreur lors de la suppression du compte");
+        }
+    };
+
+    // Fonctions utilitaires
+    function showSuccess(message, container = null) {
+        const element = container || createNotification();
+        element.className =
+            "p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg";
+        element.textContent = message;
+        element.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => element.remove(), 3000);
+        }
+    }
+
+    function showError(message, container = null) {
+        const element = container || createNotification();
+        element.className =
+            "p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg";
+        element.textContent = message;
+        element.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => element.remove(), 3000);
+        }
+    }
+
+    function createNotification() {
+        const notification = document.createElement("div");
+        notification.className = "fixed top-4 right-4 z-50 max-w-sm";
+        document.body.appendChild(notification);
+        return notification;
+    }
+</script>
