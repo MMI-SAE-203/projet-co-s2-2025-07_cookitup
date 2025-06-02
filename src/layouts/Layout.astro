@@ -26,71 +26,20 @@ const { title = "Cookit-UP" } = Astro.props;
 				<span class="font-bold text-lg">Cookit-UP</span>
 			</a>
 
-			<!-- NAV avec menus déroulants fonctionnels -->
+			<!-- NAV sans menus déroulants -->
 			<nav
-				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10 relative"
+				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10"
 			>
-				<!-- RECETTE -->
-				<div class="relative">
-					<!-- Lien cliquable -->
-					<a
-						href="/recette-plat"
-						class="peer cursor-pointer hover:underline font-bold text-sm block"
-					>
-						RECETTES
-					</a>
-
-					<!-- Menu déroulant -->
-					<div
-						class="absolute left-0 mt-1 hidden peer-hover:flex hover:flex flex-col bg-white text-black rounded shadow-lg py-2 z-50 min-w-[160px]"
-					>
-						<a
-							href="/recette/entree"
-							class="block px-4 py-2 hover:bg-gray-100">Entrée</a
-						>
-						<a
-							href="/recette/plat"
-							class="block px-4 py-2 hover:bg-gray-100">Plat</a
-						>
-						<a
-							href="/recette/dessert"
-							class="block px-4 py-2 hover:bg-gray-100">Dessert</a
-						>
-					</div>
-				</div>
-
+				<a href="/recette-plat" class="hover:underline">RECETTES</a>
 				<a href="/menu-semaine" class="hover:underline"
 					>MENU DE LA SEMAINE</a
 				>
 				<a href="/cookup" class="hover:underline">COOKUP</a>
 				<a href="/a-propos" class="hover:underline">A PROPOS</a>
-
-				<!-- COMMUNAUTE -->
-				<div class="relative">
-					<button
-						class="peer cursor-pointer hover:underline font-bold text-sm"
-					>
-						COMMUNAUTE
-					</button>
-
-					<div
-						class="absolute left-0 mt-1 hidden peer-hover:flex hover:flex flex-col bg-white text-black rounded shadow-lg py-2 z-50 min-w-[200px]"
-					>
-						<a
-							href="/communaute/conseils"
-							class="block px-4 py-2 hover:bg-gray-100"
-							>Conseils nutritionnels</a
-						>
-						<a
-							href="/communaute/avis"
-							class="block px-4 py-2 hover:bg-gray-100"
-							>Formuler un avis</a
-						>
-					</div>
-				</div>
+				<a href="/communaute" class="hover:underline">COMMUNAUTE</a>
 			</nav>
 
-			<!-- Icônes à droite -->
+			<!-- Icônes à droite (agrandies) -->
 			<div class="flex items-center space-x-4 ml-6">
 				<!-- Badge Cookup Pass -->
 				<div id="cookupBadge" class="hidden">
@@ -101,11 +50,11 @@ const { title = "Cookit-UP" } = Astro.props;
 					</div>
 				</div>
 
-				<!-- Première icône - Menu utilisateur -->
+				<!-- Première icône - Menu utilisateur (agrandie) -->
 				<div class="relative" id="userMenuContainer">
 					<button
 						id="userMenuButton"
-						class="h-8 w-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition overflow-hidden"
+						class="h-10 w-10 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 hover:border-yellow-500 hover:text-yellow-500 transition-all overflow-hidden cursor-pointer"
 						aria-expanded="false"
 						title="Menu utilisateur"
 					>
@@ -116,11 +65,11 @@ const { title = "Cookit-UP" } = Astro.props;
 							alt="Avatar"
 							class="w-full h-full object-cover rounded-full hidden"
 						/>
-						<!-- Icône par défaut -->
+						<!-- Icône par défaut (agrandie) -->
 						<svg
 							id="headerUserIcon"
 							xmlns="http://www.w3.org/2000/svg"
-							class="h-5 w-5"
+							class="h-6 w-6"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke="currentColor"
@@ -308,15 +257,15 @@ const { title = "Cookit-UP" } = Astro.props;
 					</div>
 				</div>
 
-				<!-- Deuxième icône - Favoris -->
+				<!-- Deuxième icône - Favoris (agrandie) -->
 				<a
 					href="/favoris"
-					class="h-8 w-8 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 transition"
+					class="h-10 w-10 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 hover:border-yellow-500 hover:text-yellow-500 transition-all cursor-pointer"
 					title="Mes favoris"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
+						class="h-6 w-6"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -331,6 +280,9 @@ const { title = "Cookit-UP" } = Astro.props;
 				</a>
 			</div>
 		</header>
+
+		<!-- Barre noire fine sous le header -->
+		<div class="h-px bg-black"></div>
 
 		<!-- Contenu de la page -->
 		<main>

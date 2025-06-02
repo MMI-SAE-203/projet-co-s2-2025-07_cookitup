@@ -126,8 +126,18 @@ import Layout from "../layouts/Layout.astro";
                         </h2>
                         <p class="text-yellow-100">
                             Accédez à des recettes exclusives, des cours de
-                            cuisine et bien plus encore !
+                            cuisine, la gestion de vos préférences alimentaires
+                            et bien plus encore !
                         </p>
+                        <ul class="text-yellow-100 text-sm mt-2 space-y-1">
+                            <li>
+                                • 🥗 Gestion personnalisée de votre régime
+                                alimentaire
+                            </li>
+                            <li>• 🍽️ Recettes adaptées à vos préférences</li>
+                            <li>• 👨‍🍳 Cours de cuisine exclusifs</li>
+                            <li>• ⭐ Contenu premium</li>
+                        </ul>
                     </div>
                     <button
                         id="getCookupPass"
@@ -148,6 +158,17 @@ import Layout from "../layouts/Layout.astro";
                             data-tab="profile"
                         >
                             👤 Informations personnelles
+                        </button>
+                        <button
+                            id="regimeTabBtn"
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="regime"
+                        >
+                            🥗 Régime alimentaire
+                            <span
+                                class="ml-1 text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full"
+                                >COOKUP</span
+                            >
                         </button>
                         <button
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -236,6 +257,218 @@ import Layout from "../layouts/Layout.astro";
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    <!-- Onglet Régime alimentaire -->
+                    <div id="regimeTab" class="tab-content hidden">
+                        <h2 class="text-xl font-bold mb-6">
+                            Régime alimentaire
+                        </h2>
+
+                        <p class="text-gray-600 mb-6">
+                            Sélectionnez vos préférences alimentaires pour
+                            personnaliser vos recommandations de recettes.
+                        </p>
+
+                        <!-- Vérification du pass Cookup -->
+                        <div
+                            id="regimeAccessDenied"
+                            class="text-center py-12 bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl hidden"
+                        >
+                            <div class="text-6xl mb-4">🔒</div>
+                            <h3 class="text-2xl font-bold text-orange-800 mb-3">
+                                Fonctionnalité réservée au Pass Cookup
+                            </h3>
+                            <p class="text-orange-600 mb-6 max-w-md mx-auto">
+                                Débloquez la gestion personnalisée de vos
+                                préférences alimentaires et obtenez des
+                                recommandations de recettes adaptées à votre
+                                régime.
+                            </p>
+
+                            <!-- Aperçu des fonctionnalités -->
+                            <div
+                                class="grid grid-cols-2 gap-4 max-w-lg mx-auto mb-6 text-sm"
+                            >
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🌱</div>
+                                    <div class="font-medium text-orange-800">
+                                        Végétarien
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🌿</div>
+                                    <div class="font-medium text-orange-800">
+                                        Végan
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🌾</div>
+                                    <div class="font-medium text-orange-800">
+                                        Sans gluten
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">☪️</div>
+                                    <div class="font-medium text-orange-800">
+                                        Halal
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                id="getCookupPassFromRegime"
+                                class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold px-8 py-4 rounded-xl hover:from-yellow-500 hover:to-orange-600 transition transform hover:scale-105 shadow-lg"
+                            >
+                                🌟 Débloquer avec le Pass Cookup
+                            </button>
+
+                            <p class="text-xs text-orange-500 mt-4">
+                                Accès immédiat à toutes les fonctionnalités
+                                premium
+                            </p>
+                        </div>
+
+                        <form id="regimeForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Végétarien -->
+                                <label
+                                    class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="regime"
+                                        value="végétarien"
+                                        class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                                    />
+                                    <div class="ml-3">
+                                        <div
+                                            class="text-lg font-medium text-gray-900"
+                                        >
+                                            🌱 Végétarien
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Pas de viande ni de poisson
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Végan -->
+                                <label
+                                    class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="regime"
+                                        value="végan"
+                                        class="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                                    />
+                                    <div class="ml-3">
+                                        <div
+                                            class="text-lg font-medium text-gray-900"
+                                        >
+                                            🌿 Végan
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Aucun produit d'origine animale
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Sans gluten -->
+                                <label
+                                    class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="regime"
+                                        value="sans-gluten"
+                                        class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                    />
+                                    <div class="ml-3">
+                                        <div
+                                            class="text-lg font-medium text-gray-900"
+                                        >
+                                            🌾 Sans gluten
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Sans blé, orge, seigle
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <!-- Halal -->
+                                <label
+                                    class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="regime"
+                                        value="halal"
+                                        class="w-5 h-5 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                                    />
+                                    <div class="ml-3">
+                                        <div
+                                            class="text-lg font-medium text-gray-900"
+                                        >
+                                            ☪️ Halal
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            Conforme aux prescriptions
+                                            islamiques
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Message d'erreur/succès -->
+                            <div id="regimeMessage" class="hidden"></div>
+
+                            <div class="flex gap-4">
+                                <button
+                                    type="submit"
+                                    class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-2 rounded-lg transition"
+                                >
+                                    🥗 Sauvegarder mes préférences
+                                </button>
+                                <button
+                                    type="button"
+                                    onclick="loadUserRegimes()"
+                                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-6 py-2 rounded-lg transition"
+                                >
+                                    🔄 Annuler
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Section informative -->
+                        <div
+                            class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg"
+                        >
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">
+                                💡 Pourquoi indiquer votre régime ?
+                            </h3>
+                            <ul class="text-blue-700 space-y-1">
+                                <li>
+                                    • Recettes personnalisées selon vos
+                                    préférences
+                                </li>
+                                <li>
+                                    • Filtrage automatique des recettes
+                                    incompatibles
+                                </li>
+                                <li>• Suggestions d'ingrédients adaptés</li>
+                                <li>• Meilleure expérience de navigation</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <!-- Onglet Commentaires -->
@@ -432,6 +665,13 @@ import Layout from "../layouts/Layout.astro";
             const cookupStatus = document.getElementById("cookupStatus");
             const cookupCTA = document.getElementById("cookupCTA");
 
+            // Gestion de l'affichage de l'onglet régime selon le statut Cookup
+            const regimeTabBtn = document.getElementById("regimeTabBtn");
+            // L'onglet reste toujours visible
+            if (regimeTabBtn) {
+                regimeTabBtn.classList.remove("hidden");
+            }
+
             if (user.cookup) {
                 cookupStatus.innerHTML = `
                     <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
@@ -456,6 +696,9 @@ import Layout from "../layouts/Layout.astro";
             // Date de création
             const memberSince = new Date(user.created).getFullYear();
             document.getElementById("memberSince").textContent = memberSince;
+
+            // Charger les régimes de l'utilisateur
+            await loadUserRegimes();
         } catch (error) {
             console.error("Erreur lors du chargement du profil:", error);
             throw error;
@@ -522,9 +765,34 @@ import Layout from "../layouts/Layout.astro";
                 if (targetContent) {
                     targetContent.classList.remove("hidden");
 
-                    // Charger les commentaires si nécessaire
+                    // Vérifications spéciales selon l'onglet
                     if (targetTab === "comments") {
                         loadUserComments();
+                    } else if (targetTab === "regime") {
+                        // Vérifier l'accès au régime
+                        if (!currentUser?.cookup) {
+                            // Masquer le formulaire et afficher le message d'accès refusé
+                            document
+                                .getElementById("regimeForm")
+                                .classList.add("hidden");
+                            document
+                                .querySelector("#regimeTab .mt-8")
+                                .classList.add("hidden"); // Section informative
+                            document
+                                .getElementById("regimeAccessDenied")
+                                .classList.remove("hidden");
+                        } else {
+                            // Afficher le formulaire et masquer le message
+                            document
+                                .getElementById("regimeForm")
+                                .classList.remove("hidden");
+                            document
+                                .querySelector("#regimeTab .mt-8")
+                                .classList.remove("hidden"); // Section informative
+                            document
+                                .getElementById("regimeAccessDenied")
+                                .classList.add("hidden");
+                        }
                     }
                 }
             });
@@ -600,6 +868,19 @@ import Layout from "../layouts/Layout.astro";
         // CTA Cookup Pass
         const getCookupPass = document.getElementById("getCookupPass");
         getCookupPass?.addEventListener("click", () => {
+            // TODO: Rediriger vers la page Cookup Pass
+            alert("Redirection vers la page Cookup Pass (à implémenter)");
+        });
+
+        // Formulaire régime
+        const regimeForm = document.getElementById("regimeForm");
+        regimeForm.addEventListener("submit", handleRegimeUpdate);
+
+        // CTA Cookup Pass depuis l'onglet régime
+        const getCookupPassFromRegime = document.getElementById(
+            "getCookupPassFromRegime",
+        );
+        getCookupPassFromRegime?.addEventListener("click", () => {
             // TODO: Rediriger vers la page Cookup Pass
             alert("Redirection vers la page Cookup Pass (à implémenter)");
         });
@@ -884,5 +1165,78 @@ import Layout from "../layouts/Layout.astro";
         notification.className = "fixed top-4 right-4 z-50 max-w-sm";
         document.body.appendChild(notification);
         return notification;
+    }
+
+    // Charger les régimes de l'utilisateur
+    async function loadUserRegimes() {
+        try {
+            // Récupérer les données utilisateur à jour
+            const user = await pb.collection("users").getOne(currentUser.id);
+
+            // Décocher toutes les cases
+            const checkboxes = document.querySelectorAll(
+                'input[name="regime"]',
+            );
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+
+            // Cocher les régimes de l'utilisateur
+            if (user.regime && Array.isArray(user.regime)) {
+                user.regime.forEach((regime) => {
+                    const checkbox = document.querySelector(
+                        `input[name="regime"][value="${regime}"]`,
+                    );
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+
+            console.log("✅ Régimes chargés:", user.regime);
+        } catch (error) {
+            console.error("Erreur lors du chargement des régimes:", error);
+        }
+    }
+
+    // Gérer la mise à jour des régimes
+    async function handleRegimeUpdate(e) {
+        e.preventDefault();
+
+        const regimeMessage = document.getElementById("regimeMessage");
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "⏳ Sauvegarde...";
+
+            // Récupérer les régimes sélectionnés
+            const formData = new FormData(e.target);
+            const selectedRegimes = formData.getAll("regime");
+
+            console.log("📝 Régimes sélectionnés:", selectedRegimes);
+
+            // Mettre à jour dans PocketBase
+            await pb.collection("users").update(currentUser.id, {
+                regime: selectedRegimes,
+            });
+
+            showSuccess(
+                "Préférences alimentaires mises à jour avec succès ! 🥗",
+                regimeMessage,
+            );
+
+            // Déclencher l'événement pour mettre à jour le header
+            document.dispatchEvent(new CustomEvent("userUpdate"));
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour des régimes:", error);
+            showError(
+                "Erreur lors de la mise à jour des préférences",
+                regimeMessage,
+            );
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🥗 Sauvegarder mes préférences";
+        }
     }
 </script>

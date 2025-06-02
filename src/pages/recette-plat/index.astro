@@ -4,7 +4,7 @@ import Plat from "../../components/Plat.astro";
 import PlatFavoris from "../../components/PlatFavoris.astro";
 import { Image } from "astro:assets";
 import imagePouletRoti from "../../assets/img/recettes/poulet_roti.png";
-import { getAllRecettes, getRecettesSponsors } from "../../js/backend.mjs";
+import { getAllRecettes, getRecettesSponsors } from "../../backend.mjs";
 
 const recettes = await getAllRecettes();
 const recettesSponsors = await getRecettesSponsors();
@@ -72,7 +72,12 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
 
     <!-- Section Autres recettes -->
     <section class="py-12 px-6">
-        <h2 class="text-xl md:text-3xl font-bold mb-4">Toutes nos recettes</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl md:text-3xl font-bold">Toutes nos recettes</h2>
+            <div class="text-sm text-gray-600">
+                <span id="recettesCount">{recettes.length}</span> recettes disponibles
+            </div>
+        </div>
         <p class="mb-6 text-gray-600">
             Choisissez parmi une grande liste de plats celui qui vous
             correspond, et lancez-vous !
@@ -123,6 +128,21 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
             </div>
         </div>
 
+        <!-- Informations de pagination -->
+        <div class="mb-4 flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+                Affichage de <span id="currentRangeStart">1</span>-<span
+                    id="currentRangeEnd">12</span
+                >
+                sur <span id="totalRecettes">{recettes.length}</span> recettes
+            </div>
+            <div class="text-sm text-gray-600">
+                Page <span id="currentPageDisplay">1</span> sur <span
+                    id="totalPagesDisplay">1</span
+                >
+            </div>
+        </div>
+
         <div
             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             id="recettesGrid"
@@ -152,6 +172,11 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
                     </div>
                 )
             }
+        </div>
+
+        <!-- Pagination -->
+        <div id="paginationContainer" class="mt-8">
+            <!-- La pagination sera générée dynamiquement -->
         </div>
     </section>
 
@@ -188,7 +213,6 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         initFavorisCarousel,
     } from "../../js/recettes/slider-carousel.js";
     import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
-    import { initPagination } from "../../js/recettes/pagination.js";
 
     document.addEventListener("DOMContentLoaded", async () => {
         // Initialiser la gestion des favoris
@@ -197,7 +221,9 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         initMainSlider();
         initFavorisCarousel();
         initSearchAndFilters();
-        initPagination();
+
+        // ✅ NOUVEAU : Initialiser la pagination améliorée
+        initAdvancedPagination();
 
         // ✅ NOUVEAU : Initialiser l'état des cœurs après chargement
         await initFavoriteStates();
@@ -207,23 +233,311 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         if (categorieSelect) {
             categorieSelect.addEventListener("change", function () {
                 const categorie = this.value;
-                const recettes = document.querySelectorAll(
-                    "#recettesGrid > div",
-                );
-
-                recettes.forEach((recette) => {
-                    if (
-                        categorie === "tous" ||
-                        recette.dataset.categorie === categorie
-                    ) {
-                        recette.style.display = "block";
-                    } else {
-                        recette.style.display = "none";
-                    }
-                });
+                filterAndPaginate();
             });
         }
+
+        // Autres filtres
+        const filterSelect = document.getElementById("filterSelect");
+        const sortSelect = document.getElementById("sortSelect");
+        const searchInput = document.getElementById("searchInput");
+
+        if (filterSelect) {
+            filterSelect.addEventListener("change", filterAndPaginate);
+        }
+
+        if (sortSelect) {
+            sortSelect.addEventListener("change", filterAndPaginate);
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener(
+                "input",
+                debounce(filterAndPaginate, 300),
+            );
+        }
     });
+
+    // Variables globales pour la pagination
+    let allRecettes = [];
+    let filteredRecettes = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+
+    // Initialiser la pagination avancée
+    function initAdvancedPagination() {
+        // Récupérer toutes les recettes depuis le DOM
+        const recettesGrid = document.getElementById("recettesGrid");
+        if (!recettesGrid) return;
+
+        allRecettes = Array.from(recettesGrid.children).map((card, index) => ({
+            element: card,
+            index: index,
+            nom: card.querySelector("h3")?.textContent.toLowerCase() || "",
+            categorie: card.dataset.categorie || "",
+            temps: card.querySelector('[class*="⏱️"]')?.textContent || "",
+            isFavorite: card.querySelector(".bg-red-100") !== null,
+            isSponsored: card.querySelector(".bg-yellow-500") !== null,
+        }));
+
+        filteredRecettes = [...allRecettes];
+
+        console.log(
+            `📊 ${allRecettes.length} recettes chargées pour la pagination`,
+        );
+
+        // Initialiser l'affichage
+        updatePaginationDisplay();
+    }
+
+    // Fonction de filtrage et pagination combinée
+    function filterAndPaginate() {
+        const searchTerm =
+            document.getElementById("searchInput")?.value.toLowerCase() || "";
+        const selectedCategorie =
+            document.getElementById("categorieSelect")?.value || "tous";
+        const selectedFilter =
+            document.getElementById("filterSelect")?.value || "tous";
+        const selectedSort =
+            document.getElementById("sortSelect")?.value || "default";
+
+        // Filtrer les recettes
+        filteredRecettes = allRecettes.filter((recette) => {
+            const matchesSearch = recette.nom.includes(searchTerm);
+            const matchesCategorie =
+                selectedCategorie === "tous" ||
+                recette.categorie.toLowerCase() === selectedCategorie;
+            const matchesFilter =
+                selectedFilter === "tous" ||
+                (selectedFilter === "favoris" && recette.isFavorite) ||
+                (selectedFilter === "sponsorises" && recette.isSponsored);
+
+            return matchesSearch && matchesCategorie && matchesFilter;
+        });
+
+        // Trier les recettes
+        if (selectedSort !== "default") {
+            filteredRecettes.sort((a, b) => {
+                switch (selectedSort) {
+                    case "nom":
+                        return a.nom.localeCompare(b.nom);
+                    case "recent":
+                        return b.index - a.index; // Plus récent = index plus élevé
+                    case "temps":
+                        const timeA = parseInt(a.temps) || 0;
+                        const timeB = parseInt(b.temps) || 0;
+                        return timeA - timeB;
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        // Réinitialiser à la première page
+        currentPage = 1;
+
+        // Mettre à jour l'affichage
+        updatePaginationDisplay();
+    }
+
+    // Mettre à jour l'affichage de la pagination
+    function updatePaginationDisplay() {
+        const totalRecettes = filteredRecettes.length;
+        const totalPages = Math.ceil(totalRecettes / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalRecettes);
+
+        // Masquer toutes les recettes
+        allRecettes.forEach((recette) => {
+            recette.element.style.display = "none";
+        });
+
+        // Afficher les recettes de la page actuelle
+        const currentPageRecettes = filteredRecettes.slice(
+            startIndex,
+            endIndex,
+        );
+        currentPageRecettes.forEach((recette) => {
+            recette.element.style.display = "block";
+        });
+
+        // Mettre à jour les informations de pagination
+        document.getElementById("currentRangeStart").textContent =
+            totalRecettes > 0 ? startIndex + 1 : 0;
+        document.getElementById("currentRangeEnd").textContent = endIndex;
+        document.getElementById("totalRecettes").textContent = totalRecettes;
+        document.getElementById("currentPageDisplay").textContent = currentPage;
+        document.getElementById("totalPagesDisplay").textContent = Math.max(
+            totalPages,
+            1,
+        );
+        document.getElementById("recettesCount").textContent = totalRecettes;
+
+        // Générer les boutons de pagination
+        generatePaginationButtons(totalPages);
+
+        // Afficher message si aucun résultat
+        showNoResultsMessage(totalRecettes === 0);
+
+        // Scroll vers le haut de la grille
+        if (currentPage > 1) {
+            document.getElementById("recettesGrid").scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    }
+
+    // Générer les boutons de pagination
+    function generatePaginationButtons(totalPages) {
+        const paginationContainer = document.getElementById(
+            "paginationContainer",
+        );
+        if (!paginationContainer || totalPages <= 1) {
+            paginationContainer.innerHTML = "";
+            return;
+        }
+
+        let html =
+            '<div class="flex justify-center items-center gap-2 flex-wrap">';
+
+        // Bouton Première page
+        if (currentPage > 1) {
+            html += `<button onclick="goToPage(1)" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-sm">
+                        Première
+                     </button>`;
+        }
+
+        // Bouton Précédent
+        if (currentPage > 1) {
+            html += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">
+                        ‹
+                     </button>`;
+        }
+
+        // Numéros de page
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+            html += `<button onclick="goToPage(1)" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">1</button>`;
+            if (startPage > 2) {
+                html += `<span class="px-2 py-2 text-gray-500">...</span>`;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const isActive = i === currentPage;
+            html += `<button onclick="goToPage(${i})" class="px-3 py-2 rounded transition ${
+                isActive
+                    ? "bg-yellow-500 text-white font-bold"
+                    : "border border-gray-300 hover:bg-gray-100"
+            }">${i}</button>`;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                html += `<span class="px-2 py-2 text-gray-500">...</span>`;
+            }
+            html += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">${totalPages}</button>`;
+        }
+
+        // Bouton Suivant
+        if (currentPage < totalPages) {
+            html += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">
+                        ›
+                     </button>`;
+        }
+
+        // Bouton Dernière page
+        if (currentPage < totalPages) {
+            html += `<button onclick="goToPage(${totalPages})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-sm">
+                        Dernière
+                     </button>`;
+        }
+
+        html += "</div>";
+
+        // Sélecteur de nombre d'éléments par page
+        html += `
+            <div class="mt-4 text-center">
+                <label for="itemsPerPageSelect" class="text-sm text-gray-600 mr-2">Recettes par page:</label>
+                <select id="itemsPerPageSelect" class="px-3 py-1 border border-gray-300 rounded text-sm" onchange="changeItemsPerPage(this.value)">
+                    <option value="12" ${itemsPerPage === 12 ? "selected" : ""}>12</option>
+                    <option value="24" ${itemsPerPage === 24 ? "selected" : ""}>24</option>
+                    <option value="48" ${itemsPerPage === 48 ? "selected" : ""}>48</option>
+                    <option value="all" ${itemsPerPage === 999999 ? "selected" : ""}>Toutes</option>
+                </select>
+            </div>
+        `;
+
+        paginationContainer.innerHTML = html;
+    }
+
+    // Aller à une page spécifique
+    window.goToPage = function (page) {
+        const totalPages = Math.ceil(filteredRecettes.length / itemsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            updatePaginationDisplay();
+        }
+    };
+
+    // Changer le nombre d'éléments par page
+    window.changeItemsPerPage = function (value) {
+        if (value === "all") {
+            itemsPerPage = 999999; // Afficher toutes les recettes
+        } else {
+            itemsPerPage = parseInt(value);
+        }
+        currentPage = 1;
+        updatePaginationDisplay();
+    };
+
+    // Afficher un message si aucun résultat
+    function showNoResultsMessage(show) {
+        let noResultsMsg = document.getElementById("noResultsMessage");
+
+        if (show && !noResultsMsg) {
+            noResultsMsg = document.createElement("div");
+            noResultsMsg.id = "noResultsMessage";
+            noResultsMsg.className =
+                "col-span-full text-center py-12 text-gray-500 bg-gray-50 rounded-lg";
+            noResultsMsg.innerHTML = `
+                <div class="text-6xl mb-4">🔍</div>
+                <h3 class="text-xl font-bold mb-2">Aucune recette trouvée</h3>
+                <p>Essayez de modifier vos critères de recherche ou de filtrage</p>
+                <button onclick="resetFilters()" class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition">
+                    Réinitialiser les filtres
+                </button>
+            `;
+            document.getElementById("recettesGrid").appendChild(noResultsMsg);
+        } else if (!show && noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+
+    // Réinitialiser les filtres
+    window.resetFilters = function () {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("categorieSelect").value = "tous";
+        document.getElementById("filterSelect").value = "tous";
+        document.getElementById("sortSelect").value = "default";
+        filterAndPaginate();
+    };
+
+    // Fonction debounce pour éviter trop d'appels lors de la saisie
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
     // ✅ NOUVELLE FONCTION : Initialiser l'état des favoris
     async function initFavoriteStates() {
