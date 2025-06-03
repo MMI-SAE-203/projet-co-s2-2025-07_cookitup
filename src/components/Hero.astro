@@ -6,11 +6,6 @@ export interface Props {
     backgroundImage?: string;
     overlay?: boolean;
     centered?: boolean;
-    stats?: Array<{
-        number: string;
-        label: string;
-        icon?: string;
-    }>;
 }
 
 const {
@@ -20,7 +15,6 @@ const {
     backgroundImage = "/placeholder.svg?height=600&width=1200",
     overlay = true,
     centered = true,
-    stats,
 } = Astro.props;
 
 // Fonction pour supprimer les accents
@@ -77,30 +71,6 @@ const displaySubtitle = subtitle ? removeAccents(subtitle).toUpperCase() : "";
                         <p class="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed max-w-3xl {centered ? 'mx-auto' : ''}">
                             {description}
                         </p>
-                    )
-                }
-
-                {
-                    stats && stats.length > 0 && (
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-                            {stats.map((stat) => (
-                                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-                                    <div class="text-center">
-                                        {stat.icon && (
-                                            <div class="text-3xl mb-2">
-                                                {stat.icon}
-                                            </div>
-                                        )}
-                                        <div class="text-3xl md:text-4xl font-bold text-yellow-400 mb-2">
-                                            {stat.number}
-                                        </div>
-                                        <div class="text-sm md:text-base text-gray-200 font-medium">
-                                            {stat.label}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
                     )
                 }
 

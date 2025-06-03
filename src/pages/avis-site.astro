@@ -1,0 +1,878 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+---
+
+<Layout title="Donnez votre avis | Cookit-UP">
+    <!-- État de chargement -->
+    <div
+        id="loadingState"
+        class="min-h-screen flex items-center justify-center bg-gray-50"
+    >
+        <div class="text-center">
+            <div class="text-4xl mb-4">⏳</div>
+            <h2 class="text-xl font-bold mb-2">Chargement...</h2>
+            <p class="text-gray-600">Vérification de votre connexion...</p>
+        </div>
+    </div>
+
+    <!-- État non connecté -->
+    <div id="notLoggedInState" class="min-h-screen bg-gray-50 py-12 hidden">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="bg-white rounded-lg shadow-lg p-12">
+                <div class="text-6xl mb-6">🔒</div>
+                <h1 class="text-3xl font-bold mb-4">Connexion requise</h1>
+                <p class="text-gray-600 mb-8 text-lg">
+                    Vous devez être connecté pour donner votre avis sur
+                    Cookit-UP.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                        href="/connexion"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    >
+                        🔑 Se connecter
+                    </a>
+                    <a
+                        href="/inscription"
+                        class="bg-transparent border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    >
+                        📝 Créer un compte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div id="mainContent" class="hidden">
+        <!-- Hero Section -->
+        <Hero
+            title="Votre Avis Compte"
+            subtitle="PARTAGEZ"
+            description="AIDEZ-NOUS A AMELIORER COOKIT-UP EN PARTAGEANT VOTRE EXPERIENCE ET VOS SUGGESTIONS"
+            backgroundImage="/placeholder.svg?height=600&width=1200&text=Avis+Hero"
+            stats={[
+                { number: "4.8", label: "Note moyenne", icon: "⭐" },
+                { number: "1000+", label: "Avis reçus", icon: "💬" },
+                { number: "95%", label: "Satisfaction", icon: "😊" },
+                { number: "24h", label: "Temps de réponse", icon: "⚡" },
+            ]}
+        >
+            <!-- Boutons d'action dans le hero -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                <button
+                    class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105 shadow-lg"
+                    onclick="document.getElementById('avis-form-section').scrollIntoView({ behavior: 'smooth' })"
+                >
+                    ✍️ Donner mon avis
+                </button>
+                <button
+                    class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    onclick="document.getElementById('avis-communaute-section').scrollIntoView({ behavior: 'smooth' })"
+                >
+                    👥 Voir les avis
+                </button>
+            </div>
+        </Hero>
+
+        <!-- Section Formulaire d'avis -->
+        <section id="avis-form-section" class="py-16 px-6 bg-white">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Donnez votre avis sur Cookit-UP
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Votre opinion nous aide à améliorer l'expérience pour
+                        tous les utilisateurs
+                    </p>
+                </div>
+
+                <!-- Vérification si l'utilisateur a déjà donné un avis -->
+                <div
+                    id="hasExistingAvis"
+                    class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 hidden"
+                >
+                    <div class="flex items-center">
+                        <div class="text-3xl mr-4">ℹ️</div>
+                        <div>
+                            <h3 class="font-bold text-blue-800 mb-2">
+                                Vous avez déjà donné votre avis
+                            </h3>
+                            <p class="text-blue-600 mb-3">
+                                Vous pouvez modifier votre avis existant ou en
+                                créer un nouveau.
+                            </p>
+                            <div class="flex gap-3">
+                                <button
+                                    id="editExistingAvis"
+                                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded transition"
+                                >
+                                    ✏️ Modifier mon avis
+                                </button>
+                                <button
+                                    id="createNewAvis"
+                                    class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded transition"
+                                >
+                                    ➕ Nouvel avis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire d'avis -->
+                <div class="bg-gray-50 rounded-lg p-8">
+                    <form id="avisForm" class="space-y-6">
+                        <!-- Commentaire principal -->
+                        <div>
+                            <label
+                                for="commentContent"
+                                class="block text-lg font-medium text-gray-700 mb-2"
+                            >
+                                Partagez votre avis sur Cookit-UP
+                            </label>
+                            <textarea
+                                id="commentContent"
+                                name="comment"
+                                rows="8"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
+                                placeholder="Dites-nous ce que vous pensez de Cookit-UP : votre expérience, ce que vous aimez, ce qui pourrait être amélioré, vos suggestions..."
+                                required
+                                minlength="20"
+                                maxlength="2000"></textarea>
+                            <div
+                                class="flex justify-between text-sm text-gray-500 mt-2"
+                            >
+                                <span>Minimum 20 caractères</span>
+                                <span id="charCount">0/2000</span>
+                            </div>
+                        </div>
+
+                        <!-- Autorisation de publication -->
+                        <div
+                            class="bg-yellow-50 border border-yellow-200 rounded-lg p-4"
+                        >
+                            <label class="flex items-start">
+                                <input
+                                    type="checkbox"
+                                    id="allowPublication"
+                                    name="allowPublication"
+                                    class="mt-1 mr-3"
+                                    checked
+                                />
+                                <div>
+                                    <span class="font-medium text-gray-800"
+                                        >Autoriser la publication de mon avis</span
+                                    >
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        En cochant cette case, vous autorisez
+                                        Cookit-UP à publier votre avis sur le
+                                        site (votre nom sera affiché). Vous
+                                        pouvez décocher si vous souhaitez que
+                                        votre avis reste privé.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Messages d'erreur/succès -->
+                        <div id="avisMessage" class="hidden"></div>
+
+                        <!-- Boutons -->
+                        <div class="flex gap-4">
+                            <button
+                                type="submit"
+                                class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                                id="submitAvis"
+                            >
+                                ✍️ Publier mon avis
+                            </button>
+                            <button
+                                type="button"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-8 py-4 rounded-lg transition"
+                                onclick="resetForm()"
+                            >
+                                🗑️ Effacer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Avis de la communauté -->
+        <section id="avis-communaute-section" class="py-16 px-6 bg-gray-50">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        Ce que dit notre communauté
+                    </h2>
+                    <p class="text-gray-600 text-lg">
+                        Découvrez les avis et témoignages de nos utilisateurs
+                    </p>
+                </div>
+
+                <!-- Filtres -->
+                <div class="mb-8 flex flex-wrap gap-4 justify-center">
+                    <select
+                        id="categorieAvisFilter"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    >
+                        <option value="tous">Toutes les catégories</option>
+                        <option value="recettes">🍽️ Recettes</option>
+                        <option value="interface">🎨 Interface</option>
+                        <option value="partenaires">🏪 Partenaires</option>
+                        <option value="fonctionnalites"
+                            >⚙️ Fonctionnalités</option
+                        >
+                        <option value="support">🆘 Support</option>
+                        <option value="general">🌟 Général</option>
+                    </select>
+
+                    <button
+                        id="sortAvis"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                        data-sort="recent"
+                    >
+                        📅 Plus récents
+                    </button>
+                </div>
+
+                <!-- Liste des avis -->
+                <div id="avisList">
+                    <!-- État de chargement -->
+                    <div id="avisLoading" class="text-center py-12">
+                        <div class="text-4xl mb-4">⏳</div>
+                        <h3 class="text-xl font-bold mb-2">
+                            Chargement des avis...
+                        </h3>
+                    </div>
+
+                    <!-- État vide -->
+                    <div id="noAvis" class="text-center py-16 hidden">
+                        <div class="text-6xl mb-4">💭</div>
+                        <h3 class="text-xl font-bold mb-2">
+                            Aucun avis pour le moment
+                        </h3>
+                        <p class="text-gray-600 mb-6">
+                            Soyez le premier à partager votre expérience !
+                        </p>
+                        <button
+                            onclick="document.getElementById('avis-form-section').scrollIntoView({ behavior: 'smooth' })"
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                        >
+                            ✍️ Donner mon avis
+                        </button>
+                    </div>
+
+                    <!-- Conteneur des avis -->
+                    <div id="avisContainer" class="space-y-6 hidden">
+                        <!-- Les avis seront ajoutés ici dynamiquement -->
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                    id="avisPagination"
+                    class="mt-12 flex justify-center hidden"
+                >
+                    <!-- Pagination sera générée dynamiquement -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section CTA -->
+        <section class="py-16 px-6 bg-yellow-500 text-black">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    Merci pour votre confiance !
+                </h2>
+                <p class="text-lg mb-8">
+                    Votre avis nous aide à créer la meilleure expérience
+                    culinaire possible.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                        href="/recette-plat"
+                        class="bg-black text-yellow-500 font-bold px-8 py-4 rounded-lg hover:bg-gray-800 transition transform hover:scale-105"
+                    >
+                        🍽️ Découvrir les recettes
+                    </a>
+                    <a
+                        href="/profil"
+                        class="bg-transparent border-2 border-black text-black hover:bg-black hover:text-yellow-500 font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    >
+                        👤 Mon profil
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+</Layout>
+
+<script>
+    import { isLoggedIn, getCurrentUser } from "../js/auth.js";
+    import pb from "../lib/pocketbase.js";
+
+    let currentUser = null;
+    let existingAvis = null;
+    let allAvis = [];
+    let currentPage = 1;
+    const avisPerPage = 6;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Initialisation de la page avis");
+
+        setTimeout(() => {
+            checkAccess();
+        }, 100);
+    });
+
+    // Vérifier l'accès et initialiser la page
+    async function checkAccess() {
+        const loadingState = document.getElementById("loadingState");
+        const notLoggedInState = document.getElementById("notLoggedInState");
+        const mainContent = document.getElementById("mainContent");
+
+        // Masquer tous les états
+        loadingState.classList.add("hidden");
+        notLoggedInState.classList.add("hidden");
+        mainContent.classList.add("hidden");
+
+        if (!isLoggedIn()) {
+            console.log("❌ Utilisateur non connecté");
+            notLoggedInState.classList.remove("hidden");
+            return;
+        }
+
+        currentUser = getCurrentUser();
+        console.log("✅ Utilisateur connecté:", currentUser?.email);
+
+        // Afficher le contenu principal
+        mainContent.classList.remove("hidden");
+
+        // Initialiser les fonctionnalités
+        await initPage();
+    }
+
+    // Initialiser la page
+    async function initPage() {
+        try {
+            // Vérifier si l'utilisateur a déjà donné un avis
+            await checkExistingAvis();
+
+            // Initialiser le formulaire
+            initForm();
+
+            // Charger les avis de la communauté
+            await loadCommunityAvis();
+
+            // Initialiser les filtres
+            initFilters();
+        } catch (error) {
+            console.error("❌ Erreur lors de l'initialisation:", error);
+        }
+    }
+
+    // Vérifier si l'utilisateur a déjà donné un avis
+    async function checkExistingAvis() {
+        try {
+            const avis = await pb.collection("avis_site").getFullList({
+                filter: `user = "${currentUser.id}"`,
+                sort: "-created",
+            });
+
+            if (avis.length > 0) {
+                existingAvis = avis[0]; // Le plus récent
+                showExistingAvisNotification();
+            }
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de la vérification des avis existants:",
+                error,
+            );
+        }
+    }
+
+    // Afficher la notification d'avis existant
+    function showExistingAvisNotification() {
+        const hasExistingAvis = document.getElementById("hasExistingAvis");
+        const editBtn = document.getElementById("editExistingAvis");
+        const newBtn = document.getElementById("createNewAvis");
+
+        hasExistingAvis.classList.remove("hidden");
+
+        editBtn.addEventListener("click", () => {
+            // Pré-remplir le formulaire avec l'avis existant
+            fillFormWithExistingAvis();
+            hasExistingAvis.classList.add("hidden");
+        });
+
+        newBtn.addEventListener("click", () => {
+            // Masquer la notification et permettre un nouvel avis
+            hasExistingAvis.classList.add("hidden");
+            existingAvis = null;
+        });
+    }
+
+    // Pré-remplir le formulaire avec l'avis existant
+    function fillFormWithExistingAvis() {
+        if (!existingAvis) return;
+
+        const commentContent = document.getElementById("commentContent");
+
+        if (commentContent) commentContent.value = existingAvis.comment || "";
+
+        // Mettre à jour le compteur
+        updateCharCount();
+
+        // Changer le texte du bouton
+        const submitBtn = document.getElementById("submitAvis");
+        if (submitBtn) {
+            submitBtn.textContent = "✏️ Modifier mon avis";
+        }
+    }
+
+    // Initialiser le formulaire
+    function initForm() {
+        const form = document.getElementById("avisForm");
+        const commentContent = document.getElementById("commentContent");
+        const suggestions = document.getElementById("suggestions");
+
+        // Compteurs de caractères
+        if (commentContent) {
+            commentContent.addEventListener("input", updateCharCount);
+        }
+
+        if (suggestions) {
+            suggestions.addEventListener("input", updateSuggestionsCharCount);
+        }
+
+        // Soumission du formulaire
+        if (form) {
+            form.addEventListener("submit", handleFormSubmit);
+        }
+    }
+
+    // Mettre à jour le compteur de caractères du commentaire
+    function updateCharCount() {
+        const commentContent = document.getElementById("commentContent");
+        const charCount = document.getElementById("charCount");
+
+        if (commentContent && charCount) {
+            const count = commentContent.value.length;
+            charCount.textContent = `${count}/2000`;
+
+            if (count > 2000) {
+                charCount.classList.add("text-red-500");
+            } else {
+                charCount.classList.remove("text-red-500");
+            }
+        }
+    }
+
+    // Mettre à jour le compteur de caractères des suggestions
+    function updateSuggestionsCharCount() {
+        const suggestions = document.getElementById("suggestions");
+        const suggestionsCharCount = document.getElementById(
+            "suggestionsCharCount",
+        );
+
+        if (suggestions && suggestionsCharCount) {
+            const count = suggestions.value.length;
+            suggestionsCharCount.textContent = `${count}/1000`;
+
+            if (count > 1000) {
+                suggestionsCharCount.classList.add("text-red-500");
+            } else {
+                suggestionsCharCount.classList.remove("text-red-500");
+            }
+        }
+    }
+
+    // Gérer la soumission du formulaire
+    async function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const avisMessage = document.getElementById("avisMessage");
+        const submitBtn = document.getElementById("submitAvis");
+
+        // Réinitialiser les messages
+        avisMessage.classList.add("hidden");
+        avisMessage.textContent = "";
+
+        try {
+            // Vérifications
+            const comment = formData.get("comment").trim();
+            if (comment.length < 20) {
+                throw new Error(
+                    "Le commentaire doit contenir au moins 20 caractères",
+                );
+            }
+
+            if (comment.length > 2000) {
+                throw new Error(
+                    "Le commentaire ne peut pas dépasser 2000 caractères",
+                );
+            }
+
+            // Désactiver le bouton
+            submitBtn.disabled = true;
+            submitBtn.textContent = "⏳ Publication...";
+
+            // Préparer les données
+            const avisData = {
+                user: currentUser.id,
+                comment: comment,
+            };
+
+            // Ajouter l'autorisation de publication
+            avisData.allow_publication = formData.has("allowPublication");
+
+            // Créer ou mettre à jour l'avis
+            if (existingAvis) {
+                await pb
+                    .collection("avis_site")
+                    .update(existingAvis.id, avisData);
+                showSuccess(
+                    "Votre avis a été modifié avec succès ! 🎉",
+                    avisMessage,
+                );
+            } else {
+                await pb.collection("avis_site").create(avisData);
+                showSuccess(
+                    "Merci pour votre avis ! Il a été publié avec succès 🎉",
+                    avisMessage,
+                );
+            }
+
+            // Réinitialiser le formulaire
+            resetForm();
+
+            // Recharger les avis de la communauté
+            await loadCommunityAvis();
+
+            // Faire défiler vers les avis
+            setTimeout(() => {
+                document
+                    .getElementById("avis-communaute-section")
+                    .scrollIntoView({ behavior: "smooth" });
+            }, 1000);
+        } catch (error) {
+            console.error("❌ Erreur lors de la publication de l'avis:", error);
+            showError(
+                error.message || "Erreur lors de la publication de l'avis",
+                avisMessage,
+            );
+        } finally {
+            // Réactiver le bouton
+            submitBtn.disabled = false;
+            submitBtn.textContent = existingAvis
+                ? "✏️ Modifier mon avis"
+                : "✍️ Publier mon avis";
+        }
+    }
+
+    // Réinitialiser le formulaire
+    function resetForm() {
+        const form = document.getElementById("avisForm");
+        const submitBtn = document.getElementById("submitAvis");
+
+        // Réinitialiser le formulaire
+        form.reset();
+
+        // Réinitialiser le compteur
+        updateCharCount();
+
+        // Réinitialiser le bouton
+        submitBtn.textContent = "✍️ Publier mon avis";
+
+        // Réinitialiser l'état
+        existingAvis = null;
+
+        // Masquer la notification d'avis existant
+        const hasExistingAvis = document.getElementById("hasExistingAvis");
+        hasExistingAvis.classList.add("hidden");
+    }
+
+    // Charger les avis de la communauté
+    async function loadCommunityAvis() {
+        const avisLoading = document.getElementById("avisLoading");
+        const noAvis = document.getElementById("noAvis");
+        const avisContainer = document.getElementById("avisContainer");
+
+        try {
+            avisLoading.classList.remove("hidden");
+            noAvis.classList.add("hidden");
+            avisContainer.classList.add("hidden");
+
+            // Récupérer tous les avis publics
+            allAvis = await pb.collection("avis_site").getFullList({
+                filter: "allow_publication = true",
+                expand: "user",
+                sort: "-created",
+            });
+
+            console.log(`📊 ${allAvis.length} avis chargés`);
+
+            avisLoading.classList.add("hidden");
+
+            if (allAvis.length === 0) {
+                noAvis.classList.remove("hidden");
+                return;
+            }
+
+            // Afficher les avis
+            displayAvis();
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement des avis:", error);
+            avisLoading.classList.add("hidden");
+            showError("Erreur lors du chargement des avis de la communauté");
+        }
+    }
+
+    // Afficher les avis avec pagination
+    function displayAvis(filteredAvis = null) {
+        const avisToShow = filteredAvis || allAvis;
+        const avisContainer = document.getElementById("avisContainer");
+        const avisPagination = document.getElementById("avisPagination");
+
+        if (avisToShow.length === 0) {
+            document.getElementById("noAvis").classList.remove("hidden");
+            avisContainer.classList.add("hidden");
+            avisPagination.classList.add("hidden");
+            return;
+        }
+
+        document.getElementById("noAvis").classList.add("hidden");
+        avisContainer.classList.remove("hidden");
+
+        // Pagination
+        const totalPages = Math.ceil(avisToShow.length / avisPerPage);
+        const startIndex = (currentPage - 1) * avisPerPage;
+        const endIndex = startIndex + avisPerPage;
+        const avisPage = avisToShow.slice(startIndex, endIndex);
+
+        // Afficher les avis de la page
+        avisContainer.innerHTML = avisPage.map(createAvisHTML).join("");
+
+        // Afficher la pagination si nécessaire
+        if (totalPages > 1) {
+            avisPagination.innerHTML = createPaginationHTML(
+                currentPage,
+                totalPages,
+            );
+            avisPagination.classList.remove("hidden");
+        } else {
+            avisPagination.classList.add("hidden");
+        }
+    }
+
+    // Créer le HTML d'un avis
+    function createAvisHTML(avis) {
+        const user = avis.expand?.user;
+        const userName = user?.pseudo || "Utilisateur anonyme";
+
+        // Générer l'avatar
+        let avatarHTML = "";
+        if (user?.avatar) {
+            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+            avatarHTML = `<img src="${avatarUrl}" alt="Avatar de ${userName}" class="w-12 h-12 rounded-full object-cover" />`;
+        } else {
+            const userInitials = userName.substring(0, 2).toUpperCase();
+            avatarHTML = `<div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">${userInitials}</div>`;
+        }
+
+        const createdDate = new Date(avis.created).toLocaleDateString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+
+        // Catégories
+        const categories = Array.isArray(avis.categories)
+            ? avis.categories
+            : [];
+        const categoriesHTML =
+            categories.length > 0
+                ? `<div class="flex flex-wrap gap-1 mb-3">
+                ${categories.map((cat) => `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${getCategoryIcon(cat)} ${cat}</span>`).join("")}
+               </div>`
+                : "";
+
+        return `
+            <div class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                <div class="flex items-start space-x-4">
+                    <!-- Avatar -->
+                    ${avatarHTML}
+                    
+                    <!-- Contenu -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h4 class="font-bold text-gray-900">${userName}</h4>
+                                <p class="text-sm text-gray-500">${createdDate}</p>
+                            </div>
+                            
+                        </div>
+                        
+                        ${categoriesHTML}
+                        
+                        <p class="text-gray-800 leading-relaxed mb-4">${avis.comment}</p>
+                        
+                        ${
+                            avis.suggestions
+                                ? `
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                                <h5 class="font-medium text-blue-800 mb-1">💡 Suggestions d'amélioration</h5>
+                                <p class="text-blue-700 text-sm">${avis.suggestions}</p>
+                            </div>
+                        `
+                                : ""
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Obtenir l'icône d'une catégorie
+    function getCategoryIcon(category) {
+        const icons = {
+            recettes: "🍽️",
+            interface: "🎨",
+            partenaires: "🏪",
+            fonctionnalites: "⚙️",
+            support: "🆘",
+            general: "🌟",
+        };
+        return icons[category] || "📝";
+    }
+
+    // Créer la pagination
+    function createPaginationHTML(current, total) {
+        let html = '<div class="flex justify-center gap-2">';
+
+        // Bouton précédent
+        if (current > 1) {
+            html += `<button onclick="changePage(${current - 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">Précédent</button>`;
+        }
+
+        // Numéros de page
+        for (
+            let i = Math.max(1, current - 2);
+            i <= Math.min(total, current + 2);
+            i++
+        ) {
+            const isActive = i === current;
+            html += `<button onclick="changePage(${i})" class="px-3 py-2 rounded transition ${isActive ? "bg-yellow-500 text-white" : "border border-gray-300 hover:bg-gray-100"}">${i}</button>`;
+        }
+
+        // Bouton suivant
+        if (current < total) {
+            html += `<button onclick="changePage(${current + 1})" class="px-3 py-2 border border-gray-300 rounded hover:bg-gray-100 transition">Suivant</button>`;
+        }
+
+        html += "</div>";
+        return html;
+    }
+
+    // Changer de page
+    window.changePage = function (page) {
+        currentPage = page;
+        displayAvis();
+    };
+
+    // Initialiser les filtres
+    function initFilters() {
+        const categorieFilter = document.getElementById("categorieAvisFilter");
+        const sortBtn = document.getElementById("sortAvis");
+
+        categorieFilter?.addEventListener("change", applyFilters);
+
+        sortBtn?.addEventListener("click", () => {
+            const currentSort = sortBtn.dataset.sort;
+            if (currentSort === "recent") {
+                sortBtn.dataset.sort = "rating";
+                sortBtn.textContent = "⭐ Mieux notés";
+            } else {
+                sortBtn.dataset.sort = "recent";
+                sortBtn.textContent = "📅 Plus récents";
+            }
+            applyFilters();
+        });
+    }
+
+    // Appliquer les filtres
+    function applyFilters() {
+        const categorieFilter = document.getElementById("categorieAvisFilter");
+        const sortBtn = document.getElementById("sortAvis");
+
+        let filteredAvis = [...allAvis];
+
+        // Filtre par catégorie
+        const selectedCategorie = categorieFilter?.value;
+        if (selectedCategorie && selectedCategorie !== "tous") {
+            filteredAvis = filteredAvis.filter(
+                (avis) =>
+                    Array.isArray(avis.categories) &&
+                    avis.categories.includes(selectedCategorie),
+            );
+        }
+
+        // Tri
+        const sortType = sortBtn?.dataset.sort || "recent";
+        if (sortType === "rating") {
+            filteredAvis.sort((a, b) => (b.note || 0) - (a.note || 0));
+        } else {
+            filteredAvis.sort(
+                (a, b) => new Date(b.created) - new Date(a.created),
+            );
+        }
+
+        // Réinitialiser la page
+        currentPage = 1;
+
+        // Afficher les résultats filtrés
+        displayAvis(filteredAvis);
+    }
+
+    // Fonctions utilitaires
+    function showSuccess(message, container = null) {
+        const element = container || createNotification();
+        element.className =
+            "p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg";
+        element.textContent = message;
+        element.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => element.remove(), 5000);
+        }
+    }
+
+    function showError(message, container = null) {
+        const element = container || createNotification();
+        element.className =
+            "p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg";
+        element.textContent = message;
+        element.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => element.remove(), 5000);
+        }
+    }
+
+    function createNotification() {
+        const notification = document.createElement("div");
+        notification.className = "fixed top-4 right-4 z-50 max-w-sm";
+        document.body.appendChild(notification);
+        return notification;
+    }
+
+    // Exposer la fonction resetForm globalement
+    window.resetForm = resetForm;
+</script>

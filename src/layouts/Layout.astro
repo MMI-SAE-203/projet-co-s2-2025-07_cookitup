@@ -26,7 +26,7 @@ const { title = "Cookit-UP" } = Astro.props;
 				<span class="font-bold text-lg">Cookit-UP</span>
 			</a>
 
-			<!-- NAV sans menus déroulants -->
+			<!-- NAV avec menu déroulant Communauté -->
 			<nav
 				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10"
 			>
@@ -34,9 +34,64 @@ const { title = "Cookit-UP" } = Astro.props;
 				<a href="/menu-semaine" class="hover:underline"
 					>MENU DE LA SEMAINE</a
 				>
-				<a href="/cookup" class="hover:underline">COOKUP</a>
+				<a href="/pass-cookup" class="hover:underline">COOKUP</a>
 				<a href="/a-propos" class="hover:underline">A PROPOS</a>
-				<a href="/communaute" class="hover:underline">COMMUNAUTE</a>
+
+				<!-- Menu déroulant Communauté -->
+				<div class="relative group">
+					<button class="hover:underline flex items-center">
+						COMMUNAUTE
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-4 w-4 ml-1"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"></path>
+						</svg>
+					</button>
+
+					<!-- Sous-menu -->
+					<div
+						class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+					>
+						<div class="py-2">
+							<a
+								href="/avis-site"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+							>
+								<span class="mr-2">💬</span>
+								Donner son avis
+							</a>
+							<a
+								href="/forum"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+							>
+								<span class="mr-2">👥</span>
+								Forum
+							</a>
+							<a
+								href="/evenements"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+							>
+								<span class="mr-2">📅</span>
+								Événements
+							</a>
+							<a
+								href="/blog"
+								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+							>
+								<span class="mr-2">📝</span>
+								Blog
+							</a>
+						</div>
+					</div>
+				</div>
 			</nav>
 
 			<!-- Icônes à droite (agrandies) -->
@@ -231,6 +286,38 @@ const { title = "Cookit-UP" } = Astro.props;
 								</svg>
 								Mes recettes
 							</a>
+
+							<!-- Séparateur Communauté -->
+							<div class="border-t border-gray-200 mt-2 pt-2">
+								<div class="px-4 py-1">
+									<p
+										class="text-xs font-medium text-gray-500 uppercase tracking-wide"
+									>
+										Communauté
+									</p>
+								</div>
+								<a
+									href="/avis-site"
+									class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="h-4 w-4 mr-2"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+										></path>
+									</svg>
+									Donner mon avis
+								</a>
+							</div>
+
 							<div class="border-t border-gray-200 mt-2 pt-2">
 								<button
 									id="logoutButton"
@@ -331,8 +418,8 @@ const { title = "Cookit-UP" } = Astro.props;
 					<a href="/a-propos" class="block hover:underline"
 						>.A propos</a
 					>
-					<a href="/communaute" class="block hover:underline"
-						>.Communaute</a
+					<a href="/avis-site" class="block hover:underline"
+						>.Donner son avis</a
 					>
 				</div>
 

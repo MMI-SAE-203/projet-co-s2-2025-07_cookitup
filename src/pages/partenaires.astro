@@ -1,0 +1,837 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import { getAllPartenaires } from "../backend.mjs";
+
+// 🆕 Récupérer les partenaires depuis PocketBase
+let partenaires = [];
+let totalPartenaires = 0;
+let reductionMoyenne = 0;
+
+try {
+    console.log('🏪 Chargement des partenaires depuis PocketBase...');
+    partenaires = await getAllPartenaires();
+    totalPartenaires = partenaires.length;
+    
+    if (partenaires.length > 0) {
+        // Calculer la réduction moyenne
+        const reductions = partenaires
+            .map(p => parseInt(p.reduction?.replace('%', '') || '0'))
+            .filter(r => r > 0);
+        
+        reductionMoyenne = reductions.length > 0 
+            ? Math.round(reductions.reduce((sum, r) => sum + r, 0) / reductions.length)
+            : 0;
+            
+        console.log(`✅ ${totalPartenaires} partenaires chargés, réduction moyenne: ${reductionMoyenne}%`);
+    }
+} catch (error) {
+    console.error('❌ Erreur lors du chargement des partenaires:', error);
+    
+    // Données de fallback en cas d'erreur
+    partenaires = [
+        {
+            id: "fallback-1",
+            nom: "Exemple Partenaire",
+            description: "Données de démonstration",
+            adresse: "123 Rue Example, 75001 Paris",
+            latitude: 48.8566,
+            longitude: 2.3522,
+            ville: "Paris",
+            code_postal: "75001",
+            telephone: "01 23 45 67 89",
+            horaires: "Lun-Sam: 9h-19h",
+            reduction: "10%",
+            code_promo: "DEMO10",
+            validite_offre: "31/12/2024",
+            categories: ["Épicerie"],
+            logo: null,
+            image: null
+        }
+    ];
+    totalPartenaires = 1;
+    reductionMoyenne = 10;
+}
+
+// Fonction pour générer l'URL des images PocketBase
+function getImageUrl(partenaire, field) {
+    if (!partenaire[field]) return "/placeholder.svg";
+    return `http://127.0.0.1:8090/api/files/partenaires/${partenaire.id}/${partenaire[field]}`;
+}
+---
+
+<Layout title="Nos Partenaires | Cookit-UP">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- État de chargement -->
+    <div id="loadingState" class="min-h-screen flex items-center justify-center bg-gray-50">
+        <div class="text-center">
+            <div class="text-4xl mb-4">⏳</div>
+            <h2 class="text-xl font-bold mb-2">Vérification de votre accès...</h2>
+            <p class="text-gray-600">Chargement des partenaires...</p>
+        </div>
+    </div>
+
+    <!-- État non connecté -->
+    <div id="notLoggedInState" class="min-h-screen bg-gray-50 py-12 hidden">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="bg-white rounded-lg shadow-lg p-12">
+                <div class="text-6xl mb-6">🔒</div>
+                <h1 class="text-3xl font-bold mb-4">Connexion requise</h1>
+                <p class="text-gray-600 mb-8 text-lg">
+                    Vous devez être connecté pour accéder à la page des partenaires et découvrir nos offres exclusives.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a 
+                        href="/connexion"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    >
+                        🔑 Se connecter
+                    </a>
+                    <a 
+                        href="/inscription"
+                        class="bg-transparent border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    >
+                        📝 Créer un compte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- État sans Pass Cookup -->
+    <div id="noCookupPassState" class="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50 py-12 hidden">
+        <div class="max-w-6xl mx-auto px-6">
+            <!-- Hero Section pour non-abonnés -->
+            <div class="text-center mb-12">
+                <div class="text-6xl mb-6">⭐</div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Pass Cookup requis</h1>
+                <p class="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
+                    Les réductions partenaires sont une fonctionnalité exclusive du <strong>Pass Cookup</strong>. 
+                    Débloquez l'accès à tous nos partenaires et économisez sur vos courses !
+                </p>
+            </div>
+
+            <!-- Carte des partenaires (verrouillée) -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-center">Localisation de nos partenaires</h2>
+                <div class="relative bg-white rounded-lg shadow-lg overflow-hidden">
+                    <!-- Overlay de verrouillage sur la carte -->
+                    <div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <div class="text-6xl mb-4">🔒</div>
+                            <h3 class="text-2xl font-bold mb-2">Carte verrouillée</h3>
+                            <p class="text-lg mb-4">Pass Cookup requis pour voir les emplacements</p>
+                            <button 
+                                onclick="window.location.href = '/pass-cookup'"
+                                class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold px-6 py-3 rounded-lg hover:from-yellow-500 hover:to-orange-600 transition"
+                            >
+                                ⭐ Débloquer la carte
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Carte floutée -->
+                    <div id="lockedMap" class="h-96 filter blur-sm"></div>
+                </div>
+            </div>
+
+            <!-- CTA Pass Cookup -->
+            <div class="text-center">
+                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg p-8 text-white">
+                    <h2 class="text-3xl font-bold mb-4">Débloquez tous les avantages !</h2>
+                    <p class="text-lg mb-6 opacity-90">
+                        Rejoignez le Pass Cookup et commencez à économiser dès aujourd'hui
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a 
+                            href="/pass-cookup"
+                            class="bg-white text-orange-500 font-bold px-8 py-4 rounded-lg hover:bg-gray-100 transition transform hover:scale-105"
+                        >
+                            ⭐ Découvrir le Pass Cookup
+                        </a>
+                        <button 
+                            onclick="window.location.href = '/profil'"
+                            class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-orange-500 font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                        >
+                            👤 Mon profil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal (avec Pass Cookup) -->
+    <div id="mainContent" class="hidden">
+        <!-- Hero Section -->
+        <Hero 
+            title="Nos Partenaires"
+            subtitle="DECOUVREZ"
+            description="BENEFICIEZ DE REDUCTIONS EXCLUSIVES CHEZ NOS PARTENAIRES POUR VOS COURSES ALIMENTAIRES"
+            backgroundImage="/placeholder.svg?height=600&width=1200&text=Partenaires+Hero"
+            stats={[
+                { number: totalPartenaires.toString(), label: "Partenaires", icon: "🏪" },
+                { number: reductionMoyenne.toString() + "%", label: "Réduction moyenne", icon: "💰" },
+                { number: "50+", label: "Magasins", icon: "📍" },
+                { number: "100%", label: "Gratuit", icon: "🎁" }
+            ]}
+        >
+            <!-- Boutons d'action dans le hero -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                <button 
+                    class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105 shadow-lg"
+                    onclick="document.getElementById('carte-section').scrollIntoView({ behavior: 'smooth' })"
+                >
+                    🗺️ Voir la carte
+                </button>
+                <button 
+                    class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                    onclick="document.getElementById('partenaires-section').scrollIntoView({ behavior: 'smooth' })"
+                >
+                    🏪 Liste des partenaires
+                </button>
+            </div>
+        </Hero>
+
+        <!-- Section Carte Interactive -->
+        <section id="carte-section" class="py-16 px-6 bg-gray-50">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Trouvez nos partenaires près de chez vous</h2>
+                    <p class="text-gray-600 text-lg">
+                        Découvrez tous nos magasins partenaires sur la carte interactive
+                    </p>
+                </div>
+
+                <!-- Contrôles de la carte -->
+                <div class="mb-6 flex flex-wrap gap-4 justify-center">
+                    <select 
+                        id="mapCategorieFilter"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    >
+                        <option value="tous">Toutes les catégories</option>
+                        <option value="Épicerie">Épicerie</option>
+                        <option value="Produits frais">Produits frais</option>
+                        <option value="Bio">Bio</option>
+                        <option value="Surgelés">Surgelés</option>
+                        <option value="Fruits">Fruits & Légumes</option>
+                    </select>
+                    
+                    <select 
+                        id="mapVilleFilter"
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    >
+                        <option value="tous">Toutes les villes</option>
+                        {[...new Set(partenaires.map(p => p.ville))].map(ville => (
+                            <option value={ville}>{ville}</option>
+                        ))}
+                    </select>
+
+                    <button 
+                        id="centerMapBtn"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                    >
+                        🎯 Centrer la carte
+                    </button>
+
+                    <button 
+                        id="locateUserBtn"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                    >
+                        📍 Ma position
+                    </button>
+                </div>
+
+                <!-- Carte -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div id="map" class="h-96 md:h-[500px] w-full"></div>
+                </div>
+
+                <!-- Légende -->
+                <div class="mt-6 bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-bold mb-4">Légende</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                            <span>Épicerie</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                            <span>Bio</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
+                            <span>Produits frais</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+                            <span>Surgelés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Liste des partenaires -->
+        <section id="partenaires-section" class="py-16 px-6 bg-white">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-bold">Nos partenaires</h2>
+                    <div class="text-sm text-gray-600">
+                        {totalPartenaires} partenaires disponibles
+                    </div>
+                </div>
+
+                <!-- Badge Pass Cookup actif -->
+                <div class="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                    <div class="flex items-center justify-center">
+                        <div class="text-2xl mr-3">✅</div>
+                        <div>
+                            <h3 class="font-bold text-green-800">Pass Cookup actif</h3>
+                            <p class="text-sm text-green-600">Vous avez accès à toutes les réductions partenaires !</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grille des partenaires -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="partenairesList">
+                    {partenaires.map((partenaire) => (
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow partenaire-card" 
+                             data-categories={Array.isArray(partenaire.categories) ? partenaire.categories.join(',') : ''} 
+                             data-reduction={parseInt(partenaire.reduction?.replace('%', '') || '0')}
+                             data-id={partenaire.id}
+                             data-lat={partenaire.latitude}
+                             data-lng={partenaire.longitude}>
+                            
+                            <!-- Image du magasin -->
+                            <div class="relative h-48">
+                                <img 
+                                    src={getImageUrl(partenaire, 'image') || "/placeholder.svg"} 
+                                    alt={`Magasin ${partenaire.nom}`}
+                                    class="w-full h-full object-cover"
+                                />
+                                <!-- Badge réduction -->
+                                {partenaire.reduction && (
+                                    <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold">
+                                        -{partenaire.reduction}
+                                    </div>
+                                )}
+                                <!-- Badge Cookup Pass actif -->
+                                <div class="absolute top-4 left-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                                    ✅ ACTIF
+                                </div>
+                            </div>
+
+                            <div class="p-6">
+                                <!-- Logo et nom -->
+                                <div class="flex items-center mb-4">
+                                    <img 
+                                        src={getImageUrl(partenaire, 'logo') || "/placeholder.svg"} 
+                                        alt={`Logo ${partenaire.nom}`}
+                                        class="h-12 w-auto mr-4"
+                                    />
+                                    <div>
+                                        <h3 class="text-xl font-bold">{partenaire.nom}</h3>
+                                        <p class="text-sm text-gray-500">{partenaire.ville}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                                    {partenaire.description}
+                                </p>
+
+                                <!-- Offre débloquée -->
+                                {partenaire.reduction && partenaire.code_promo && (
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-2xl font-bold text-green-600">
+                                                {partenaire.reduction}
+                                            </span>
+                                            {partenaire.validite_offre && (
+                                                <span class="text-xs text-gray-500">
+                                                    Valide jusqu'au {partenaire.validite_offre}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div class="bg-white border border-dashed border-green-400 rounded p-2 text-center">
+                                            <span class="text-xs text-gray-500">Code promo :</span>
+                                            <span class="font-mono font-bold text-green-600 ml-1 promo-code">
+                                                {partenaire.code_promo}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <!-- Catégories -->
+                                {Array.isArray(partenaire.categories) && partenaire.categories.length > 0 && (
+                                    <div class="flex flex-wrap gap-1 mb-4">
+                                        {partenaire.categories.map((categorie) => (
+                                            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                                                {categorie}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <!-- Informations pratiques -->
+                                <div class="space-y-2 text-sm text-gray-600 mb-4">
+                                    <div class="flex items-start">
+                                        <span class="mr-2">📍</span>
+                                        <span>{partenaire.adresse}</span>
+                                    </div>
+                                    {partenaire.telephone && (
+                                        <div class="flex items-center">
+                                            <span class="mr-2">📞</span>
+                                            <span>{partenaire.telephone}</span>
+                                        </div>
+                                    )}
+                                    {partenaire.horaires && (
+                                        <div class="flex items-start">
+                                            <span class="mr-2">🕒</span>
+                                            <span>{partenaire.horaires}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="flex gap-2">
+                                    {partenaire.code_promo && (
+                                        <button 
+                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition"
+                                            onclick={`copyPromoCode('${partenaire.code_promo}')`}
+                                        >
+                                            📋 Copier le code
+                                        </button>
+                                    )}
+                                    <button 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
+                                        onclick={`showOnMap('${partenaire.id}')`}
+                                    >
+                                        🗺️
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <!-- Message si aucun partenaire -->
+                {partenaires.length === 0 && (
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">🏪</div>
+                        <h3 class="text-xl font-bold mb-2">Aucun partenaire disponible</h3>
+                        <p class="text-gray-600">Les partenaires seront bientôt ajoutés !</p>
+                    </div>
+                )}
+            </div>
+        </section>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Données des partenaires pour JavaScript -->
+    <script define:vars={{ partenairesData: partenaires }}>
+        // Les données des partenaires sont maintenant disponibles dans la variable partenairesData
+        window.partenairesData = partenairesData;
+    </script>
+</Layout>
+
+<script>
+    import { isLoggedIn, getCurrentUser } from '../js/auth.js';
+    import pb from '../lib/pocketbase.js';
+
+    // Variables globales pour la carte
+    let map = null;
+    let markers = [];
+    let userMarker = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 Initialisation de la page partenaires');
+        console.log('🏪 Partenaires chargés:', window.partenairesData?.length || 0);
+        
+        // Attendre un peu pour que l'authentification soit initialisée
+        setTimeout(() => {
+            checkAccess();
+        }, 100);
+        
+        // Écouter les changements d'authentification
+        document.addEventListener('userLogin', checkAccess);
+        document.addEventListener('userLogout', checkAccess);
+        document.addEventListener('userUpdate', checkAccess);
+    });
+
+    // Vérifier l'accès et afficher la bonne interface
+    async function checkAccess() {
+        console.log('🔍 Vérification de l\'accès...');
+        
+        const loadingState = document.getElementById('loadingState');
+        const notLoggedInState = document.getElementById('notLoggedInState');
+        const noCookupPassState = document.getElementById('noCookupPassState');
+        const mainContent = document.getElementById('mainContent');
+        
+        // Masquer tous les états
+        loadingState.classList.add('hidden');
+        notLoggedInState.classList.add('hidden');
+        noCookupPassState.classList.add('hidden');
+        mainContent.classList.add('hidden');
+        
+        try {
+            // Vérifier si l'utilisateur est connecté
+            if (!isLoggedIn()) {
+                console.log('❌ Utilisateur non connecté');
+                notLoggedInState.classList.remove('hidden');
+                return;
+            }
+            
+            // Récupérer les données utilisateur à jour depuis PocketBase
+            const currentUser = getCurrentUser();
+            console.log('👤 Utilisateur connecté:', currentUser?.email);
+            
+            // Récupérer les données utilisateur fraîches depuis PocketBase
+            let freshUserData;
+            try {
+                freshUserData = await pb.collection('users').getOne(currentUser.id);
+                console.log('📡 Données fraîches de PocketBase:', freshUserData);
+            } catch (error) {
+                console.error('❌ Erreur lors de la récupération des données utilisateur:', error);
+                freshUserData = currentUser;
+            }
+            
+            // Vérifier le Pass Cookup avec plusieurs propriétés possibles
+            const hasCookupPass = checkCookupPass(freshUserData);
+            console.log('⭐ Pass Cookup actif:', hasCookupPass);
+            
+            if (hasCookupPass) {
+                console.log('✅ Accès autorisé - Affichage du contenu principal');
+                mainContent.classList.remove('hidden');
+                
+                // Initialiser la carte et les fonctionnalités
+                setTimeout(() => {
+                    initMap();
+                    initMapControls();
+                }, 100);
+            } else {
+                console.log('🔒 Pass Cookup requis - Affichage de l\'interface verrouillée');
+                noCookupPassState.classList.remove('hidden');
+                
+                // Initialiser une carte verrouillée (floutée)
+                setTimeout(() => {
+                    initLockedMap();
+                }, 100);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erreur lors de la vérification de l\'accès:', error);
+            notLoggedInState.classList.remove('hidden');
+        }
+    }
+
+    // Fonction pour vérifier le Pass Cookup
+    function checkCookupPass(user) {
+        if (!user) return false;
+        
+        const possibleProperties = [
+            'cookup',
+            'pass_cookup', 
+            'passCookup',
+            'cookup_pass',
+            'hasCookupPass'
+        ];
+        
+        for (const prop of possibleProperties) {
+            const value = user[prop];
+            if (value === true || value === 'true' || value === 1 || value === '1') {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    // Initialiser la carte principale
+    function initMap() {
+        console.log('🗺️ Initialisation de la carte...');
+        
+        if (!window.partenairesData || window.partenairesData.length === 0) {
+            console.warn('⚠️ Aucune donnée de partenaire disponible');
+            return;
+        }
+        
+        // Centrer sur la France
+        map = L.map('map').setView([46.603354, 1.888334], 6);
+        
+        // Ajouter les tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Ajouter les marqueurs des partenaires
+        addPartenaireMarkers();
+        
+        console.log('✅ Carte initialisée avec succès');
+    }
+
+    // Initialiser la carte verrouillée (pour les non-abonnés)
+    function initLockedMap() {
+        console.log('🔒 Initialisation de la carte verrouillée...');
+        
+        const lockedMap = L.map('lockedMap').setView([46.603354, 1.888334], 6);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(lockedMap);
+        
+        // Ajouter quelques marqueurs génériques si des données existent
+        if (window.partenairesData && window.partenairesData.length > 0) {
+            window.partenairesData.slice(0, 3).forEach(partenaire => {
+                if (partenaire.latitude && partenaire.longitude) {
+                    L.marker([partenaire.latitude, partenaire.longitude])
+                        .addTo(lockedMap)
+                        .bindPopup(`
+                            <div class="text-center p-2">
+                                <div class="text-2xl mb-2">🔒</div>
+                                <strong>Pass Cookup requis</strong>
+                            </div>
+                        `);
+                }
+            });
+        }
+    }
+
+    // Ajouter les marqueurs des partenaires
+    function addPartenaireMarkers() {
+        if (!window.partenairesData) return;
+        
+        // Couleurs par catégorie
+        const categoryColors = {
+            'Épicerie': '#ef4444',
+            'Bio': '#22c55e',
+            'Produits frais': '#3b82f6',
+            'Surgelés': '#8b5cf6',
+            'Fruits': '#f59e0b',
+            'Légumes': '#10b981'
+        };
+        
+        window.partenairesData.forEach(partenaire => {
+            // Vérifier que les coordonnées existent
+            if (!partenaire.latitude || !partenaire.longitude) {
+                console.warn('⚠️ Coordonnées manquantes pour:', partenaire.nom);
+                return;
+            }
+            
+            // Déterminer la couleur du marqueur
+            const categories = Array.isArray(partenaire.categories) ? partenaire.categories : [];
+            const primaryCategory = categories[0] || 'Épicerie';
+            const color = categoryColors[primaryCategory] || '#6b7280';
+            
+            // Créer une icône personnalisée
+            const customIcon = L.divIcon({
+                html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+                popupAnchor: [0, -10],
+                className: 'custom-marker'
+            });
+            
+            // Créer le marqueur
+            const marker = L.marker([partenaire.latitude, partenaire.longitude], {
+                icon: customIcon
+            }).addTo(map);
+            
+            // Contenu du popup
+            const popupContent = `
+                <div class="p-4 min-w-[250px]">
+                    <h3 class="font-bold text-lg mb-2">${partenaire.nom}</h3>
+                    <p class="text-sm text-gray-600 mb-2">${partenaire.adresse}</p>
+                    
+                    ${partenaire.reduction && partenaire.code_promo ? `
+                        <div class="bg-green-50 border border-green-200 rounded p-3 mb-3">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-green-600 text-lg">${partenaire.reduction}</span>
+                                <span class="text-xs text-gray-500">de réduction</span>
+                            </div>
+                            <div class="bg-white border border-dashed border-green-400 rounded p-2 text-center">
+                                <span class="text-xs text-gray-500">Code :</span>
+                                <span class="font-mono font-bold text-green-600">${partenaire.code_promo}</span>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="space-y-1 text-sm text-gray-600 mb-3">
+                        ${partenaire.telephone ? `<div>📞 ${partenaire.telephone}</div>` : ''}
+                        ${partenaire.horaires ? `<div>🕒 ${partenaire.horaires}</div>` : ''}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        ${partenaire.code_promo ? `
+                            <button 
+                                onclick="copyPromoCode('${partenaire.code_promo}')"
+                                class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm transition"
+                            >
+                                📋 Copier
+                            </button>
+                        ` : ''}
+                        <button 
+                            onclick="getDirections(${partenaire.latitude}, ${partenaire.longitude})"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded text-sm transition"
+                        >
+                            🧭 Itinéraire
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            marker.bindPopup(popupContent);
+            
+            // Stocker le marqueur avec ses données
+            markers.push({
+                marker: marker,
+                data: partenaire
+            });
+        });
+    }
+
+    // Initialiser les contrôles de la carte
+    function initMapControls() {
+        // Filtre par catégorie
+        const mapCategorieFilter = document.getElementById('mapCategorieFilter');
+        mapCategorieFilter?.addEventListener('change', filterMapMarkers);
+        
+        // Filtre par ville
+        const mapVilleFilter = document.getElementById('mapVilleFilter');
+        mapVilleFilter?.addEventListener('change', filterMapMarkers);
+        
+        // Centrer la carte
+        const centerMapBtn = document.getElementById('centerMapBtn');
+        centerMapBtn?.addEventListener('click', () => {
+            map.setView([46.603354, 1.888334], 6);
+        });
+        
+        // Localiser l'utilisateur
+        const locateUserBtn = document.getElementById('locateUserBtn');
+        locateUserBtn?.addEventListener('click', locateUser);
+    }
+
+    // Filtrer les marqueurs sur la carte
+    function filterMapMarkers() {
+        const selectedCategorie = document.getElementById('mapCategorieFilter')?.value || 'tous';
+        const selectedVille = document.getElementById('mapVilleFilter')?.value || 'tous';
+        
+        markers.forEach(({ marker, data }) => {
+            const categories = Array.isArray(data.categories) ? data.categories : [];
+            const matchesCategorie = selectedCategorie === 'tous' || 
+                                   categories.includes(selectedCategorie);
+            const matchesVille = selectedVille === 'tous' || data.ville === selectedVille;
+            
+            if (matchesCategorie && matchesVille) {
+                marker.addTo(map);
+            } else {
+                map.removeLayer(marker);
+            }
+        });
+    }
+
+    // Localiser l'utilisateur
+    function locateUser() {
+        if (!navigator.geolocation) {
+            alert('La géolocalisation n\'est pas supportée par votre navigateur');
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                // Supprimer l'ancien marqueur utilisateur
+                if (userMarker) {
+                    map.removeLayer(userMarker);
+                }
+                
+                // Ajouter le nouveau marqueur utilisateur
+                userMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        html: '<div style="background-color: #3b82f6; width: 15px; height: 15px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+                        iconSize: [15, 15],
+                        iconAnchor: [7.5, 7.5],
+                        className: 'user-marker'
+                    })
+                }).addTo(map);
+                
+                userMarker.bindPopup('<strong>📍 Votre position</strong>');
+                
+                // Centrer la carte sur l'utilisateur
+                map.setView([lat, lng], 12);
+                
+                showNotification('Position trouvée ! 📍');
+            },
+            (error) => {
+                console.error('Erreur de géolocalisation:', error);
+                alert('Impossible de récupérer votre position');
+            }
+        );
+    }
+
+    // Afficher un partenaire spécifique sur la carte
+    window.showOnMap = function(partenaireId) {
+        const partenaire = window.partenairesData?.find(p => p.id === partenaireId);
+        if (!partenaire || !partenaire.latitude || !partenaire.longitude) return;
+        
+        // Aller à la section carte
+        document.getElementById('carte-section').scrollIntoView({ behavior: 'smooth' });
+        
+        // Centrer sur le partenaire
+        setTimeout(() => {
+            map.setView([partenaire.latitude, partenaire.longitude], 15);
+            
+            // Trouver et ouvrir le popup du marqueur
+            const markerData = markers.find(m => m.data.id === partenaireId);
+            if (markerData) {
+                markerData.marker.openPopup();
+            }
+        }, 500);
+    };
+
+    // Obtenir un itinéraire
+    window.getDirections = function(lat, lng) {
+        const url = `https://www.openstreetmap.org/directions?from=&to=${lat},${lng}`;
+        window.open(url, '_blank');
+    };
+
+    // Copier le code promo
+    window.copyPromoCode = function(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            showNotification(`Code ${code} copié ! 📋`);
+        }).catch(() => {
+            // Fallback
+            const textArea = document.createElement('textarea');
+            textArea.value = code;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showNotification(`Code ${code} copié ! 📋`);
+        });
+    };
+
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity';
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+</script>
+</Layout>

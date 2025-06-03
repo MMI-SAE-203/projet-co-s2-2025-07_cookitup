@@ -178,6 +178,18 @@ import Layout from "../layouts/Layout.astro";
                         </button>
                         <button
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="avis"
+                        >
+                            ⭐ Mes avis
+                        </button>
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="subscription"
+                        >
+                            💳 Gérer l'abonnement
+                        </button>
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="security"
                         >
                             🔒 Sécurité
@@ -524,6 +536,368 @@ import Layout from "../layouts/Layout.astro";
                         </div>
                     </div>
 
+                    <!-- Onglet Mes avis -->
+                    <div id="avisTab" class="tab-content hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold">
+                                Mes avis sur le site
+                            </h2>
+                            <a
+                                href="/avis-site"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                            >
+                                ✍️ Donner un avis
+                            </a>
+                        </div>
+
+                        <!-- État de chargement des avis -->
+                        <div id="avisLoading" class="text-center py-8">
+                            <div class="text-2xl mb-2">⏳</div>
+                            <p class="text-gray-600">
+                                Chargement de vos avis...
+                            </p>
+                        </div>
+
+                        <!-- Liste des avis -->
+                        <div id="userAvisList" class="space-y-4 hidden">
+                            <!-- Les avis seront ajoutés ici -->
+                        </div>
+
+                        <!-- État vide -->
+                        <div id="noUserAvis" class="text-center py-12 hidden">
+                            <div class="text-6xl mb-4">⭐</div>
+                            <h3 class="text-xl font-bold mb-2">
+                                Aucun avis donné
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                Vous n'avez pas encore donné votre avis sur
+                                Cookit-UP.
+                            </p>
+                            <a
+                                href="/avis-site"
+                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                            >
+                                ✍️ Donner mon avis
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Gérer l'abonnement -->
+                    <div id="subscriptionTab" class="tab-content hidden">
+                        <h2 class="text-xl font-bold mb-6">
+                            Gérer mon abonnement
+                        </h2>
+
+                        <!-- État de chargement -->
+                        <div id="subscriptionLoading" class="text-center py-8">
+                            <div class="text-2xl mb-2">⏳</div>
+                            <p class="text-gray-600">
+                                Chargement des informations d'abonnement...
+                            </p>
+                        </div>
+
+                        <!-- Pas d'abonnement -->
+                        <div
+                            id="noSubscription"
+                            class="text-center py-12 bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl hidden"
+                        >
+                            <div class="text-6xl mb-4">💳</div>
+                            <h3 class="text-2xl font-bold text-orange-800 mb-3">
+                                Aucun abonnement actif
+                            </h3>
+                            <p class="text-orange-600 mb-6 max-w-md mx-auto">
+                                Vous n'avez pas encore d'abonnement Pass Cookup.
+                                Découvrez tous les avantages et souscrivez dès
+                                maintenant !
+                            </p>
+
+                            <!-- Aperçu des avantages -->
+                            <div
+                                class="grid grid-cols-2 gap-4 max-w-lg mx-auto mb-6 text-sm"
+                            >
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🍽️</div>
+                                    <div class="font-medium text-orange-800">
+                                        Recettes premium
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🏪</div>
+                                    <div class="font-medium text-orange-800">
+                                        Codes promo
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">📅</div>
+                                    <div class="font-medium text-orange-800">
+                                        Planificateur
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-white/50 p-3 rounded-lg border border-orange-100"
+                                >
+                                    <div class="text-2xl mb-1">🆘</div>
+                                    <div class="font-medium text-orange-800">
+                                        Support prioritaire
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <a
+                                    href="/pass-cookup"
+                                    class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold px-8 py-4 rounded-xl hover:from-yellow-500 hover:to-orange-600 transition transform hover:scale-105 shadow-lg"
+                                >
+                                    🌟 Découvrir le Pass Cookup
+                                </a>
+                                <br />
+                                <a
+                                    href="/abonnement-cookup"
+                                    class="inline-block bg-emerald-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-emerald-700 transition"
+                                >
+                                    💳 S'abonner maintenant
+                                </a>
+                            </div>
+
+                            <p class="text-xs text-orange-500 mt-4">
+                                À partir de 5,99€/mois • Résiliable à tout
+                                moment
+                            </p>
+                        </div>
+
+                        <!-- Abonnement actif -->
+                        <div id="activeSubscription" class="hidden">
+                            <!-- Informations de l'abonnement -->
+                            <div
+                                class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg p-6 text-white mb-6"
+                            >
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-xl font-bold mb-2">
+                                            🌟 Pass Cookup Actif
+                                        </h3>
+                                        <p
+                                            id="subscriptionType"
+                                            class="text-emerald-100"
+                                        >
+                                            Abonnement mensuel
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div
+                                            class="text-2xl font-bold"
+                                            id="subscriptionPrice"
+                                        >
+                                            5,99€
+                                        </div>
+                                        <div class="text-emerald-100 text-sm">
+                                            par mois
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Détails de l'abonnement -->
+                            <div
+                                class="bg-white border border-gray-200 rounded-lg p-6 mb-6"
+                            >
+                                <h4 class="font-semibold text-gray-900 mb-4">
+                                    Détails de l'abonnement
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-gray-600"
+                                            >Date de souscription :</span
+                                        >
+                                        <span
+                                            id="subscriptionStartDate"
+                                            class="font-medium ml-2"
+                                            >15 janvier 2024</span
+                                        >
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600"
+                                            >Prochaine facturation :</span
+                                        >
+                                        <span
+                                            id="nextBillingDate"
+                                            class="font-medium ml-2"
+                                            >15 février 2024</span
+                                        >
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600"
+                                            >Statut :</span
+                                        >
+                                        <span
+                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2"
+                                        >
+                                            ✅ Actif
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600"
+                                            >Renouvellement automatique :</span
+                                        >
+                                        <span
+                                            id="autoRenewal"
+                                            class="font-medium ml-2"
+                                            >Activé</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Avantages inclus -->
+                            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                                <h4 class="font-semibold text-gray-900 mb-4">
+                                    Vos avantages Pass Cookup
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-3">
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Accès aux recettes premium</span
+                                        >
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Codes promo partenaires exclusifs</span
+                                        >
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Planificateur de menus personnalisé</span
+                                        >
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Support client prioritaire</span
+                                        >
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Gestion des préférences
+                                            alimentaires</span
+                                        >
+                                    </div>
+                                    <div class="flex items-center">
+                                        <svg
+                                            class="h-5 w-5 text-emerald-500 mr-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-700"
+                                            >Accès à la carte des partenaires</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="space-y-4">
+                                <!-- Modifier l'abonnement -->
+                                <div
+                                    class="bg-blue-50 border border-blue-200 rounded-lg p-4"
+                                >
+                                    <h5 class="font-medium text-blue-800 mb-2">
+                                        💡 Modifier votre abonnement
+                                    </h5>
+                                    <p class="text-blue-700 text-sm mb-3">
+                                        Vous pouvez passer à l'abonnement annuel
+                                        et économiser 26% sur votre facture.
+                                    </p>
+                                    <button
+                                        onclick="upgradeSubscription()"
+                                        class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+                                    >
+                                        📈 Passer à l'abonnement annuel
+                                    </button>
+                                </div>
+
+                                <!-- Résilier l'abonnement -->
+                                <div
+                                    class="bg-red-50 border border-red-200 rounded-lg p-4"
+                                >
+                                    <h5 class="font-medium text-red-800 mb-2">
+                                        ⚠️ Résilier votre abonnement
+                                    </h5>
+                                    <p class="text-red-700 text-sm mb-3">
+                                        Vous perdrez l'accès à tous les
+                                        avantages du Pass Cookup à la fin de
+                                        votre période de facturation actuelle.
+                                    </p>
+                                    <button
+                                        onclick="cancelSubscription()"
+                                        class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition"
+                                    >
+                                        🗑️ Résilier l'abonnement
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Onglet Sécurité -->
                     <div id="securityTab" class="tab-content hidden">
                         <h2 class="text-xl font-bold mb-6">
@@ -781,6 +1155,8 @@ import Layout from "../layouts/Layout.astro";
                     // Vérifications spéciales selon l'onglet
                     if (targetTab === "comments") {
                         loadUserComments();
+                    } else if (targetTab === "avis") {
+                        loadUserAvis();
                     } else if (targetTab === "regime") {
                         // Vérifier l'accès au régime
                         if (!currentUser?.cookup) {
@@ -806,6 +1182,8 @@ import Layout from "../layouts/Layout.astro";
                                 .getElementById("regimeAccessDenied")
                                 .classList.add("hidden");
                         }
+                    } else if (targetTab === "subscription") {
+                        loadSubscriptionInfo();
                     }
                 }
             });
@@ -1030,6 +1408,38 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
+    // Charger les avis de l'utilisateur
+    async function loadUserAvis() {
+        const avisLoading = document.getElementById("avisLoading");
+        const userAvisList = document.getElementById("userAvisList");
+        const noUserAvis = document.getElementById("noUserAvis");
+
+        try {
+            avisLoading.classList.remove("hidden");
+            userAvisList.classList.add("hidden");
+            noUserAvis.classList.add("hidden");
+
+            const avis = await pb.collection("avis_site").getFullList({
+                filter: `user = "${currentUser.id}"`,
+                sort: "-created",
+            });
+
+            avisLoading.classList.add("hidden");
+
+            if (avis.length === 0) {
+                noUserAvis.classList.remove("hidden");
+                return;
+            }
+
+            userAvisList.innerHTML = avis.map(createUserAvisHTML).join("");
+            userAvisList.classList.remove("hidden");
+        } catch (error) {
+            console.error("Erreur lors du chargement des avis:", error);
+            avisLoading.classList.add("hidden");
+            showError("Erreur lors du chargement des avis");
+        }
+    }
+
     // Créer le HTML d'un commentaire utilisateur
     function createUserCommentHTML(comment) {
         const recette = comment.expand?.recette;
@@ -1111,6 +1521,106 @@ import Layout from "../layouts/Layout.astro";
         `;
     }
 
+    // Créer le HTML d'un avis utilisateur
+    function createUserAvisHTML(avis) {
+        const createdDate = new Date(avis.created).toLocaleDateString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+
+        const stars = avis.note ? "⭐".repeat(avis.note) : "";
+
+        // Générer l'avatar
+        let avatarHTML = "";
+        if (currentUser?.avatar) {
+            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${currentUser.id}/${currentUser.avatar}`;
+            avatarHTML = `<img src="${avatarUrl}" alt="Mon avatar" class="w-12 h-12 rounded-full object-cover" />`;
+        } else {
+            const userName = currentUser?.pseudo || "Utilisateur";
+            const userInitials = userName.substring(0, 2).toUpperCase();
+            avatarHTML = `<div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">${userInitials}</div>`;
+        }
+
+        // Catégories
+        const categories = Array.isArray(avis.categories)
+            ? avis.categories
+            : [];
+        const categoriesHTML =
+            categories.length > 0
+                ? `<div class="flex flex-wrap gap-1 mb-3">
+                ${categories.map((cat) => `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${getCategoryIcon(cat)} ${cat}</span>`).join("")}
+               </div>`
+                : "";
+
+        return `
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <div class="flex items-start space-x-4">
+                    <!-- Avatar -->
+                    ${avatarHTML}
+                    
+                    <!-- Contenu -->
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-bold text-lg">Avis sur Cookit-UP</h4>
+                                <p class="text-sm text-gray-500">${createdDate}</p>
+                                <div class="flex items-center mt-1">
+                                    ${stars ? `<span class="text-lg mr-2">${stars}</span>` : ""}
+                                    ${
+                                        avis.allow_publication
+                                            ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">📢 Public</span>'
+                                            : '<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">🔒 Privé</span>'
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${categoriesHTML}
+                        
+                        <p class="text-gray-800 leading-relaxed mb-4">${avis.comment}</p>
+                        
+                        ${
+                            avis.suggestions
+                                ? `
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded mb-4">
+                                <h5 class="font-medium text-blue-800 mb-1">💡 Mes suggestions</h5>
+                                <p class="text-blue-700 text-sm">${avis.suggestions}</p>
+                            </div>
+                        `
+                                : ""
+                        }
+                        
+                        <div class="flex gap-2">
+                            <a href="/avis-site" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition">
+                                ✏️ Modifier
+                            </a>
+                            <button 
+                                onclick="deleteUserAvis('${avis.id}')"
+                                class="text-red-600 hover:text-red-800 text-sm font-medium transition"
+                            >
+                                🗑️ Supprimer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Obtenir l'icône d'une catégorie
+    function getCategoryIcon(category) {
+        const icons = {
+            recettes: "🍽️",
+            interface: "🎨",
+            partenaires: "🏪",
+            fonctionnalites: "⚙️",
+            support: "🆘",
+            general: "🌟",
+        };
+        return icons[category] || "📝";
+    }
+
     // Supprimer un commentaire utilisateur
     window.deleteUserComment = async function (commentId) {
         if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
@@ -1125,6 +1635,22 @@ import Layout from "../layouts/Layout.astro";
         } catch (error) {
             console.error("Erreur lors de la suppression:", error);
             showError("Erreur lors de la suppression du commentaire");
+        }
+    };
+
+    // Supprimer un avis utilisateur
+    window.deleteUserAvis = async function (avisId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cet avis ?")) {
+            return;
+        }
+
+        try {
+            await pb.collection("avis_site").delete(avisId);
+            await loadUserAvis();
+            showSuccess("Avis supprimé 🗑️");
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression de l'avis");
         }
     };
 
@@ -1252,4 +1778,131 @@ import Layout from "../layouts/Layout.astro";
             submitBtn.textContent = "🥗 Sauvegarder mes préférences";
         }
     }
+
+    // Charger les informations d'abonnement
+    async function loadSubscriptionInfo() {
+        const subscriptionLoading = document.getElementById(
+            "subscriptionLoading",
+        );
+        const noSubscription = document.getElementById("noSubscription");
+        const activeSubscription =
+            document.getElementById("activeSubscription");
+
+        try {
+            subscriptionLoading.classList.remove("hidden");
+            noSubscription.classList.add("hidden");
+            activeSubscription.classList.add("hidden");
+
+            // Simuler un délai de chargement
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            subscriptionLoading.classList.add("hidden");
+
+            // Vérifier si l'utilisateur a un abonnement actif (basé sur le champ cookup)
+            if (currentUser?.cookup) {
+                // Simuler les données d'abonnement
+                const subscriptionData = getSimulatedSubscriptionData();
+                displaySubscriptionInfo(subscriptionData);
+                activeSubscription.classList.remove("hidden");
+            } else {
+                noSubscription.classList.remove("hidden");
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement de l'abonnement:", error);
+            subscriptionLoading.classList.add("hidden");
+            showError(
+                "Erreur lors du chargement des informations d'abonnement",
+            );
+        }
+    }
+
+    // Simuler les données d'abonnement
+    function getSimulatedSubscriptionData() {
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 2); // Abonnement depuis 2 mois
+
+        const nextBilling = new Date();
+        nextBilling.setMonth(nextBilling.getMonth() + 1); // Prochaine facturation dans 1 mois
+
+        return {
+            type: "monthly",
+            price: "5,99€",
+            startDate: startDate.toLocaleDateString("fr-FR"),
+            nextBilling: nextBilling.toLocaleDateString("fr-FR"),
+            status: "active",
+            autoRenewal: true,
+        };
+    }
+
+    // Afficher les informations d'abonnement
+    function displaySubscriptionInfo(data) {
+        document.getElementById("subscriptionType").textContent =
+            data.type === "monthly"
+                ? "Abonnement mensuel"
+                : "Abonnement annuel";
+        document.getElementById("subscriptionPrice").textContent = data.price;
+        document.getElementById("subscriptionStartDate").textContent =
+            data.startDate;
+        document.getElementById("nextBillingDate").textContent =
+            data.nextBilling;
+        document.getElementById("autoRenewal").textContent = data.autoRenewal
+            ? "Activé"
+            : "Désactivé";
+    }
+
+    // Améliorer l'abonnement
+    window.upgradeSubscription = function () {
+        if (
+            confirm(
+                "Voulez-vous passer à l'abonnement annuel et économiser 26% ?",
+            )
+        ) {
+            // Simuler la mise à niveau
+            showSuccess(
+                "Mise à niveau programmée ! Votre abonnement passera en annuel lors du prochain renouvellement.",
+            );
+
+            // Mettre à jour l'affichage
+            setTimeout(() => {
+                document.getElementById("subscriptionType").textContent =
+                    "Abonnement annuel (à partir du prochain cycle)";
+            }, 1000);
+        }
+    };
+
+    // Résilier l'abonnement
+    window.cancelSubscription = function () {
+        const confirmation = prompt(
+            'Pour confirmer la résiliation de votre abonnement, tapez "RESILIER" :',
+        );
+
+        if (confirmation === "RESILIER") {
+            // Simuler la résiliation
+            showSuccess(
+                "Abonnement résilié. Vous conserverez l'accès jusqu'à la fin de votre période de facturation actuelle.",
+            );
+
+            // Mettre à jour le statut utilisateur
+            setTimeout(async () => {
+                try {
+                    // Mettre à jour le statut cookup à false
+                    await pb.collection("users").update(currentUser.id, {
+                        cookup: false,
+                    });
+
+                    // Recharger le profil
+                    await loadUserProfile();
+
+                    // Déclencher l'événement pour mettre à jour le header
+                    document.dispatchEvent(new CustomEvent("userUpdate"));
+
+                    // Recharger l'onglet abonnement
+                    loadSubscriptionInfo();
+                } catch (error) {
+                    console.error("Erreur lors de la résiliation:", error);
+                    showError("Erreur lors de la résiliation de l'abonnement");
+                }
+            }, 1000);
+        }
+    };
 </script>
