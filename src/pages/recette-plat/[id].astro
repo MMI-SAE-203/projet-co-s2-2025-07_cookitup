@@ -1,26 +1,36 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getRecetteById, getRecettesSimilaires, getAllRecettes } from "../../backend.mjs";
+import {
+    getRecetteById,
+    getRecettesSimilaires,
+    getAllRecettes,
+} from "../../backend.mjs";
 import Plat from "../../components/Plat.astro";
 
 // ✅ FONCTION OBLIGATOIRE pour les routes dynamiques
 export async function getStaticPaths() {
     try {
         const recettes = await getAllRecettes();
-        
-        console.log('📋 Génération des pages statiques pour', recettes.length, 'recettes');
-        
+
+        console.log(
+            "📋 Génération des pages statiques pour",
+            recettes.length,
+            "recettes",
+        );
+
         return recettes.map((recette) => ({
-            params: { 
-                id: recette.id 
+            params: {
+                id: recette.id,
             },
-            props: { 
-                recette: recette 
-            }
+            props: {
+                recette: recette,
+            },
         }));
-        
     } catch (error) {
-        console.error('❌ Erreur lors de la génération des chemins statiques:', error);
+        console.error(
+            "❌ Erreur lors de la génération des chemins statiques:",
+            error,
+        );
         return [];
     }
 }
@@ -33,70 +43,122 @@ let recettesSimilaires = [];
 
 if (recetteProp) {
     recette = recetteProp;
-    console.log('✅ Utilisation des données depuis getStaticPaths');
+    console.log("✅ Utilisation des données depuis getStaticPaths");
 } else {
-    console.log('📡 Récupération des données via API...');
+    console.log("📡 Récupération des données via API...");
     try {
         recette = await getRecetteById(id);
         if (!recette) {
-            return Astro.redirect('/recette-plat', 302);
+            return Astro.redirect("/recette-plat", 302);
         }
     } catch (error) {
-        console.error('❌ Erreur:', error);
-        return Astro.redirect('/recette-plat', 302);
+        console.error("❌ Erreur:", error);
+        return Astro.redirect("/recette-plat", 302);
     }
+}
 
-    try {
-        recettesSimilaires = await getRecettesSimilaires(id, 4);
-    } catch (error) {
-    console.error('❌ Erreur recettes similaires:', error);
+try {
+    recettesSimilaires = await getRecettesSimilaires(id, 4);
+} catch (error) {
+    console.error("❌ Erreur recettes similaires:", error);
 }
 
 // ✅ CORRECTION : Utiliser "img" au lieu de "image"
-const imageUrl = recette.img ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}` : "/placeholder.svg";
-
-// ✅ Déterminer le contenu des instructions avec plusieurs fallbacks
-const instructionsContent = recette.preparation || recette.instructions || recette.description || "";
+const imageUrl = recette.img
+    ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
+    : "/placeholder.svg";
 ---
 
 <Layout>
     <!-- Hero de la recette -->
     <section class="relative w-full h-[500px]">
-        <img 
-            src={imageUrl || "/placeholder.svg"} 
+        <img
+            src={imageUrl || "/placeholder.svg"}
             alt={recette.nom}
             class="w-full h-full object-cover"
         />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20 flex items-center justify-center">
+        <div
+            class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20 flex items-center justify-center"
+        >
             <div class="text-center text-white px-4">
-                <h1 class="text-4xl md:text-6xl font-bold mb-4 uppercase drop-shadow-lg">{recette.nom}</h1>
+                <h1
+                    class="text-4xl md:text-6xl font-bold mb-4 uppercase drop-shadow-lg"
+                >
+                    {recette.nom}
+                </h1>
                 <div class="flex justify-center gap-6 text-lg flex-wrap">
-                    <span class="bg-black/30 backdrop-blur-sm px-3 py-1 rounded">⏱️ {recette.temps_prep}</span>
-                    
-                    {recette.calories && (
-                        <span class="bg-orange-500/80 backdrop-blur-sm px-3 py-1 rounded">🔥 {recette.calories} cal</span>
-                    )}
-                    
-                    {recette.categorie && <span class="bg-blue-500/80 backdrop-blur-sm px-3 py-1 rounded">📂 {recette.categorie}</span>}
-                    
-                    {recette.regime && recette.regime.length > 0 && recette.regime.map((regimeType) => {
-                        const regimeConfig = {
-                            'végétarien': { icon: '🌱', color: 'bg-green-500/80' },
-                            'végan': { icon: '🌿', color: 'bg-green-500/80' },
-                            'sans-gluten': { icon: '🌾', color: 'bg-blue-500/80' },
-                            'halal': { icon: '☪️', color: 'bg-purple-500/80' }
-                        };
-                        const config = regimeConfig[regimeType] || { icon: '🍽️', color: 'bg-gray-500/80' };
-                        
-                        return (
-                            <span class={`${config.color} backdrop-blur-sm px-3 py-1 rounded`}>
-                                {config.icon} {regimeType}
+                    <span class="bg-black/30 backdrop-blur-sm px-3 py-1 rounded"
+                        >⏱️ {recette.temps_prep}</span
+                    >
+
+                    {
+                        recette.calories && (
+                            <span class="bg-orange-500/80 backdrop-blur-sm px-3 py-1 rounded">
+                                🔥 {recette.calories} cal
                             </span>
-                        );
-                    })}
-                    
-                    {recette.isFavorite && <span class="bg-red-500/80 backdrop-blur-sm px-3 py-1 rounded">❤️ Favoris</span>}
-                    {recette.expand?.sponsorise && <span class="bg-yellow-500/80 backdrop-blur-sm px-3 py-1 rounded">🌟 Sponsorisé</span>}
+                        )
+                    }
+
+                    {
+                        recette.categorie && (
+                            <span class="bg-blue-500/80 backdrop-blur-sm px-3 py-1 rounded">
+                                📂 {recette.categorie}
+                            </span>
+                        )
+                    }
+
+                    {
+                        recette.regime &&
+                            recette.regime.length > 0 &&
+                            recette.regime.map((regimeType) => {
+                                const regimeConfig = {
+                                    végétarien: {
+                                        icon: "🌱",
+                                        color: "bg-green-500/80",
+                                    },
+                                    végan: {
+                                        icon: "🌿",
+                                        color: "bg-green-500/80",
+                                    },
+                                    "sans-gluten": {
+                                        icon: "🌾",
+                                        color: "bg-blue-500/80",
+                                    },
+                                    halal: {
+                                        icon: "☪️",
+                                        color: "bg-purple-500/80",
+                                    },
+                                };
+                                const config = regimeConfig[regimeType] || {
+                                    icon: "🍽️",
+                                    color: "bg-gray-500/80",
+                                };
+
+                                return (
+                                    <span
+                                        class={`${config.color} backdrop-blur-sm px-3 py-1 rounded`}
+                                    >
+                                        {config.icon} {regimeType}
+                                    </span>
+                                );
+                            })
+                    }
+
+                    {
+                        recette.isFavorite && (
+                            <span class="bg-red-500/80 backdrop-blur-sm px-3 py-1 rounded">
+                                ❤️ Favoris
+                            </span>
+                        )
+                    }
+
+                    {
+                        recette.expand?.sponsorise && (
+                            <span class="bg-yellow-500/80 backdrop-blur-sm px-3 py-1 rounded">
+                                🌟 Sponsorisé
+                            </span>
+                        )
+                    }
                 </div>
             </div>
         </div>
@@ -109,60 +171,116 @@ const instructionsContent = recette.preparation || recette.instructions || recet
             <div class="lg:col-span-1">
                 <div class="bg-gray-50 p-6 rounded-lg sticky top-6 space-y-6">
                     <!-- Informations nutritionnelles -->
-                    {(recette.calories || (recette.regime && recette.regime.length > 0)) && (
-                        <div>
-                            <h3 class="text-lg font-bold mb-4">INFORMATIONS NUTRITIONNELLES</h3>
-                            
-                            {recette.calories && (
-                                <div class="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-medium text-orange-800">Calories</span>
-                                        <span class="text-xl font-bold text-orange-600">🔥 {recette.calories}</span>
+                    {
+                        (recette.calories ||
+                            (recette.regime && recette.regime.length > 0)) && (
+                            <div>
+                                <h3 class="text-lg font-bold mb-4">
+                                    INFORMATIONS NUTRITIONNELLES
+                                </h3>
+
+                                {recette.calories && (
+                                    <div class="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-medium text-orange-800">
+                                                Calories
+                                            </span>
+                                            <span class="text-xl font-bold text-orange-600">
+                                                🔥 {recette.calories}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                            
-                            {recette.regime && recette.regime.length > 0 && (
-                                <div>
-                                    <h4 class="font-medium text-gray-700 mb-2">REGIMES COMPATIBLES</h4>
-                                    <div class="space-y-2">
-                                        {recette.regime.map((regimeType) => {
-                                            const regimeConfig = {
-                                                'végétarien': { icon: '🌱', color: 'bg-green-50 border-green-200 text-green-800', label: 'VEGETARIEN' },
-                                                'végan': { icon: '🌿', color: 'bg-green-50 border-green-200 text-green-800', label: 'VEGAN' },
-                                                'sans-gluten': { icon: '🌾', color: 'bg-blue-50 border-blue-200 text-blue-800', label: 'SANS GLUTEN' },
-                                                'halal': { icon: '☪️', color: 'bg-purple-50 border-purple-200 text-purple-800', label: 'Halal' }
-                                            };
-                                            const config = regimeConfig[regimeType] || { icon: '🍽️', color: 'bg-gray-50 border-gray-200 text-gray-800', label: regimeType };
-                                            
-                                            return (
-                                                <div class={`p-2 border rounded ${config.color}`}>
-                                                    <span class="font-medium">{config.icon} {config.label}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    
+                                )}
+
+                                {recette.regime &&
+                                    recette.regime.length > 0 && (
+                                        <div>
+                                            <h4 class="font-medium text-gray-700 mb-2">
+                                                REGIMES COMPATIBLES
+                                            </h4>
+                                            <div class="space-y-2">
+                                                {recette.regime.map(
+                                                    (regimeType) => {
+                                                        const regimeConfig = {
+                                                            végétarien: {
+                                                                icon: "🌱",
+                                                                color: "bg-green-50 border-green-200 text-green-800",
+                                                                label: "VEGETARIEN",
+                                                            },
+                                                            végan: {
+                                                                icon: "🌿",
+                                                                color: "bg-green-50 border-green-200 text-green-800",
+                                                                label: "VEGAN",
+                                                            },
+                                                            "sans-gluten": {
+                                                                icon: "🌾",
+                                                                color: "bg-blue-50 border-blue-200 text-blue-800",
+                                                                label: "SANS GLUTEN",
+                                                            },
+                                                            halal: {
+                                                                icon: "☪️",
+                                                                color: "bg-purple-50 border-purple-200 text-purple-800",
+                                                                label: "Halal",
+                                                            },
+                                                        };
+                                                        const config =
+                                                            regimeConfig[
+                                                                regimeType
+                                                            ] || {
+                                                                icon: "🍽️",
+                                                                color: "bg-gray-50 border-gray-200 text-gray-800",
+                                                                label: regimeType,
+                                                            };
+
+                                                        return (
+                                                            <div
+                                                                class={`p-2 border rounded ${config.color}`}
+                                                            >
+                                                                <span class="font-medium">
+                                                                    {
+                                                                        config.icon
+                                                                    }{" "}
+                                                                    {
+                                                                        config.label
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                            </div>
+                        )
+                    }
+
                     <!-- Ingrédients -->
                     <div>
                         <h2 class="text-2xl font-bold mb-6">INGREDIENTS</h2>
-                        
-                        {recette.expand?.ingredients && recette.expand.ingredients.length > 0 ? (
-                            <ul class="space-y-3">
-                                {recette.expand.ingredients.map((ingredient) => (
-                                    <li class="flex items-center">
-                                        <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
-                                        <span>{ingredient.nom || ingredient.name}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p class="text-gray-500">Aucun ingrédient spécifié</p>
-                        )}
+
+                        {
+                            recette.expand?.ingredients &&
+                            recette.expand.ingredients.length > 0 ? (
+                                <ul class="space-y-3">
+                                    {recette.expand.ingredients.map(
+                                        (ingredient) => (
+                                            <li class="flex items-center">
+                                                <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3" />
+                                                <span>
+                                                    {ingredient.nom ||
+                                                        ingredient.name}
+                                                </span>
+                                            </li>
+                                        ),
+                                    )}
+                                </ul>
+                            ) : (
+                                <p class="text-gray-500">
+                                    Aucun ingrédient spécifié
+                                </p>
+                            )
+                        }
                     </div>
                 </div>
             </div>
@@ -170,22 +288,33 @@ const instructionsContent = recette.preparation || recette.instructions || recet
             <!-- Instructions -->
             <div class="lg:col-span-2">
                 <h2 class="text-2xl font-bold mb-6">PREPARATION</h2>
-                
+
                 <!-- Contenu des instructions avec gestion dynamique -->
                 <div class="prose max-w-none">
-                    <div class="text-gray-800 whitespace-pre-line leading-relaxed">
-                        {recette.preparation || "Instructions de préparation non disponibles"}
+                    <div
+                        class="text-gray-800 whitespace-pre-line leading-relaxed"
+                    >
+                        {
+                            recette.preparation ||
+                                "Instructions de préparation non disponibles"
+                        }
                     </div>
                 </div>
 
-                {recette.expand?.sponsorise && (
-                    <div class="mt-12 p-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg">
-                        <h3 class="font-bold text-lg mb-3">RECETTE SPONSORISEE</h3>
-                        <p class="text-gray-700">
-                            Cette recette est sponsorisée par {recette.expand.sponsorise.nom || "notre partenaire"}
-                        </p>
-                    </div>
-                )}
+                {
+                    recette.expand?.sponsorise && (
+                        <div class="mt-12 p-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg">
+                            <h3 class="font-bold text-lg mb-3">
+                                RECETTE SPONSORISEE
+                            </h3>
+                            <p class="text-gray-700">
+                                Cette recette est sponsorisée par{" "}
+                                {recette.expand.sponsorise.nom ||
+                                    "notre partenaire"}
+                            </p>
+                        </div>
+                    )
+                }
             </div>
         </div>
     </div>
@@ -193,21 +322,38 @@ const instructionsContent = recette.preparation || recette.instructions || recet
     <!-- Actions -->
     <section class="py-8 px-6 border-t border-gray-200">
         <div class="max-w-6xl mx-auto flex justify-center gap-4 flex-wrap">
-            <button 
+            <button
                 class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition font-medium js-favori-btn"
                 data-id={recette.id}
             >
+                <svg
+                    class="w-5 h-5 inline mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    ></path>
+                </svg>
                 <span class="button-text">
-                    {recette.isFavorite ? '❤️ Retirer des favoris' : '🤍 Ajouter aux favoris'}
+                    {
+                        recette.isFavorite
+                            ? "Retirer des favoris"
+                            : "Ajouter aux favoris"
+                    }
                 </span>
             </button>
-            <button 
+            <button
                 class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition font-medium"
                 onclick="window.print()"
             >
                 🖨️ Imprimer la recette
             </button>
-            <button 
+            <button
                 class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition font-medium"
                 onclick="navigator.share ? navigator.share({title: document.title, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
             >
@@ -222,7 +368,11 @@ const instructionsContent = recette.preparation || recette.instructions || recet
             <div class="bg-white rounded-lg shadow-lg p-8">
                 <h2 class="text-2xl font-bold mb-8 flex items-center">
                     💬 Commentaires et avis
-                    <span id="commentCount" class="ml-2 text-sm bg-gray-100 px-2 py-1 rounded-full">0</span>
+                    <span
+                        id="commentCount"
+                        class="ml-2 text-sm bg-gray-100 px-2 py-1 rounded-full"
+                        >0</span
+                    >
                 </h2>
 
                 <!-- Formulaire d'ajout de commentaire -->
@@ -230,62 +380,113 @@ const instructionsContent = recette.preparation || recette.instructions || recet
                     <!-- État non connecté -->
                     <div id="notLoggedComment" class="text-center py-8">
                         <div class="text-4xl mb-4">🔒</div>
-                        <h3 class="text-lg font-bold mb-2">Connectez-vous pour laisser un avis</h3>
-                        <p class="text-gray-600 mb-4">Partagez votre expérience avec cette recette !</p>
-                        <a href="/connexion" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition">
+                        <h3 class="text-lg font-bold mb-2">
+                            Connectez-vous pour laisser un avis
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Partagez votre expérience avec cette recette !
+                        </p>
+                        <a
+                            href="/connexion"
+                            class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                        >
                             Se connecter
                         </a>
                     </div>
 
                     <!-- Formulaire pour utilisateur connecté -->
                     <div id="loggedComment" class="hidden">
-                        <h3 class="text-lg font-bold mb-4">Laissez votre avis</h3>
+                        <h3 class="text-lg font-bold mb-4">
+                            Laissez votre avis
+                        </h3>
                         <form id="addCommentForm" class="space-y-4">
                             <!-- Système de notation -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Note (optionnel)</label>
-                                <div class="flex items-center space-x-1" id="starRating">
-                                    <button type="button" class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition" data-rating="1">⭐</button>
-                                    <button type="button" class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition" data-rating="2">⭐</button>
-                                    <button type="button" class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition" data-rating="3">⭐</button>
-                                    <button type="button" class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition" data-rating="4">⭐</button>
-                                    <button type="button" class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition" data-rating="5">⭐</button>
-                                    <span id="ratingText" class="ml-2 text-sm text-gray-600"></span>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Note (optionnel)</label
+                                >
+                                <div
+                                    class="flex items-center space-x-1"
+                                    id="starRating"
+                                >
+                                    <button
+                                        type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition"
+                                        data-rating="1">⭐</button
+                                    >
+                                    <button
+                                        type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition"
+                                        data-rating="2">⭐</button
+                                    >
+                                    <button
+                                        type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition"
+                                        data-rating="3">⭐</button
+                                    >
+                                    <button
+                                        type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition"
+                                        data-rating="4">⭐</button
+                                    >
+                                    <button
+                                        type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition"
+                                        data-rating="5">⭐</button
+                                    >
+                                    <span
+                                        id="ratingText"
+                                        class="ml-2 text-sm text-gray-600"
+                                    ></span>
                                 </div>
-                                <input type="hidden" id="selectedRating" value="">
+                                <input
+                                    type="hidden"
+                                    id="selectedRating"
+                                    value=""
+                                />
                             </div>
 
                             <!-- Commentaire -->
                             <div>
-                                <label for="commentContent" class="block text-sm font-medium text-gray-700 mb-2">Votre commentaire</label>
-                                <textarea 
-                                    id="commentContent" 
-                                    rows="4" 
+                                <label
+                                    for="commentContent"
+                                    class="block text-sm font-medium text-gray-700 mb-2"
+                                    >Votre commentaire</label
+                                >
+                                <textarea
+                                    id="commentContent"
+                                    rows="4"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
                                     placeholder="Partagez votre expérience avec cette recette..."
                                     required
                                     minlength="10"
-                                    maxlength="1000"
-                                ></textarea>
-                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    maxlength="1000"></textarea>
+                                <div
+                                    class="flex justify-between text-xs text-gray-500 mt-1"
+                                >
                                     <span>Minimum 10 caractères</span>
                                     <span id="charCount">0/1000</span>
                                 </div>
                             </div>
 
                             <!-- Message d'erreur -->
-                            <div id="commentError" class="text-red-500 text-sm hidden"></div>
+                            <div
+                                id="commentError"
+                                class="text-red-500 text-sm hidden"
+                            >
+                            </div>
 
                             <!-- Boutons -->
                             <div class="flex gap-3">
-                                <button 
+                                <button
                                     type="submit"
                                     class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 rounded-lg transition"
                                     id="submitComment"
                                 >
                                     📝 Publier le commentaire
                                 </button>
-                                <button 
+                                <button
                                     type="button"
                                     class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-6 py-2 rounded-lg transition"
                                     onclick="document.getElementById('addCommentForm').reset(); updateCharCount(); resetStars();"
@@ -302,14 +503,21 @@ const instructionsContent = recette.preparation || recette.instructions || recet
                     <!-- État de chargement -->
                     <div id="commentsLoading" class="text-center py-8">
                         <div class="text-2xl mb-2">⏳</div>
-                        <p class="text-gray-600">Chargement des commentaires...</p>
+                        <p class="text-gray-600">
+                            Chargement des commentaires...
+                        </p>
                     </div>
 
                     <!-- État vide -->
                     <div id="noComments" class="text-center py-12 hidden">
                         <div class="text-6xl mb-4">💭</div>
-                        <h3 class="text-xl font-bold mb-2">Aucun commentaire pour le moment</h3>
-                        <p class="text-gray-600">Soyez le premier à partager votre avis sur cette recette !</p>
+                        <h3 class="text-xl font-bold mb-2">
+                            Aucun commentaire pour le moment
+                        </h3>
+                        <p class="text-gray-600">
+                            Soyez le premier à partager votre avis sur cette
+                            recette !
+                        </p>
                     </div>
 
                     <!-- Commentaires -->
@@ -322,112 +530,175 @@ const instructionsContent = recette.preparation || recette.instructions || recet
     </section>
 
     <!-- Recettes similaires -->
-    {recettesSimilaires.length > 0 && (
-        <section class="bg-gray-50 py-12 px-6">
-            <div class="max-w-6xl mx-auto">
-                <h2 class="text-2xl md:text-3xl font-bold mb-8">RECETTES SIMILAIRES</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {recettesSimilaires.map((recette) => (
-                        <Plat 
-                            id={recette.id}
-                            nom={recette.nom}
-                            img={recette.img}
-                            temps_prep={recette.temps_prep}
-                            isFavorite={recette.isFavorite}
-                            sponsorise={recette.expand?.sponsorise}
-                            categorie={recette.categorie}
-                        />
-                    ))}
+    {
+        recettesSimilaires.length > 0 && (
+            <section class="bg-gray-50 py-12 px-6">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-8">
+                        RECETTES SIMILAIRES
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {recettesSimilaires.map((recette) => (
+                            <Plat
+                                id={recette.id}
+                                nom={recette.nom}
+                                img={recette.img}
+                                temps_prep={recette.temps_prep}
+                                isFavorite={recette.isFavorite}
+                                sponsorise={recette.expand?.sponsorise}
+                                categorie={recette.categorie}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </section>
-    )}
+            </section>
+        )
+    }
 </Layout>
 
 <script>
-    import { initFavorisButtons } from '../../js/favoris.js';
-    import pb from '../../lib/pocketbase.js';
-    import { isLoggedIn, getCurrentUser } from '../../js/auth.js';
+    import { initFavorisButtons } from "../../js/favoris.js";
+    import pb from "../../lib/pocketbase.js";
+    import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
 
-    let currentRecetteId = '';
+    let currentRecetteId = "";
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+        console.log("🚀 Initialisation de la page recette");
+
         // Récupérer l'ID de la recette depuis l'URL
-        currentRecetteId = window.location.pathname.split('/').pop();
-        
-        // Initialiser la gestion des favoris
-        initFavorisButtons();
-        
-        // Initialiser l'état des cœurs
-        await initFavoriteState();
-        
-        // Initialiser les commentaires
-        initComments();
-        
-        // Charger les commentaires
-        await loadComments();
+        currentRecetteId = window.location.pathname.split("/").pop();
+        console.log("📝 ID de la recette:", currentRecetteId);
+
+        // Attendre un peu pour que le DOM soit complètement chargé
+        setTimeout(async () => {
+            // Initialiser la gestion des favoris
+            console.log("❤️ Initialisation des favoris...");
+            initFavorisButtons();
+
+            // Initialiser l'état des cœurs
+            await initFavoriteState();
+
+            // Initialiser les commentaires
+            initComments();
+
+            // Charger les commentaires
+            await loadComments();
+        }, 100);
     });
+
+    // Fonction pour initialiser l'état du favori
+    async function initFavoriteState() {
+        if (!isLoggedIn()) {
+            console.log("⚠️ Utilisateur non connecté, pas de favori à charger");
+            return;
+        }
+
+        try {
+            console.log(
+                "🔍 Vérification du favori pour la recette:",
+                currentRecetteId,
+            );
+
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${getCurrentUser().id}" && recette = "${currentRecetteId}"`,
+            });
+
+            const isFavorite = favoris.length > 0;
+            console.log("❤️ Recette favorite:", isFavorite);
+
+            const favorisButton = document.querySelector(".js-favori-btn");
+            const heartIcon = favorisButton?.querySelector("svg");
+            const buttonText = favorisButton?.querySelector(".button-text");
+
+            if (favorisButton) {
+                console.log("🎯 Bouton favori trouvé");
+                if (heartIcon) {
+                    if (isFavorite) {
+                        heartIcon.setAttribute("fill", "red");
+                        heartIcon.style.color = "red";
+                    } else {
+                        heartIcon.setAttribute("fill", "none");
+                        heartIcon.style.color = "currentColor";
+                    }
+                }
+
+                if (buttonText) {
+                    buttonText.textContent = isFavorite
+                        ? "Retirer des favoris"
+                        : "Ajouter aux favoris";
+                }
+            } else {
+                console.error("❌ Bouton favori non trouvé");
+            }
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de l'initialisation du favori:",
+                error,
+            );
+        }
+    }
 
     // Initialiser le système de commentaires
     function initComments() {
-        const notLoggedComment = document.getElementById('notLoggedComment');
-        const loggedComment = document.getElementById('loggedComment');
-        const commentContent = document.getElementById('commentContent');
-        const addCommentForm = document.getElementById('addCommentForm');
-        
+        const notLoggedComment = document.getElementById("notLoggedComment");
+        const loggedComment = document.getElementById("loggedComment");
+        const commentContent = document.getElementById("commentContent");
+        const addCommentForm = document.getElementById("addCommentForm");
+
         // Vérifier l'état de connexion
         if (isLoggedIn()) {
-            notLoggedComment.classList.add('hidden');
-            loggedComment.classList.remove('hidden');
+            notLoggedComment?.classList.add("hidden");
+            loggedComment?.classList.remove("hidden");
         } else {
-            notLoggedComment.classList.remove('hidden');
-            loggedComment.classList.add('hidden');
+            notLoggedComment?.classList.remove("hidden");
+            loggedComment?.classList.add("hidden");
         }
-        
+
         // Gestion du compteur de caractères
         if (commentContent) {
-            commentContent.addEventListener('input', updateCharCount);
+            commentContent.addEventListener("input", updateCharCount);
         }
-        
+
         // Gestion du système d'étoiles
         initStarRating();
-        
+
         // Gestion du formulaire
         if (addCommentForm) {
-            addCommentForm.addEventListener('submit', handleCommentSubmit);
+            addCommentForm.addEventListener("submit", handleCommentSubmit);
         }
     }
 
     // Système de notation par étoiles
     function initStarRating() {
-        const starButtons = document.querySelectorAll('.star-btn');
-        const ratingText = document.getElementById('ratingText');
-        const selectedRating = document.getElementById('selectedRating');
-        
+        const starButtons = document.querySelectorAll(".star-btn");
+        const ratingText = document.getElementById("ratingText");
+        const selectedRating = document.getElementById("selectedRating");
+
         const ratingLabels = {
-            1: 'Décevant',
-            2: 'Moyen',
-            3: 'Bien',
-            4: 'Très bien',
-            5: 'Excellent'
+            1: "Décevant",
+            2: "Moyen",
+            3: "Bien",
+            4: "Très bien",
+            5: "Excellent",
         };
-        
-        starButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
+
+        starButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
                 e.preventDefault();
                 const rating = parseInt(button.dataset.rating);
-                
+
                 // Mettre à jour l'affichage
                 starButtons.forEach((star, index) => {
                     if (index < rating) {
-                        star.classList.remove('text-gray-300');
-                        star.classList.add('text-yellow-400');
+                        star.classList.remove("text-gray-300");
+                        star.classList.add("text-yellow-400");
                     } else {
-                        star.classList.remove('text-yellow-400');
-                        star.classList.add('text-gray-300');
+                        star.classList.remove("text-yellow-400");
+                        star.classList.add("text-gray-300");
                     }
                 });
-                
+
                 // Mettre à jour le texte et la valeur
                 selectedRating.value = rating;
                 ratingText.textContent = ratingLabels[rating];
@@ -437,32 +708,32 @@ const instructionsContent = recette.preparation || recette.instructions || recet
 
     // Réinitialiser les étoiles
     function resetStars() {
-        const starButtons = document.querySelectorAll('.star-btn');
-        const ratingText = document.getElementById('ratingText');
-        const selectedRating = document.getElementById('selectedRating');
-        
-        starButtons.forEach(star => {
-            star.classList.remove('text-yellow-400');
-            star.classList.add('text-gray-300');
+        const starButtons = document.querySelectorAll(".star-btn");
+        const ratingText = document.getElementById("ratingText");
+        const selectedRating = document.getElementById("selectedRating");
+
+        starButtons.forEach((star) => {
+            star.classList.remove("text-yellow-400");
+            star.classList.add("text-gray-300");
         });
-        
-        selectedRating.value = '';
-        ratingText.textContent = '';
+
+        selectedRating.value = "";
+        ratingText.textContent = "";
     }
 
     // Mettre à jour le compteur de caractères
     function updateCharCount() {
-        const commentContent = document.getElementById('commentContent');
-        const charCount = document.getElementById('charCount');
-        
+        const commentContent = document.getElementById("commentContent");
+        const charCount = document.getElementById("charCount");
+
         if (commentContent && charCount) {
             const count = commentContent.value.length;
             charCount.textContent = `${count}/1000`;
-            
+
             if (count > 1000) {
-                charCount.classList.add('text-red-500');
+                charCount.classList.add("text-red-500");
             } else {
-                charCount.classList.remove('text-red-500');
+                charCount.classList.remove("text-red-500");
             }
         }
     }
@@ -470,128 +741,143 @@ const instructionsContent = recette.preparation || recette.instructions || recet
     // Gérer la soumission du commentaire
     async function handleCommentSubmit(e) {
         e.preventDefault();
-        
-        const commentContent = document.getElementById('commentContent');
-        const selectedRating = document.getElementById('selectedRating');
-        const commentError = document.getElementById('commentError');
-        const submitButton = document.getElementById('submitComment');
-        
+
+        const commentContent = document.getElementById("commentContent");
+        const selectedRating = document.getElementById("selectedRating");
+        const commentError = document.getElementById("commentError");
+        const submitButton = document.getElementById("submitComment");
+
         // Réinitialiser les erreurs
-        commentError.classList.add('hidden');
-        commentError.textContent = '';
-        
+        commentError.classList.add("hidden");
+        commentError.textContent = "";
+
         try {
             // Vérifications
             if (!isLoggedIn()) {
-                throw new Error('Vous devez être connecté pour commenter');
+                throw new Error("Vous devez être connecté pour commenter");
             }
-            
+
             const content = commentContent.value.trim();
             if (content.length < 10) {
-                throw new Error('Le commentaire doit contenir au moins 10 caractères');
+                throw new Error(
+                    "Le commentaire doit contenir au moins 10 caractères",
+                );
             }
-            
+
             if (content.length > 1000) {
-                throw new Error('Le commentaire ne peut pas dépasser 1000 caractères');
+                throw new Error(
+                    "Le commentaire ne peut pas dépasser 1000 caractères",
+                );
             }
-            
+
             // Désactiver le bouton
             submitButton.disabled = true;
-            submitButton.textContent = '⏳ Publication...';
-            
+            submitButton.textContent = "⏳ Publication...";
+
             // Préparer les données
             const commentData = {
                 user: getCurrentUser().id,
                 recette: currentRecetteId,
-                contenu: content
+                contenu: content,
             };
-            
+
             // Ajouter la note si sélectionnée
             if (selectedRating.value) {
                 commentData.note = parseInt(selectedRating.value);
             }
-            
+
             // Envoyer le commentaire
-            await pb.collection('commentaires').create(commentData);
-            
+            await pb.collection("commentaires").create(commentData);
+
             // Réinitialiser le formulaire
-            document.getElementById('addCommentForm').reset();
+            document.getElementById("addCommentForm").reset();
             updateCharCount();
             resetStars();
-            
+
             // Recharger les commentaires
             await loadComments();
-            
+
             // Afficher un message de succès
-            showNotification('Commentaire publié avec succès ! 🎉');
-            
+            showNotification("Commentaire publié avec succès ! 🎉");
         } catch (error) {
-            console.error('Erreur lors de la publication du commentaire:', error);
+            console.error(
+                "Erreur lors de la publication du commentaire:",
+                error,
+            );
             commentError.textContent = error.message;
-            commentError.classList.remove('hidden');
+            commentError.classList.remove("hidden");
         } finally {
             // Réactiver le bouton
             submitButton.disabled = false;
-            submitButton.textContent = '📝 Publier le commentaire';
+            submitButton.textContent = "📝 Publier le commentaire";
         }
     }
 
     // Charger les commentaires
     async function loadComments() {
-        const commentsLoading = document.getElementById('commentsLoading');
-        const noComments = document.getElementById('noComments');
-        const commentsContainer = document.getElementById('commentsContainer');
-        const commentCount = document.getElementById('commentCount');
-        
+        const commentsLoading = document.getElementById("commentsLoading");
+        const noComments = document.getElementById("noComments");
+        const commentsContainer = document.getElementById("commentsContainer");
+        const commentCount = document.getElementById("commentCount");
+
         try {
-            commentsLoading.classList.remove('hidden');
-            noComments.classList.add('hidden');
-            commentsContainer.classList.add('hidden');
-            
+            commentsLoading?.classList.remove("hidden");
+            noComments?.classList.add("hidden");
+            commentsContainer?.classList.add("hidden");
+
             // Récupérer les commentaires
-            const commentaires = await pb.collection('commentaires').getFullList({
-                filter: `recette = "${currentRecetteId}"`,
-                expand: 'user',
-                sort: '-created'
-            });
-            
+            const commentaires = await pb
+                .collection("commentaires")
+                .getFullList({
+                    filter: `recette = "${currentRecetteId}"`,
+                    expand: "user",
+                    sort: "-created",
+                });
+
             // Mettre à jour le compteur
-            commentCount.textContent = commentaires.length;
-            
+            if (commentCount) {
+                commentCount.textContent = commentaires.length;
+            }
+
             // Cacher le loading
-            commentsLoading.classList.add('hidden');
-            
+            commentsLoading?.classList.add("hidden");
+
             if (commentaires.length === 0) {
-                noComments.classList.remove('hidden');
+                noComments?.classList.remove("hidden");
                 return;
             }
-            
+
             // Afficher les commentaires
-            commentsContainer.innerHTML = commentaires.map(createCommentHTML).join('');
-            commentsContainer.classList.remove('hidden');
-            
+            if (commentsContainer) {
+                commentsContainer.innerHTML = commentaires
+                    .map(createCommentHTML)
+                    .join("");
+                commentsContainer.classList.remove("hidden");
+            }
         } catch (error) {
-            console.error('Erreur lors du chargement des commentaires:', error);
-            commentsLoading.classList.add('hidden');
-            
+            console.error("Erreur lors du chargement des commentaires:", error);
+            commentsLoading?.classList.add("hidden");
+
             // Afficher un message d'erreur
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'text-center py-8 bg-red-50 rounded-lg';
-            errorDiv.innerHTML = `
-                <div class="text-4xl mb-2">⚠️</div>
-                <p class="text-red-600">Erreur lors du chargement des commentaires</p>
-            `;
-            commentsContainer.appendChild(errorDiv);
+            if (commentsContainer) {
+                const errorDiv = document.createElement("div");
+                errorDiv.className = "text-center py-8 bg-red-50 rounded-lg";
+                errorDiv.innerHTML = `
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <p class="text-red-600">Erreur lors du chargement des commentaires</p>
+                `;
+                commentsContainer.appendChild(errorDiv);
+            }
         }
     }
 
     // Créer le HTML d'un commentaire
     function createCommentHTML(commentaire) {
         const user = commentaire.expand?.user;
-        const userName = user?.pseudo || 'Utilisateur anonyme';
-        
+        const userName = user?.pseudo || "Utilisateur anonyme";
+
         // Générer l'avatar
-        let avatarHTML = '';
+        let avatarHTML = "";
         if (user?.avatar) {
             const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
             avatarHTML = `<img src="${avatarUrl}" alt="Avatar de ${userName}" class="w-12 h-12 rounded-full object-cover" />`;
@@ -599,20 +885,23 @@ const instructionsContent = recette.preparation || recette.instructions || recet
             const userInitials = userName.substring(0, 2).toUpperCase();
             avatarHTML = `<div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">${userInitials}</div>`;
         }
-        
-        const createdDate = new Date(commentaire.created).toLocaleDateString('fr-FR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        const stars = commentaire.note ? '⭐'.repeat(commentaire.note) : '';
-        
+
+        const createdDate = new Date(commentaire.created).toLocaleDateString(
+            "fr-FR",
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+            },
+        );
+
+        const stars = commentaire.note ? "⭐".repeat(commentaire.note) : "";
+
         const currentUser = getCurrentUser();
         const isOwner = currentUser && currentUser.id === commentaire.user;
-        
+
         return `
             <div class="bg-gray-50 rounded-lg p-6 border border-gray-200" data-comment-id="${commentaire.id}">
                 <div class="flex items-start space-x-4">
@@ -626,12 +915,14 @@ const instructionsContent = recette.preparation || recette.instructions || recet
                                 <h4 class="font-bold text-gray-900">${userName}</h4>
                                 <p class="text-sm text-gray-500">${createdDate}</p>
                             </div>
-                            ${stars ? `<div class="text-lg">${stars}</div>` : ''}
+                            ${stars ? `<div class="text-lg">${stars}</div>` : ""}
                         </div>
                         
                         <p class="text-gray-800 leading-relaxed">${commentaire.contenu}</p>
                         
-                        ${isOwner ? `
+                        ${
+                            isOwner
+                                ? `
                             <div class="mt-4 flex gap-2">
                                 <button 
                                     onclick="deleteComment('${commentaire.id}')"
@@ -640,7 +931,9 @@ const instructionsContent = recette.preparation || recette.instructions || recet
                                     🗑️ Supprimer
                                 </button>
                             </div>
-                        ` : ''}
+                        `
+                                : ""
+                        }
                     </div>
                 </div>
             </div>
@@ -648,78 +941,37 @@ const instructionsContent = recette.preparation || recette.instructions || recet
     }
 
     // Supprimer un commentaire
-    window.deleteComment = async function(commentId) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+    window.deleteComment = async function (commentId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
             return;
         }
-        
+
         try {
-            await pb.collection('commentaires').delete(commentId);
+            await pb.collection("commentaires").delete(commentId);
             await loadComments();
-            showNotification('Commentaire supprimé 🗑️');
+            showNotification("Commentaire supprimé 🗑️");
         } catch (error) {
-            console.error('Erreur lors de la suppression:', error);
-            alert('Erreur lors de la suppression du commentaire');
+            console.error("Erreur lors de la suppression:", error);
+            alert("Erreur lors de la suppression du commentaire");
         }
     };
 
     // Fonction pour afficher une notification
     function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity';
+        const notification = document.createElement("div");
+        notification.className =
+            "fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity";
         notification.textContent = message;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
-            notification.style.opacity = '0';
+            notification.style.opacity = "0";
             setTimeout(() => {
                 if (notification.parentNode) {
                     notification.parentNode.removeChild(notification);
                 }
             }, 300);
         }, 3000);
-    }
-
-    // Fonction pour initialiser l'état du favori
-    async function initFavoriteState() {
-        if (!isLoggedIn()) {
-            console.log("⚠️ Utilisateur non connecté, pas de favori à charger");
-            return;
-        }
-
-        try {
-            console.log("🔍 Vérification du favori pour la recette:", currentRecetteId);
-            
-            const favoris = await pb.collection('favoris').getFullList({
-                filter: `user = "${getCurrentUser().id}" && recette = "${currentRecetteId}"`,
-            });
-            
-            const isFavorite = favoris.length > 0;
-            console.log("❤️ Recette favorite:", isFavorite);
-            
-            const favorisButton = document.querySelector('.js-favori-btn');
-            const heartIcon = favorisButton?.querySelector('svg');
-            const buttonText = favorisButton?.querySelector('.button-text');
-            
-            if (favorisButton && heartIcon) {
-                if (isFavorite) {
-                    heartIcon.setAttribute('fill', 'red');
-                    heartIcon.style.color = 'red';
-                    if (buttonText) {
-                        buttonText.textContent = '❤️ Retirer des favoris';
-                    }
-                } else {
-                    heartIcon.setAttribute('fill', 'none');
-                    heartIcon.style.color = 'currentColor';
-                    if (buttonText) {
-                        buttonText.textContent = '🤍 Ajouter aux favoris';
-                    }
-                }
-            }
-            
-        } catch (error) {
-            console.error("❌ Erreur lors de l'initialisation du favori:", error);
-        }
     }
 </script>

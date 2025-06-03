@@ -138,10 +138,10 @@ export function initFavorisButtons() {
             const isNowFavorite = await toggleFavori(recetteId)
             console.log("✅ Favori mis à jour:", isNowFavorite ? "ajouté" : "retiré")
 
-            // Mettre à jour l'icône
+            // Mettre à jour l'icône immédiatement
             if (heartIcon) {
                 heartIcon.setAttribute("fill", isNowFavorite ? "red" : "none")
-                heartIcon.style.color = isNowFavorite ? "red" : "currentColor"
+                heartIcon.style.color = isNowFavorite ? "red" : "white"
             }
 
             // Animation
@@ -161,6 +161,12 @@ export function initFavorisButtons() {
 
             // Optionnel : afficher une notification
             showNotification(message)
+
+            // Déclencher un événement personnalisé pour informer les autres parties de l'app
+            const favoriEvent = new CustomEvent("favoriToggled", {
+                detail: { recetteId, isNowFavorite },
+            })
+            document.dispatchEvent(favoriEvent)
         } catch (error) {
             console.error("❌ Erreur favoris:", error)
             alert("Erreur lors de la mise à jour des favoris: " + error.message)

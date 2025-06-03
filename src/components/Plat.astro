@@ -40,8 +40,10 @@ const categorieColor =
 ---
 
 <div
-    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow card-recette"
     data-categorie={categorie}
+    data-calories={calories}
+    data-regime={regime ? regime.join(",") : ""}
 >
     <div class="relative">
         <img
@@ -69,19 +71,22 @@ const categorieColor =
             )
         }
 
-        <!-- Icône cœur -->
+        <!-- ✅ BOUTON FAVORI CORRIGÉ -->
         <button
             type="button"
-            class="absolute top-2 right-2 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full js-favori-btn"
+            class="absolute top-2 right-2 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full js-favori-btn transition-all duration-200"
             data-id={id}
-            aria-label="Ajouter aux favoris"
+            aria-label={isFavorite
+                ? "Retirer des favoris"
+                : "Ajouter aux favoris"}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                fill="none"
+                fill={isFavorite ? "red" : "none"}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 class="w-6 h-6"
+                style={isFavorite ? "color: red;" : "color: white;"}
             >
                 <path
                     stroke-linecap="round"
@@ -94,7 +99,7 @@ const categorieColor =
     </div>
 
     <div class="p-4">
-        <h3 class="font-bold text-lg mb-2 uppercase">{nom}</h3>
+        <h3 class="font-bold text-lg mb-2 uppercase card-title">{nom}</h3>
 
         <div class="space-y-2 text-sm text-gray-600 mb-3">
             <div class="flex justify-between items-center">

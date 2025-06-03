@@ -7,7 +7,12 @@ export function initPagination() {
 
     const itemsPerPage = 12
     let currentPage = 1
-    const allItems = Array.from(recettesGrid.children)
+    const allItems = Array.from(recettesGrid.children).filter((item) => !item.classList.contains("hidden"))
+    const totalItems = allItems.length
+    const totalPages = Math.ceil(totalItems / itemsPerPage)
+
+    // Mettre à jour les compteurs d'affichage
+    updateDisplayCounters(currentPage, itemsPerPage, totalItems)
 
     function showPage(page) {
         const startIndex = (page - 1) * itemsPerPage
@@ -18,9 +23,28 @@ export function initPagination() {
         })
 
         updatePaginationButtons(page)
+        updateDisplayCounters(page, itemsPerPage, totalItems)
 
         // Scroll vers le haut de la grille
         recettesGrid.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+    function updateDisplayCounters(page, itemsPerPage, totalItems) {
+        const startItem = Math.min((page - 1) * itemsPerPage + 1, totalItems)
+        const endItem = Math.min(page * itemsPerPage, totalItems)
+
+        // Mettre à jour les compteurs d'affichage
+        const currentRangeStart = document.getElementById("currentRangeStart")
+        const currentRangeEnd = document.getElementById("currentRangeEnd")
+        const totalRecettes = document.getElementById("totalRecettes")
+        const currentPageDisplay = document.getElementById("currentPageDisplay")
+        const totalPagesDisplay = document.getElementById("totalPagesDisplay")
+
+        if (currentRangeStart) currentRangeStart.textContent = startItem.toString()
+        if (currentRangeEnd) currentRangeEnd.textContent = endItem.toString()
+        if (totalRecettes) totalRecettes.textContent = totalItems.toString()
+        if (currentPageDisplay) currentPageDisplay.textContent = page.toString()
+        if (totalPagesDisplay) totalPagesDisplay.textContent = totalPages.toString()
     }
 
     function updatePaginationButtons(currentPage) {
@@ -34,6 +58,8 @@ export function initPagination() {
     }
 
     function generatePaginationHTML(current, total) {
+        if (total <= 1) return "" // Ne pas afficher la pagination s'il n'y a qu'une seule page
+
         let html = '<div class="flex justify-center mt-8 gap-2">'
 
         // Bouton Précédent
@@ -77,5 +103,8 @@ export function initPagination() {
     }
 
     // Initialiser la pagination
-    showPage(1)
-  }
+    if (totalPages > 0) {
+        showPage(1)
+    }
+}
+  

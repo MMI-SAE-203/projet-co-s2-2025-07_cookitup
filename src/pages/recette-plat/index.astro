@@ -5,12 +5,41 @@ import PlatFavoris from "../../components/PlatFavoris.astro";
 import Hero from "../../components/Hero.astro";
 import { getAllRecettes, getRecettesSponsors } from "../../backend.mjs";
 
-const recettes = await getAllRecettes();
-const recettesSponsors = await getRecettesSponsors();
+console.log("🚀 Début du chargement de la page recettes...");
+
+let recettes = [];
+let recettesSponsors = [];
+
+try {
+    console.log("📡 Récupération des recettes...");
+    recettes = await getAllRecettes();
+    console.log("✅ Recettes récupérées:", recettes.length);
+
+    if (recettes.length > 0) {
+        console.log("📝 Exemple de recette:", {
+            id: recettes[0].id,
+            nom: recettes[0].nom,
+            img: recettes[0].img,
+            temps_prep: recettes[0].temps_prep,
+        });
+    }
+
+    console.log("🌟 Récupération des recettes sponsorisées...");
+    recettesSponsors = await getRecettesSponsors();
+    console.log(
+        "✅ Recettes sponsorisées récupérées:",
+        recettesSponsors.length,
+    );
+} catch (error) {
+    console.error("❌ Erreur lors du chargement des données:", error);
+    console.error("❌ Message d'erreur:", error.message);
+}
+
 const totalRecettes = recettes.length;
 
-console.log("📊 Recettes récupérées:", recettes.length);
-console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
+console.log("📊 Résumé:");
+console.log("- Recettes totales:", totalRecettes);
+console.log("- Recettes sponsorisées:", recettesSponsors.length);
 ---
 
 <Layout>
@@ -167,6 +196,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
             </div>
         </div>
 
+        <!-- Grille des recettes -->
         <div
             class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             id="recettesGrid"
@@ -201,7 +231,7 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         </div>
 
         <!-- Pagination -->
-        <div id="paginationContainer" class="mt-8">
+        <div class="pagination-container mt-8">
             <!-- La pagination sera générée dynamiquement -->
         </div>
     </section>
@@ -231,3 +261,98 @@ console.log("🌟 Recettes sponsorisées:", recettesSponsors.length);
         </div>
     </section>
 </Layout>
+
+<script>
+    import { initFavorisButtons } from "../../js/favoris.js";
+    import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
+    import { initPagination } from "../../js/recettes/pagination.js";
+    import pb from "../../lib/pocketbase.js";
+    import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Initialisation de la page index des recettes");
+
+        // Attendre un peu pour que le DOM soit complètement chargé
+        setTimeout(async () => {
+            console.log("❤️ Initialisation des boutons favoris...");
+
+            // Vérifier que les boutons favoris existent
+            const favorisButtons = document.querySelectorAll(".js-favori-btn");
+            console.log(`🔍 ${favorisButtons.length} boutons favoris trouvés`);
+
+            // Synchroniser l'état visuel des favoris avec PocketBase
+            await syncFavoriteStates();
+
+            // Initialiser la gestion des favoris
+            initFavorisButtons();
+
+            // Initialiser la recherche et les filtres
+            console.log("🔍 Initialisation de la recherche et des filtres...");
+            initSearchAndFilters();
+
+            // Initialiser la pagination
+            console.log("📄 Initialisation de la pagination...");
+            initPagination();
+
+            console.log("✅ Initialisation terminée");
+        }, 100);
+    });
+
+    // Fonction pour synchroniser l'état visuel des favoris
+    async function syncFavoriteStates() {
+        if (!isLoggedIn()) {
+            console.log(
+                "⚠️ Utilisateur non connecté, pas de synchronisation des favoris",
+            );
+            return;
+        }
+
+        try {
+            console.log("🔄 Synchronisation de l'état des favoris...");
+
+            // Récupérer tous les favoris de l'utilisateur
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${getCurrentUser().id}"`,
+            });
+
+            const favoriteIds = favoris.map((favori) => favori.recette);
+            console.log("❤️ IDs des recettes favorites:", favoriteIds);
+
+            // Mettre à jour l'état visuel de chaque bouton favori
+            const favorisButtons = document.querySelectorAll(".js-favori-btn");
+
+            favorisButtons.forEach((button) => {
+                const recetteId = button.dataset.id;
+                const heartIcon = button.querySelector("svg");
+
+                if (recetteId && heartIcon) {
+                    const isFavorite = favoriteIds.includes(recetteId);
+
+                    if (isFavorite) {
+                        heartIcon.setAttribute("fill", "red");
+                        heartIcon.style.color = "red";
+                        console.log(
+                            `❤️ Recette ${recetteId} marquée comme favorite`,
+                        );
+                    } else {
+                        heartIcon.setAttribute("fill", "none");
+                        heartIcon.style.color = "white";
+                    }
+                }
+            });
+
+            console.log("✅ Synchronisation des favoris terminée");
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de la synchronisation des favoris:",
+                error,
+            );
+        }
+    }
+
+    // Écouter les changements de favoris pour mettre à jour l'affichage
+    document.addEventListener("favoriToggled", async (event) => {
+        console.log("🔄 Favori modifié, resynchronisation...");
+        await syncFavoriteStates();
+    });
+</script>
