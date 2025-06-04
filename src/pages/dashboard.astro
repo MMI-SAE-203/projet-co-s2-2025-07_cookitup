@@ -1,11 +1,12 @@
 ---
-// src/pages/dashboard.astro
 import Layout from "../layouts/Layout.astro";
+
+export const prerender = false;
 
 const { locals, redirect } = Astro;
 
-if (!locals.session.user) {
-    // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
+// Sécurisation de l'accès utilisateur
+if (!locals?.session?.user) {
     return redirect("/connexion");
 }
 
@@ -29,18 +30,19 @@ const user = locals.session.user;
                     <a
                         href="/mes-recettes"
                         class="text-yellow-600 hover:underline"
-                        >📋 Voir mes recettes</a
                     >
+                        📋 Voir mes recettes
+                    </a>
                 </li>
                 <li>
-                    <a href="/profil" class="text-yellow-600 hover:underline"
-                        >👤 Modifier mon profil</a
-                    >
+                    <a href="/profil" class="text-yellow-600 hover:underline">
+                        👤 Modifier mon profil
+                    </a>
                 </li>
                 <li>
-                    <a href="/logout" class="text-red-500 hover:underline"
-                        >🚪 Déconnexion</a
-                    >
+                    <a href="/logout" class="text-red-500 hover:underline">
+                        🚪 Déconnexion
+                    </a>
                 </li>
             </ul>
         </div>
