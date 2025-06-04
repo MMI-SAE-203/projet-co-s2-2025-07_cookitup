@@ -1,0 +1,80 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Plat from "../components/Plat.astro";
+import { getCommentedRecettes } from "../backend.mjs";
+
+// Titre de la page
+const pageTitle = "Mes Commentaires | Cookit-UP";
+
+// Cette fonction n'existe pas encore, vous devrez l'ajouter à backend.mjs
+// Pour l'instant, on utilise un tableau vide
+let commentedRecettes = [];
+try {
+    commentedRecettes = await getCommentedRecettes();
+} catch (error) {
+    console.error(
+        "Erreur lors de la récupération des recettes commentées:",
+        error,
+    );
+    commentedRecettes = [];
+}
+---
+
+<Layout title={pageTitle}>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Onglets de navigation -->
+        <div class="bg-gray-800 rounded-full mb-8">
+            <div class="flex justify-center">
+                <a
+                    href="/favoris"
+                    class="py-3 px-8 rounded-full text-white font-bold text-center hover:bg-gray-700 transition"
+                >
+                    Favoris
+                </a>
+                <a
+                    href="/commentaires"
+                    class="py-3 px-8 rounded-full bg-yellow-500 text-white font-bold text-center"
+                >
+                    recette commenter
+                </a>
+            </div>
+        </div>
+
+        <!-- Titre de section -->
+        <h1 class="text-3xl font-bold mb-8">Mes Recettes Commentées</h1>
+
+        <!-- Grille de recettes commentées -->
+        {
+            commentedRecettes.length > 0 ? (
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {commentedRecettes.map((recette) => (
+                        <Plat
+                            id={recette.id}
+                            nom={recette.nom}
+                            image={recette.image}
+                            temps_preparation={recette.temps_preparation}
+                            favori={recette.favori}
+                            sponsorise={recette.expand?.sponsorise}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <div class="text-center py-16 bg-gray-50 rounded-lg">
+                    <div class="text-6xl mb-4">💬</div>
+                    <h2 class="text-2xl font-bold mb-2">
+                        Aucune recette commentée
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Vous n'avez pas encore commenté de recettes.
+                    </p>
+                    <a
+                        href="/recette-plat"
+                        class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                    >
+                        Découvrir des recettes
+                    </a>
+                </div>
+            )
+        }
+    </main>
+</Layout>

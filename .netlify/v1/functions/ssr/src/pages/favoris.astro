@@ -1,0 +1,470 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Mes Recettes Favorites">
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Mes Recettes Favorites</h1>
+            <a
+                href="/recette-plat"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition"
+            >
+                Retour aux recettes
+            </a>
+        </div>
+
+        <!-- État de chargement -->
+        <div id="loadingState" class="text-center py-16">
+            <div class="text-4xl mb-4">⏳</div>
+            <h2 class="text-xl font-bold mb-2">Chargement...</h2>
+            <p class="text-gray-600">Vérification de votre connexion...</p>
+        </div>
+
+        <!-- État non connecté -->
+        <div
+            id="notLoggedInState"
+            class="text-center py-16 bg-gray-50 rounded-lg hidden"
+        >
+            <div class="text-6xl mb-4">🔒</div>
+            <h2 class="text-2xl font-bold mb-2">
+                Connectez-vous pour voir vos favoris
+            </h2>
+            <p class="text-gray-600 mb-6">
+                Vous devez être connecté pour accéder à vos recettes favorites.
+            </p>
+            <a
+                href="/connexion"
+                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+            >
+                Se connecter
+            </a>
+        </div>
+
+        <!-- Contenu principal -->
+        <div id="mainContent" class="hidden">
+            <!-- Onglets de catégories -->
+            <div class="mb-8 border-b border-gray-200">
+                <ul
+                    class="flex flex-wrap -mb-px text-sm font-medium text-center"
+                    id="categoriesTabs"
+                    role="tablist"
+                >
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-yellow-500 rounded-t-lg active"
+                            id="all-tab"
+                            data-tabs-target="#all"
+                            type="button"
+                            role="tab"
+                            aria-controls="all"
+                            aria-selected="true"
+                        >
+                            Tous (<span id="allCount">0</span>)
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                            id="entrees-tab"
+                            data-tabs-target="#entrees"
+                            type="button"
+                            role="tab"
+                            aria-controls="entrees"
+                            aria-selected="false"
+                        >
+                            Entrées (<span id="entreesCount">0</span>)
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                            id="plats-tab"
+                            data-tabs-target="#plats"
+                            type="button"
+                            role="tab"
+                            aria-controls="plats"
+                            aria-selected="false"
+                        >
+                            Plats (<span id="platsCount">0</span>)
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:border-gray-300"
+                            id="desserts-tab"
+                            data-tabs-target="#desserts"
+                            type="button"
+                            role="tab"
+                            aria-controls="desserts"
+                            aria-selected="false"
+                        >
+                            Desserts (<span id="dessertsCount">0</span>)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contenu des onglets -->
+            <div id="categoriesContent">
+                <!-- Tous les favoris -->
+                <div
+                    class="block"
+                    id="all"
+                    role="tabpanel"
+                    aria-labelledby="all-tab"
+                >
+                    <div
+                        id="allFavorites"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                    >
+                    </div>
+                </div>
+
+                <!-- Entrées -->
+                <div
+                    class="hidden"
+                    id="entrees"
+                    role="tabpanel"
+                    aria-labelledby="entrees-tab"
+                >
+                    <div
+                        id="entreesFavorites"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                    >
+                    </div>
+                </div>
+
+                <!-- Plats -->
+                <div
+                    class="hidden"
+                    id="plats"
+                    role="tabpanel"
+                    aria-labelledby="plats-tab"
+                >
+                    <div
+                        id="platsFavorites"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                    >
+                    </div>
+                </div>
+
+                <!-- Desserts -->
+                <div
+                    class="hidden"
+                    id="desserts"
+                    role="tabpanel"
+                    aria-labelledby="desserts-tab"
+                >
+                    <div
+                        id="dessertsFavorites"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                    >
+                    </div>
+                </div>
+            </div>
+
+            <!-- État vide -->
+            <div
+                id="emptyState"
+                class="text-center py-16 bg-gray-50 rounded-lg hidden"
+            >
+                <div class="text-6xl mb-4">❤️</div>
+                <h2 class="text-2xl font-bold mb-2">Aucune recette favorite</h2>
+                <p class="text-gray-600 mb-6">
+                    Vous n'avez pas encore ajouté de recettes à vos favoris.
+                </p>
+                <a
+                    href="/recette-plat"
+                    class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                >
+                    Découvrir des recettes
+                </a>
+            </div>
+
+            <!-- Section d'aide -->
+            <div
+                class="mt-16 p-6 bg-green-50 rounded-lg border border-green-100"
+            >
+                <h2 class="text-xl font-bold mb-4">
+                    Comment gérer vos favoris ?
+                </h2>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span
+                            >Cliquez sur l'icône ❤️ sur une recette pour
+                            l'ajouter ou la retirer de vos favoris</span
+                        >
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span
+                            >Retrouvez toutes vos recettes favorites sur cette
+                            page</span
+                        >
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span
+                            >Utilisez les onglets pour filtrer par type de plat</span
+                        >
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script>
+    import { initFavorisButtons } from "../js/favoris.js";
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+
+    // Fonction pour créer une carte de recette
+    function createRecipeCard(recette) {
+        const imageUrl = recette.img
+            ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
+            : "/placeholder.svg";
+
+        const categorieColors = {
+            entree: "bg-green-100 text-green-800",
+            plat: "bg-blue-100 text-blue-800",
+            dessert: "bg-purple-100 text-purple-800",
+        };
+
+        const categorieColor =
+            categorieColors[recette.categorie?.toLowerCase()] ||
+            "bg-gray-100 text-gray-800";
+
+        return `
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow" data-categorie="${recette.categorie || ""}">
+                <div class="relative">
+                    <img src="${imageUrl}" alt="${recette.nom}" class="w-full h-48 object-cover" />
+                    
+                    ${
+                        recette.expand?.sponsorise
+                            ? `
+                        <div class="absolute top-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
+                            SPONSORISÉ
+                        </div>
+                    `
+                            : ""
+                    }
+                    
+                    ${
+                        recette.categorie
+                            ? `
+                        <div class="absolute bottom-2 left-2 ${categorieColor} px-2 py-1 rounded text-xs font-bold uppercase">
+                            ${recette.categorie}
+                        </div>
+                    `
+                            : ""
+                    }
+                    
+                    <button type="button" class="absolute top-2 right-2 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full js-favori-btn" data-id="${recette.id}" aria-label="Retirer des favoris">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6" style="color: red;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-4">
+                <h3 class="font-bold text-lg mb-2 uppercase">${recette.nom}</h3>
+                
+                <div class="flex justify-between items-center text-sm text-gray-600">
+                    <span>⏱️ ${recette.temps_prep || "N/A"}</span>
+                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded">❤️ Favoris</span>
+                </div>
+                
+                <a href="/recette-plat/${recette.id}" class="block mt-3 bg-yellow-500 hover:bg-yellow-600 text-white text-center py-2 rounded transition font-medium">
+                    VOIR LA RECETTE
+                </a>
+            </div>
+        </div>
+    `;
+    }
+
+    // Fonction principale pour charger les favoris
+    async function loadFavorites() {
+        console.log("🔄 Chargement des favoris...");
+
+        const loadingState = document.getElementById("loadingState");
+        const notLoggedInState = document.getElementById("notLoggedInState");
+        const mainContent = document.getElementById("mainContent");
+        const emptyState = document.getElementById("emptyState");
+
+        try {
+            // Attendre un peu pour que PocketBase soit initialisé
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
+            // Vérifier si l'utilisateur est connecté
+            console.log("🔍 Vérification de l'authentification...");
+            console.log("Auth store valid:", pb.authStore.isValid);
+            console.log("Auth model:", pb.authStore.model);
+
+            if (!pb.authStore.isValid) {
+                console.log("❌ Utilisateur non connecté");
+                loadingState.classList.add("hidden");
+                notLoggedInState.classList.remove("hidden");
+                return;
+            }
+
+            console.log("✅ Utilisateur connecté:", pb.authStore.model.email);
+
+            // Récupérer les favoris
+            console.log("📡 Récupération des favoris...");
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${pb.authStore.model.id}"`,
+                expand: "recette,recette.ingredients,recette.sponsorise",
+                sort: "-created",
+            });
+
+            console.log(`📊 Favoris récupérés: ${favoris.length}`);
+
+            // Extraire les recettes
+            const recettes = favoris
+                .map((favori) => {
+                    if (!favori.expand?.recette) {
+                        console.warn(
+                            "⚠️ Favori sans recette associée:",
+                            favori.id,
+                        );
+                        return null;
+                    }
+                    return {
+                        ...favori.expand.recette,
+                        isFavorite: true,
+                    };
+                })
+                .filter(Boolean);
+
+            console.log(`📊 Recettes valides: ${recettes.length}`);
+
+            // Cacher le loading
+            loadingState.classList.add("hidden");
+
+            if (recettes.length === 0) {
+                emptyState.classList.remove("hidden");
+                mainContent.classList.remove("hidden");
+                return;
+            }
+
+            // Afficher le contenu principal
+            mainContent.classList.remove("hidden");
+
+            // Grouper par catégorie
+            const entrees = recettes.filter(
+                (r) => r.categorie?.toLowerCase() === "entree",
+            );
+            const plats = recettes.filter(
+                (r) => r.categorie?.toLowerCase() === "plat",
+            );
+            const desserts = recettes.filter(
+                (r) => r.categorie?.toLowerCase() === "dessert",
+            );
+
+            // Mettre à jour les compteurs
+            document.getElementById("allCount").textContent = recettes.length;
+            document.getElementById("entreesCount").textContent =
+                entrees.length;
+            document.getElementById("platsCount").textContent = plats.length;
+            document.getElementById("dessertsCount").textContent =
+                desserts.length;
+
+            // Afficher les recettes
+            document.getElementById("allFavorites").innerHTML = recettes
+                .map(createRecipeCard)
+                .join("");
+            document.getElementById("entreesFavorites").innerHTML =
+                entrees.length > 0
+                    ? entrees.map(createRecipeCard).join("")
+                    : '<div class="col-span-full text-center py-16 bg-gray-50 rounded-lg"><h2 class="text-xl font-bold mb-2">Aucune entrée favorite</h2><p class="text-gray-600">Vous n\'avez pas encore ajouté d\'entrées à vos favoris.</p></div>';
+            document.getElementById("platsFavorites").innerHTML =
+                plats.length > 0
+                    ? plats.map(createRecipeCard).join("")
+                    : '<div class="col-span-full text-center py-16 bg-gray-50 rounded-lg"><h2 class="text-xl font-bold mb-2">Aucun plat favori</h2><p class="text-gray-600">Vous n\'avez pas encore ajouté de plats à vos favoris.</p></div>';
+            document.getElementById("dessertsFavorites").innerHTML =
+                desserts.length > 0
+                    ? desserts.map(createRecipeCard).join("")
+                    : '<div class="col-span-full text-center py-16 bg-gray-50 rounded-lg"><h2 class="text-xl font-bold mb-2">Aucun dessert favori</h2><p class="text-gray-600">Vous n\'avez pas encore ajouté de desserts à vos favoris.</p></div>';
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement des favoris:", error);
+            loadingState.classList.add("hidden");
+
+            // Afficher un message d'erreur
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "text-center py-16 bg-red-50 rounded-lg";
+            errorDiv.innerHTML = `
+                <div class="text-6xl mb-4">⚠️</div>
+                <h2 class="text-2xl font-bold mb-2">Erreur de chargement</h2>
+                <p class="text-gray-600 mb-6">Impossible de charger vos favoris: ${error.message}</p>
+                <button onclick="location.reload()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition">
+                    Réessayer
+                </button>
+            `;
+            document.querySelector("main").appendChild(errorDiv);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Page favoris chargée");
+
+        // Charger les favoris
+        loadFavorites();
+
+        // Initialiser la gestion des favoris
+        initFavorisButtons();
+
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('[role="tab"]');
+        const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+
+        tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                // Désactiver tous les onglets
+                tabButtons.forEach((btn) => {
+                    btn.classList.remove("border-yellow-500");
+                    btn.classList.add(
+                        "border-transparent",
+                        "hover:border-gray-300",
+                    );
+                    btn.setAttribute("aria-selected", "false");
+                });
+
+                // Cacher tous les panneaux
+                tabPanels.forEach((panel) => {
+                    panel.classList.add("hidden");
+                    panel.classList.remove("block");
+                });
+
+                // Activer l'onglet cliqué
+                button.classList.remove(
+                    "border-transparent",
+                    "hover:border-gray-300",
+                );
+                button.classList.add("border-yellow-500");
+                button.setAttribute("aria-selected", "true");
+
+                // Afficher le panneau correspondant
+                const targetId = button
+                    .getAttribute("data-tabs-target")
+                    .substring(1);
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.remove("hidden");
+                    targetPanel.classList.add("block");
+                }
+            });
+        });
+
+        // Écouter les changements de favoris
+        document.addEventListener("favoriToggled", (event) => {
+            console.log("🔄 Rechargement des favoris après modification");
+            // Recharger les favoris après un délai
+            setTimeout(() => {
+                loadFavorites();
+            }, 500);
+        });
+    });
+</script>

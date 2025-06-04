@@ -1,0 +1,359 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Plat from "../../components/Plat.astro";
+import PlatFavoris from "../../components/PlatFavoris.astro";
+import Hero from "../../components/Hero.astro";
+import { getAllRecettes, getRecettesSponsors } from "../../backend.mjs";
+
+console.log("🚀 Début du chargement de la page recettes...");
+
+let recettes = [];
+let recettesSponsors = [];
+
+try {
+    console.log("📡 Récupération des recettes...");
+    recettes = await getAllRecettes();
+    console.log("✅ Recettes récupérées:", recettes.length);
+
+    if (recettes.length > 0) {
+        console.log("📝 Exemple de recette:", {
+            id: recettes[0].id,
+            nom: recettes[0].nom,
+            img: recettes[0].img,
+            temps_prep: recettes[0].temps_prep,
+        });
+    }
+
+    console.log("🌟 Récupération des recettes sponsorisées...");
+    recettesSponsors = await getRecettesSponsors();
+    console.log(
+        "✅ Recettes sponsorisées récupérées:",
+        recettesSponsors.length,
+    );
+} catch (error) {
+    console.error("❌ Erreur lors du chargement des données:", error);
+    console.error("❌ Message d'erreur:", error.message);
+}
+
+const totalRecettes = recettes.length;
+
+console.log("📊 Résumé:");
+console.log("- Recettes totales:", totalRecettes);
+console.log("- Recettes sponsorisées:", recettesSponsors.length);
+---
+
+<Layout>
+    <!-- Hero Section -->
+    <Hero
+        title="Nos Recettes"
+        subtitle="DECOUVREZ"
+        description="UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS"
+        backgroundImage="/placeholder.svg?height=600&width=1200"
+        stats={[
+            { number: totalRecettes.toString(), label: "Recettes", icon: "🍽️" },
+            { number: "12", label: "CATEGORIES", icon: "📂" },
+            { number: "4.8", label: "NOTE MOYENNE", icon: "⭐" },
+            { number: "1000+", label: "Avis", icon: "💬" },
+        ]}
+    >
+        <!-- Boutons d'action dans le hero -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button
+                class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105 shadow-lg"
+                onclick="document.getElementById('recettes-section').scrollIntoView({ behavior: 'smooth' })"
+            >
+                🔍 Explorer les recettes
+            </button>
+            <button
+                class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black font-bold px-8 py-4 rounded-lg transition transform hover:scale-105"
+                onclick="window.location.href = '/favoris'"
+            >
+                ❤️ Mes favoris
+            </button>
+        </div>
+    </Hero>
+
+    <!-- Section Recettes en vedette -->
+    <section class="bg-[#C2584F] text-white py-12 px-6 relative">
+        <h2 class="text-xl md:text-3xl font-bold uppercase mb-8">
+            Recettes en vedette
+        </h2>
+
+        <div
+            class="flex gap-4 overflow-x-auto snap-x pb-4"
+            id="vedettesContainer"
+        >
+            {
+                recettesSponsors.length > 0
+                    ? recettesSponsors
+                          .slice(0, 6)
+                          .map((plat) => (
+                              <PlatFavoris
+                                  id={plat.id}
+                                  nom={plat.nom}
+                                  img={plat.img}
+                                  calories={plat.calories}
+                                  regime={plat.regime}
+                              />
+                          ))
+                    : recettes
+                          .slice(0, 6)
+                          .map((plat) => (
+                              <PlatFavoris
+                                  id={plat.id}
+                                  nom={plat.nom}
+                                  img={plat.img}
+                                  calories={plat.calories}
+                                  regime={plat.regime}
+                              />
+                          ))
+            }
+        </div>
+    </section>
+
+    <!-- Section Autres recettes -->
+    <section id="recettes-section" class="py-12 px-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl md:text-3xl font-bold">Toutes nos recettes</h2>
+            <div class="text-sm text-gray-600">
+                <span id="recettesCount">{recettes.length}</span> recettes disponibles
+            </div>
+        </div>
+        <p class="mb-6 text-gray-600">
+            Choisissez parmi une grande liste de plats celui qui vous
+            correspond, et lancez-vous !
+        </p>
+
+        <!-- Barre de recherche et filtres -->
+        <div class="mb-8 flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <input
+                    type="text"
+                    placeholder="Rechercher une recette..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="searchInput"
+                />
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <!-- Filtre par catégorie -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="categorieSelect"
+                >
+                    <option value="tous">Toutes les catégories</option>
+                    <option value="entree">Entrées</option>
+                    <option value="plat">Plats</option>
+                    <option value="dessert">Desserts</option>
+                </select>
+
+                <!-- Autres filtres -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="filterSelect"
+                >
+                    <option value="tous">Tous les types</option>
+                    <option value="sponsorises">Sponsorisés</option>
+                    <option value="favoris">Favoris</option>
+                </select>
+
+                <!-- Tri -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="sortSelect"
+                >
+                    <option value="default">Trier par</option>
+                    <option value="nom">Nom A-Z</option>
+                    <option value="recent">Plus récent</option>
+                    <option value="temps">Temps de préparation</option>
+                </select>
+
+                <!-- Filtre par régime -->
+                <select
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    id="regimeSelect"
+                >
+                    <option value="tous">Tous les régimes</option>
+                    <option value="végétarien">🌱 Végétarien</option>
+                    <option value="végan">🌿 Végan</option>
+                    <option value="sans-gluten">🌾 Sans gluten</option>
+                    <option value="halal">☪️ Halal</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Informations de pagination -->
+        <div class="mb-4 flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+                Affichage de <span id="currentRangeStart">1</span>-<span
+                    id="currentRangeEnd">12</span
+                >
+                sur <span id="totalRecettes">{recettes.length}</span> recettes
+            </div>
+            <div class="text-sm text-gray-600">
+                Page <span id="currentPageDisplay">1</span> sur <span
+                    id="totalPagesDisplay">1</span
+                >
+            </div>
+        </div>
+
+        <!-- Grille des recettes -->
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            id="recettesGrid"
+        >
+            {
+                recettes.length > 0 ? (
+                    recettes.map((plat) => (
+                        <Plat
+                            id={plat.id}
+                            nom={plat.nom}
+                            img={plat.img}
+                            temps_prep={plat.temps_prep}
+                            isFavorite={plat.isFavorite}
+                            sponsorise={plat.expand?.sponsorise}
+                            categorie={plat.categorie}
+                            calories={plat.calories}
+                            regime={plat.regime}
+                        />
+                    ))
+                ) : (
+                    <div class="col-span-full text-center py-12 bg-gray-100 rounded-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">
+                            Aucune recette trouvée
+                        </h3>
+                        <p class="text-gray-600">
+                            Vérifiez que PocketBase est démarré et contient des
+                            données
+                        </p>
+                    </div>
+                )
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container mt-8">
+            <!-- La pagination sera générée dynamiquement -->
+        </div>
+    </section>
+
+    <!-- Section CTA -->
+    <section class="bg-green-600 text-white py-12 px-6 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">
+            DECOUVREZ NOS RECETTES
+        </h2>
+        <p class="mb-6">
+            Explorez notre collection de recettes delicieuses et faciles a
+            realiser !
+        </p>
+        <div class="flex justify-center gap-4 flex-wrap">
+            <a
+                href="#recettesGrid"
+                class="inline-block bg-white text-green-600 font-bold px-6 py-3 rounded-full hover:bg-gray-100 transition"
+            >
+                Voir toutes les recettes
+            </a>
+            <a
+                href="/favoris"
+                class="inline-block bg-red-500 text-white font-bold px-6 py-3 rounded-full hover:bg-red-600 transition"
+            >
+                Mes recettes favorites
+            </a>
+        </div>
+    </section>
+</Layout>
+
+<script>
+    import { initFavorisButtons } from "../../js/favoris.js";
+    import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
+    import { initPagination } from "../../js/recettes/pagination.js";
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+    import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("🚀 Initialisation de la page index des recettes");
+
+        // Attendre un peu pour que le DOM soit complètement chargé
+        setTimeout(async () => {
+            console.log("❤️ Initialisation des boutons favoris...");
+
+            // Vérifier que les boutons favoris existent
+            const favorisButtons = document.querySelectorAll(".js-favori-btn");
+            console.log(`🔍 ${favorisButtons.length} boutons favoris trouvés`);
+
+            // Synchroniser l'état visuel des favoris avec PocketBase
+            await syncFavoriteStates();
+
+            // Initialiser la gestion des favoris
+            initFavorisButtons();
+
+            // Initialiser la recherche et les filtres
+            console.log("🔍 Initialisation de la recherche et des filtres...");
+            initSearchAndFilters();
+
+            // Initialiser la pagination
+            console.log("📄 Initialisation de la pagination...");
+            initPagination();
+
+            console.log("✅ Initialisation terminée");
+        }, 100);
+    });
+
+    // Fonction pour synchroniser l'état visuel des favoris
+    async function syncFavoriteStates() {
+        if (!isLoggedIn()) {
+            console.log(
+                "⚠️ Utilisateur non connecté, pas de synchronisation des favoris",
+            );
+            return;
+        }
+
+        try {
+            console.log("🔄 Synchronisation de l'état des favoris...");
+
+            // Récupérer tous les favoris de l'utilisateur
+            const favoris = await pb.collection("favoris").getFullList({
+                filter: `user = "${getCurrentUser().id}"`,
+            });
+
+            const favoriteIds = favoris.map((favori) => favori.recette);
+            console.log("❤️ IDs des recettes favorites:", favoriteIds);
+
+            // Mettre à jour l'état visuel de chaque bouton favori
+            const favorisButtons = document.querySelectorAll(".js-favori-btn");
+
+            favorisButtons.forEach((button) => {
+                const recetteId = button.dataset.id;
+                const heartIcon = button.querySelector("svg");
+
+                if (recetteId && heartIcon) {
+                    const isFavorite = favoriteIds.includes(recetteId);
+
+                    if (isFavorite) {
+                        heartIcon.setAttribute("fill", "red");
+                        heartIcon.style.color = "red";
+                        console.log(
+                            `❤️ Recette ${recetteId} marquée comme favorite`,
+                        );
+                    } else {
+                        heartIcon.setAttribute("fill", "none");
+                        heartIcon.style.color = "white";
+                    }
+                }
+            });
+
+            console.log("✅ Synchronisation des favoris terminée");
+        } catch (error) {
+            console.error(
+                "❌ Erreur lors de la synchronisation des favoris:",
+                error,
+            );
+        }
+    }
+
+    // Écouter les changements de favoris pour mettre à jour l'affichage
+    document.addEventListener("favoriToggled", async (event) => {
+        console.log("🔄 Favori modifié, resynchronisation...");
+        await syncFavoriteStates();
+    });
+</script>
