@@ -6,7 +6,7 @@ import Layout from "../layouts/Layout.astro";
     <main class="max-w-4xl mx-auto px-4 py-8">
         <!-- État de chargement -->
         <div id="loadingState" class="text-center py-16">
-            <div class="text-4xl mb-4">⏳</div>
+            <div class="text-4xl mb-4"></div>
             <h2 class="text-xl font-bold mb-2">Chargement du profil...</h2>
         </div>
 
@@ -15,7 +15,7 @@ import Layout from "../layouts/Layout.astro";
             id="notLoggedInState"
             class="text-center py-16 bg-gray-50 rounded-lg hidden"
         >
-            <div class="text-6xl mb-4">🔒</div>
+            <div class="text-6xl mb-4"></div>
             <h2 class="text-2xl font-bold mb-2">Accès restreint</h2>
             <p class="text-gray-600 mb-6">
                 Vous devez être connecté pour accéder à votre profil.
@@ -122,7 +122,7 @@ import Layout from "../layouts/Layout.astro";
                 >
                     <div class="mb-4 md:mb-0">
                         <h2 class="text-2xl font-bold mb-2">
-                            🌟 Découvrez le Pass Cookup
+                            Découvrez le Pass Cookup
                         </h2>
                         <p class="text-yellow-100">
                             Accédez à des recettes exclusives, des cours de
@@ -131,12 +131,12 @@ import Layout from "../layouts/Layout.astro";
                         </p>
                         <ul class="text-yellow-100 text-sm mt-2 space-y-1">
                             <li>
-                                • 🥗 Gestion personnalisée de votre régime
+                                • Gestion personnalisée de votre régime
                                 alimentaire
                             </li>
-                            <li>• 🍽️ Recettes adaptées à vos préférences</li>
-                            <li>• 👨‍🍳 Cours de cuisine exclusifs</li>
-                            <li>• ⭐ Contenu premium</li>
+                            <li>• Recettes adaptées à vos préférences</li>
+                            <li>• Cours de cuisine exclusifs</li>
+                            <li>• Contenu premium</li>
                         </ul>
                     </div>
                     <button
@@ -157,14 +157,14 @@ import Layout from "../layouts/Layout.astro";
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-yellow-500 text-yellow-600 bg-yellow-50"
                             data-tab="profile"
                         >
-                            👤 Informations personnelles
+                            Informations personnelles
                         </button>
                         <button
                             id="regimeTabBtn"
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="regime"
                         >
-                            🥗 Régime alimentaire
+                            Régime alimentaire
                             <span
                                 class="ml-1 text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full"
                                 >COOKUP</span
@@ -174,25 +174,31 @@ import Layout from "../layouts/Layout.astro";
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="comments"
                         >
-                            💬 Mes commentaires
+                            Mes commentaires
                         </button>
                         <button
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="avis"
                         >
-                            ⭐ Mes avis
+                            Mes avis
                         </button>
                         <button
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="subscription"
                         >
-                            💳 Gérer l'abonnement
+                            Gérer l'abonnement
                         </button>
                         <button
                             class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             data-tab="security"
                         >
-                            🔒 Sécurité
+                            Sécurité
+                        </button>
+                        <button
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            data-tab="recipes"
+                        >
+                            Mes recettes
                         </button>
                     </nav>
                 </div>
@@ -272,14 +278,14 @@ import Layout from "../layouts/Layout.astro";
                                     type="submit"
                                     class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-2 rounded-lg transition"
                                 >
-                                    💾 Sauvegarder les modifications
+                                    Sauvegarder les modifications
                                 </button>
                                 <button
                                     type="button"
                                     onclick="loadUserProfile()"
                                     class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-6 py-2 rounded-lg transition"
                                 >
-                                    🔄 Annuler
+                                    Annuler
                                 </button>
                             </div>
                         </form>
@@ -301,7 +307,7 @@ import Layout from "../layouts/Layout.astro";
                             id="regimeAccessDenied"
                             class="text-center py-12 bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl hidden"
                         >
-                            <div class="text-6xl mb-4">🔒</div>
+                            <div class="text-6xl mb-4"></div>
                             <h3 class="text-2xl font-bold text-orange-800 mb-3">
                                 Fonctionnalité réservée au Pass Cookup
                             </h3>
@@ -319,7 +325,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🌱</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Végétarien
                                     </div>
@@ -327,7 +333,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🌿</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Végan
                                     </div>
@@ -335,7 +341,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🌾</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Sans gluten
                                     </div>
@@ -343,7 +349,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">☪️</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Halal
                                     </div>
@@ -354,7 +360,7 @@ import Layout from "../layouts/Layout.astro";
                                 id="getCookupPassFromRegime"
                                 class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold px-8 py-4 rounded-xl hover:from-yellow-500 hover:to-orange-600 transition transform hover:scale-105 shadow-lg"
                             >
-                                🌟 Débloquer avec le Pass Cookup
+                                Débloquer avec le Pass Cookup
                             </button>
 
                             <p class="text-xs text-orange-500 mt-4">
@@ -379,7 +385,7 @@ import Layout from "../layouts/Layout.astro";
                                         <div
                                             class="text-lg font-medium text-gray-900"
                                         >
-                                            🌱 Végétarien
+                                            Végétarien
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             Pas de viande ni de poisson
@@ -401,7 +407,7 @@ import Layout from "../layouts/Layout.astro";
                                         <div
                                             class="text-lg font-medium text-gray-900"
                                         >
-                                            🌿 Végan
+                                            Végan
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             Aucun produit d'origine animale
@@ -423,7 +429,7 @@ import Layout from "../layouts/Layout.astro";
                                         <div
                                             class="text-lg font-medium text-gray-900"
                                         >
-                                            🌾 Sans gluten
+                                            Sans gluten
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             Sans blé, orge, seigle
@@ -445,7 +451,7 @@ import Layout from "../layouts/Layout.astro";
                                         <div
                                             class="text-lg font-medium text-gray-900"
                                         >
-                                            ☪️ Halal
+                                            Halal
                                         </div>
                                         <div class="text-sm text-gray-500">
                                             Conforme aux prescriptions
@@ -463,14 +469,14 @@ import Layout from "../layouts/Layout.astro";
                                     type="submit"
                                     class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-2 rounded-lg transition"
                                 >
-                                    🥗 Sauvegarder mes préférences
+                                    Sauvegarder mes préférences
                                 </button>
                                 <button
                                     type="button"
                                     onclick="loadUserRegimes()"
                                     class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold px-6 py-2 rounded-lg transition"
                                 >
-                                    🔄 Annuler
+                                    Annuler
                                 </button>
                             </div>
                         </form>
@@ -480,7 +486,7 @@ import Layout from "../layouts/Layout.astro";
                             class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg"
                         >
                             <h3 class="text-lg font-bold text-blue-800 mb-2">
-                                💡 Pourquoi indiquer votre régime ?
+                                Pourquoi indiquer votre régime ?
                             </h3>
                             <ul class="text-blue-700 space-y-1">
                                 <li>
@@ -503,7 +509,7 @@ import Layout from "../layouts/Layout.astro";
 
                         <!-- État de chargement des commentaires -->
                         <div id="commentsLoading" class="text-center py-8">
-                            <div class="text-2xl mb-2">⏳</div>
+                            <div class="text-2xl mb-2"></div>
                             <p class="text-gray-600">
                                 Chargement de vos commentaires...
                             </p>
@@ -519,7 +525,7 @@ import Layout from "../layouts/Layout.astro";
                             id="noUserComments"
                             class="text-center py-12 hidden"
                         >
-                            <div class="text-6xl mb-4">💭</div>
+                            <div class="text-6xl mb-4"></div>
                             <h3 class="text-xl font-bold mb-2">
                                 Aucun commentaire
                             </h3>
@@ -546,13 +552,13 @@ import Layout from "../layouts/Layout.astro";
                                 href="/avis-site"
                                 class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-4 py-2 rounded-lg transition"
                             >
-                                ✍️ Donner un avis
+                                Donner un avis
                             </a>
                         </div>
 
                         <!-- État de chargement des avis -->
                         <div id="avisLoading" class="text-center py-8">
-                            <div class="text-2xl mb-2">⏳</div>
+                            <div class="text-2xl mb-2"></div>
                             <p class="text-gray-600">
                                 Chargement de vos avis...
                             </p>
@@ -565,7 +571,7 @@ import Layout from "../layouts/Layout.astro";
 
                         <!-- État vide -->
                         <div id="noUserAvis" class="text-center py-12 hidden">
-                            <div class="text-6xl mb-4">⭐</div>
+                            <div class="text-6xl mb-4"></div>
                             <h3 class="text-xl font-bold mb-2">
                                 Aucun avis donné
                             </h3>
@@ -577,7 +583,7 @@ import Layout from "../layouts/Layout.astro";
                                 href="/avis-site"
                                 class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
                             >
-                                ✍️ Donner mon avis
+                                Donner mon avis
                             </a>
                         </div>
                     </div>
@@ -590,7 +596,7 @@ import Layout from "../layouts/Layout.astro";
 
                         <!-- État de chargement -->
                         <div id="subscriptionLoading" class="text-center py-8">
-                            <div class="text-2xl mb-2">⏳</div>
+                            <div class="text-2xl mb-2"></div>
                             <p class="text-gray-600">
                                 Chargement des informations d'abonnement...
                             </p>
@@ -601,7 +607,7 @@ import Layout from "../layouts/Layout.astro";
                             id="noSubscription"
                             class="text-center py-12 bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-xl hidden"
                         >
-                            <div class="text-6xl mb-4">💳</div>
+                            <div class="text-6xl mb-4"></div>
                             <h3 class="text-2xl font-bold text-orange-800 mb-3">
                                 Aucun abonnement actif
                             </h3>
@@ -618,7 +624,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🍽️</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Recettes premium
                                     </div>
@@ -626,7 +632,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🏪</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Codes promo
                                     </div>
@@ -634,7 +640,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">📅</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Planificateur
                                     </div>
@@ -642,7 +648,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div
                                     class="bg-white/50 p-3 rounded-lg border border-orange-100"
                                 >
-                                    <div class="text-2xl mb-1">🆘</div>
+                                    <div class="text-2xl mb-1"></div>
                                     <div class="font-medium text-orange-800">
                                         Support prioritaire
                                     </div>
@@ -654,14 +660,14 @@ import Layout from "../layouts/Layout.astro";
                                     href="/pass-cookup"
                                     class="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-bold px-8 py-4 rounded-xl hover:from-yellow-500 hover:to-orange-600 transition transform hover:scale-105 shadow-lg"
                                 >
-                                    🌟 Découvrir le Pass Cookup
+                                    Découvrir le Pass Cookup
                                 </a>
                                 <br />
                                 <a
                                     href="/abonnement-cookup"
                                     class="inline-block bg-emerald-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-emerald-700 transition"
                                 >
-                                    💳 S'abonner maintenant
+                                    S'abonner maintenant
                                 </a>
                             </div>
 
@@ -680,7 +686,7 @@ import Layout from "../layouts/Layout.astro";
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <h3 class="text-xl font-bold mb-2">
-                                            🌟 Pass Cookup Actif
+                                            Pass Cookup Actif
                                         </h3>
                                         <p
                                             id="subscriptionType"
@@ -861,7 +867,7 @@ import Layout from "../layouts/Layout.astro";
                                     class="bg-blue-50 border border-blue-200 rounded-lg p-4"
                                 >
                                     <h5 class="font-medium text-blue-800 mb-2">
-                                        💡 Modifier votre abonnement
+                                        Modifier votre abonnement
                                     </h5>
                                     <p class="text-blue-700 text-sm mb-3">
                                         Vous pouvez passer à l'abonnement annuel
@@ -871,7 +877,7 @@ import Layout from "../layouts/Layout.astro";
                                         onclick="upgradeSubscription()"
                                         class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
                                     >
-                                        📈 Passer à l'abonnement annuel
+                                        Passer à l'abonnement annuel
                                     </button>
                                 </div>
 
@@ -880,7 +886,7 @@ import Layout from "../layouts/Layout.astro";
                                     class="bg-red-50 border border-red-200 rounded-lg p-4"
                                 >
                                     <h5 class="font-medium text-red-800 mb-2">
-                                        ⚠️ Résilier votre abonnement
+                                        Résilier votre abonnement
                                     </h5>
                                     <p class="text-red-700 text-sm mb-3">
                                         Vous perdrez l'accès à tous les
@@ -891,7 +897,7 @@ import Layout from "../layouts/Layout.astro";
                                         onclick="cancelSubscription()"
                                         class="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition"
                                     >
-                                        🗑️ Résilier l'abonnement
+                                        Résilier l'abonnement
                                     </button>
                                 </div>
                             </div>
@@ -954,7 +960,7 @@ import Layout from "../layouts/Layout.astro";
                                 type="submit"
                                 class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2 rounded-lg transition"
                             >
-                                🔒 Changer le mot de passe
+                                Changer le mot de passe
                             </button>
                         </form>
 
@@ -972,8 +978,59 @@ import Layout from "../layouts/Layout.astro";
                                 onclick="deleteAccount()"
                                 class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2 rounded-lg transition"
                             >
-                                🗑️ Supprimer mon compte
+                                Supprimer mon compte
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Mes recettes -->
+                    <div id="recipesTab" class="tab-content hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold">Mes recettes</h2>
+                            <a
+                                href="/creer-recette"
+                                class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-4 py-2 rounded-lg transition"
+                            >
+                                Créer une recette
+                            </a>
+                        </div>
+
+                        <!-- État de chargement des recettes -->
+                        <div id="recipesLoading" class="text-center py-8">
+                            <div class="text-2xl mb-2"></div>
+                            <p class="text-gray-600">
+                                Chargement de vos recettes...
+                            </p>
+                        </div>
+
+                        <!-- Liste des recettes -->
+                        <div
+                            id="userRecipesList"
+                            class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden"
+                        >
+                            <!-- Les recettes seront ajoutées ici -->
+                        </div>
+
+                        <!-- État vide -->
+                        <div
+                            id="noUserRecipes"
+                            class="text-center py-12 hidden"
+                        >
+                            <div class="text-6xl mb-4"></div>
+                            <h3 class="text-xl font-bold mb-2">
+                                Aucune recette publiée
+                            </h3>
+                            <p class="text-gray-600 mb-4">
+                                Vous n'avez pas encore créé de recettes.
+                                Partagez vos talents culinaires avec la
+                                communauté !
+                            </p>
+                            <a
+                                href="/creer-recette"
+                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                            >
+                                Créer ma première recette
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1157,31 +1214,35 @@ import Layout from "../layouts/Layout.astro";
                         loadUserComments();
                     } else if (targetTab === "avis") {
                         loadUserAvis();
+                    } else if (targetTab === "recipes") {
+                        loadUserRecipes();
                     } else if (targetTab === "regime") {
                         // Vérifier l'accès au régime
-                        if (!currentUser?.cookup) {
-                            // Masquer le formulaire et afficher le message d'accès refusé
-                            document
-                                .getElementById("regimeForm")
-                                .classList.add("hidden");
-                            document
-                                .querySelector("#regimeTab .mt-8")
-                                .classList.add("hidden"); // Section informative
-                            document
-                                .getElementById("regimeAccessDenied")
-                                .classList.remove("hidden");
-                        } else {
-                            // Afficher le formulaire et masquer le message
-                            document
-                                .getElementById("regimeForm")
-                                .classList.remove("hidden");
-                            document
-                                .querySelector("#regimeTab .mt-8")
-                                .classList.remove("hidden"); // Section informative
-                            document
-                                .getElementById("regimeAccessDenied")
-                                .classList.add("hidden");
-                        }
+                        if (!currentUser?.cookup)
+                            if (!currentUser?.cookup) {
+                                // Vérifier l'accès au régime
+                                // Masquer le formulaire et afficher le message d'accès refusé
+                                document
+                                    .getElementById("regimeForm")
+                                    .classList.add("hidden");
+                                document
+                                    .querySelector("#regimeTab .mt-8")
+                                    .classList.add("hidden"); // Section informative
+                                document
+                                    .getElementById("regimeAccessDenied")
+                                    .classList.remove("hidden");
+                            } else {
+                                // Afficher le formulaire et masquer le message
+                                document
+                                    .getElementById("regimeForm")
+                                    .classList.remove("hidden");
+                                document
+                                    .querySelector("#regimeTab .mt-8")
+                                    .classList.remove("hidden"); // Section informative
+                                document
+                                    .getElementById("regimeAccessDenied")
+                                    .classList.add("hidden");
+                            }
                     } else if (targetTab === "subscription") {
                         loadSubscriptionInfo();
                     }
@@ -1259,8 +1320,7 @@ import Layout from "../layouts/Layout.astro";
         // CTA Cookup Pass
         const getCookupPass = document.getElementById("getCookupPass");
         getCookupPass?.addEventListener("click", () => {
-            // TODO: Rediriger vers la page Cookup Pass
-            alert("Redirection vers la page Cookup Pass (à implémenter)");
+            window.location.href = "/pass-cookup";
         });
 
         // Formulaire régime
@@ -1272,8 +1332,7 @@ import Layout from "../layouts/Layout.astro";
             "getCookupPassFromRegime",
         );
         getCookupPassFromRegime?.addEventListener("click", () => {
-            // TODO: Rediriger vers la page Cookup Pass
-            alert("Redirection vers la page Cookup Pass (à implémenter)");
+            window.location.href = "/pass-cookup";
         });
     }
 
@@ -1313,7 +1372,7 @@ import Layout from "../layouts/Layout.astro";
             );
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = "💾 Sauvegarder les modifications";
+            submitBtn.textContent = "Sauvegarder les modifications";
         }
     }
 
@@ -1369,7 +1428,7 @@ import Layout from "../layouts/Layout.astro";
             );
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = "🔒 Changer le mot de passe";
+            submitBtn.textContent = "Changer le mot de passe";
         }
     }
 
@@ -1440,6 +1499,40 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
+    // Charger les recettes de l'utilisateur
+    async function loadUserRecipes() {
+        const recipesLoading = document.getElementById("recipesLoading");
+        const userRecipesList = document.getElementById("userRecipesList");
+        const noUserRecipes = document.getElementById("noUserRecipes");
+
+        try {
+            recipesLoading.classList.remove("hidden");
+            userRecipesList.classList.add("hidden");
+            noUserRecipes.classList.add("hidden");
+
+            const recipes = await pb.collection("recettes").getFullList({
+                filter: `user = "${currentUser.id}"`,
+                sort: "-created",
+            });
+
+            recipesLoading.classList.add("hidden");
+
+            if (recipes.length === 0) {
+                noUserRecipes.classList.remove("hidden");
+                return;
+            }
+
+            userRecipesList.innerHTML = recipes
+                .map(createUserRecipeHTML)
+                .join("");
+            userRecipesList.classList.remove("hidden");
+        } catch (error) {
+            console.error("Erreur lors du chargement des recettes:", error);
+            recipesLoading.classList.add("hidden");
+            showError("Erreur lors du chargement des recettes");
+        }
+    }
+
     // Créer le HTML d'un commentaire utilisateur
     function createUserCommentHTML(comment) {
         const recette = comment.expand?.recette;
@@ -1491,27 +1584,22 @@ import Layout from "../layouts/Layout.astro";
                                         ${recetteName}
                                     </a>
                                 </h4>
-                                <p class="text-sm text-gray-500">${createdDate}</p>
+                                <div class="flex items-center gap-2 text-sm text-gray-600">
+                                    <span>${createdDate}</span>
+                                    ${stars ? `<span class="text-yellow-500">${stars}</span>` : ""}
+                                </div>
                             </div>
-                            ${stars ? `<div class="text-lg">${stars}</div>` : ""}
                         </div>
                         
-                        <p class="text-gray-800 leading-relaxed">${comment.contenu}</p>
+                        <p class="text-gray-700 leading-relaxed">${comment.commentaire}</p>
                         
                         <div class="mt-4 flex gap-2">
-                            ${
-                                recette
-                                    ? `
-                                <a href="${recetteLink}" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition">
-                                    👁️ Voir la recette
-                                </a>
-                            `
-                                    : ""
-                            }
-                            <button 
-                                onclick="deleteUserComment('${comment.id}')"
-                                class="text-red-600 hover:text-red-800 text-sm font-medium transition"
-                            >
+                            <button onclick="editComment('${comment.id}')" 
+                                class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                ✏️ Modifier
+                            </button>
+                            <button onclick="deleteComment('${comment.id}')" 
+                                class="text-red-600 hover:text-red-800 text-sm font-medium">
                                 🗑️ Supprimer
                             </button>
                         </div>
@@ -1529,216 +1617,108 @@ import Layout from "../layouts/Layout.astro";
             day: "numeric",
         });
 
-        const stars = avis.note ? "⭐".repeat(avis.note) : "";
-
-        // Générer l'avatar
-        let avatarHTML = "";
-        if (currentUser?.avatar) {
-            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${currentUser.id}/${currentUser.avatar}`;
-            avatarHTML = `<img src="${avatarUrl}" alt="Mon avatar" class="w-12 h-12 rounded-full object-cover" />`;
-        } else {
-            const userName = currentUser?.pseudo || "Utilisateur";
-            const userInitials = userName.substring(0, 2).toUpperCase();
-            avatarHTML = `<div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold">${userInitials}</div>`;
-        }
-
-        // Catégories
-        const categories = Array.isArray(avis.categories)
-            ? avis.categories
-            : [];
-        const categoriesHTML =
-            categories.length > 0
-                ? `<div class="flex flex-wrap gap-1 mb-3">
-                ${categories.map((cat) => `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${getCategoryIcon(cat)} ${cat}</span>`).join("")}
-               </div>`
-                : "";
-
         return `
             <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div class="flex items-start space-x-4">
-                    <!-- Avatar -->
-                    ${avatarHTML}
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h4 class="font-bold text-lg">Mon avis sur Cookit-UP</h4>
+                        <div class="text-sm text-gray-600">${createdDate}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editAvis('${avis.id}')" 
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            ✏️ Modifier
+                        </button>
+                        <button onclick="deleteAvis('${avis.id}')" 
+                            class="text-red-600 hover:text-red-800 text-sm font-medium">
+                            🗑️ Supprimer
+                        </button>
+                    </div>
+                </div>
+                
+                <p class="text-gray-700 leading-relaxed">${avis.comment}</p>
+            </div>
+        `;
+    }
+
+    // Créer le HTML d'une recette utilisateur
+    function createUserRecipeHTML(recipe) {
+        const createdDate = new Date(recipe.created).toLocaleDateString(
+            "fr-FR",
+            {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            },
+        );
+
+        // Image de la recette
+        let imageHTML = "";
+        if (recipe.image) {
+            const imageUrl = `http://127.0.0.1:8090/api/files/recettes/${recipe.id}/${recipe.image}`;
+            imageHTML = `<img src="${imageUrl}" alt="${recipe.nom}" class="w-full h-48 object-cover rounded-lg mb-4" />`;
+        } else {
+            imageHTML = `<div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-500">
+                <span class="text-4xl">🍽️</span>
+            </div>`;
+        }
+
+        return `
+            <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                ${imageHTML}
+                
+                <div class="p-4">
+                    <h4 class="font-bold text-lg mb-2">
+                        <a href="/recette-plat/${recipe.id}" class="text-yellow-600 hover:text-yellow-800 transition">
+                            ${recipe.nom}
+                        </a>
+                    </h4>
                     
-                    <!-- Contenu -->
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h4 class="font-bold text-lg">Avis sur Cookit-UP</h4>
-                                <p class="text-sm text-gray-500">${createdDate}</p>
-                                <div class="flex items-center mt-1">
-                                    ${stars ? `<span class="text-lg mr-2">${stars}</span>` : ""}
-                                    ${
-                                        avis.allow_publication
-                                            ? '<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">📢 Public</span>'
-                                            : '<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs">🔒 Privé</span>'
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        
-                        ${categoriesHTML}
-                        
-                        <p class="text-gray-800 leading-relaxed mb-4">${avis.comment}</p>
-                        
-                        ${
-                            avis.suggestions
-                                ? `
-                            <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded mb-4">
-                                <h5 class="font-medium text-blue-800 mb-1">💡 Mes suggestions</h5>
-                                <p class="text-blue-700 text-sm">${avis.suggestions}</p>
-                            </div>
-                        `
-                                : ""
-                        }
-                        
-                        <div class="flex gap-2">
-                            <a href="/avis-site" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium transition">
-                                ✏️ Modifier
-                            </a>
-                            <button 
-                                onclick="deleteUserAvis('${avis.id}')"
-                                class="text-red-600 hover:text-red-800 text-sm font-medium transition"
-                            >
-                                🗑️ Supprimer
-                            </button>
-                        </div>
+                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">${recipe.description || "Aucune description"}</p>
+                    
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-4">
+                        <span>⏱️ ${recipe.temps_preparation || "N/A"} min</span>
+                        <span>📅 ${createdDate}</span>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <a href="/recette-plat/${recipe.id}" 
+                            class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center py-2 px-4 rounded-lg text-sm font-medium transition">
+                            👁️ Voir
+                        </a>
+                        <button onclick="editRecipe('${recipe.id}')" 
+                            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition">
+                            ✏️ Modifier
+                        </button>
+                        <button onclick="deleteRecipe('${recipe.id}')" 
+                            class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition">
+                            🗑️ Supprimer
+                        </button>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    // Obtenir l'icône d'une catégorie
-    function getCategoryIcon(category) {
-        const icons = {
-            recettes: "🍽️",
-            interface: "🎨",
-            partenaires: "🏪",
-            fonctionnalites: "⚙️",
-            support: "🆘",
-            general: "🌟",
-        };
-        return icons[category] || "📝";
-    }
-
-    // Supprimer un commentaire utilisateur
-    window.deleteUserComment = async function (commentId) {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
-            return;
-        }
-
-        try {
-            await pb.collection("commentaires").delete(commentId);
-            await loadUserComments();
-            await loadUserStats();
-            showSuccess("Commentaire supprimé 🗑️");
-        } catch (error) {
-            console.error("Erreur lors de la suppression:", error);
-            showError("Erreur lors de la suppression du commentaire");
-        }
-    };
-
-    // Supprimer un avis utilisateur
-    window.deleteUserAvis = async function (avisId) {
-        if (!confirm("Êtes-vous sûr de vouloir supprimer cet avis ?")) {
-            return;
-        }
-
-        try {
-            await pb.collection("avis_site").delete(avisId);
-            await loadUserAvis();
-            showSuccess("Avis supprimé 🗑️");
-        } catch (error) {
-            console.error("Erreur lors de la suppression:", error);
-            showError("Erreur lors de la suppression de l'avis");
-        }
-    };
-
-    // Supprimer le compte
-    window.deleteAccount = async function () {
-        const confirmation = prompt(
-            'Pour confirmer la suppression de votre compte, tapez "SUPPRIMER" :',
-        );
-
-        if (confirmation !== "SUPPRIMER") {
-            return;
-        }
-
-        try {
-            await pb.collection("users").delete(currentUser.id);
-            logout();
-            window.location.href = "/";
-        } catch (error) {
-            console.error("Erreur lors de la suppression du compte:", error);
-            showError("Erreur lors de la suppression du compte");
-        }
-    };
-
-    // Fonctions utilitaires
-    function showSuccess(message, container = null) {
-        const element = container || createNotification();
-        element.className =
-            "p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg";
-        element.textContent = message;
-        element.classList.remove("hidden");
-
-        if (!container) {
-            setTimeout(() => element.remove(), 3000);
-        }
-    }
-
-    function showError(message, container = null) {
-        const element = container || createNotification();
-        element.className =
-            "p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg";
-        element.textContent = message;
-        element.classList.remove("hidden");
-
-        if (!container) {
-            setTimeout(() => element.remove(), 3000);
-        }
-    }
-
-    function createNotification() {
-        const notification = document.createElement("div");
-        notification.className = "fixed top-4 right-4 z-50 max-w-sm";
-        document.body.appendChild(notification);
-        return notification;
-    }
-
     // Charger les régimes de l'utilisateur
     async function loadUserRegimes() {
         try {
-            // Récupérer les données utilisateur à jour
             const user = await pb.collection("users").getOne(currentUser.id);
+            const regimes = user.regimes || [];
 
             // Décocher toutes les cases
             const checkboxes = document.querySelectorAll(
                 'input[name="regime"]',
             );
             checkboxes.forEach((checkbox) => {
-                checkbox.checked = false;
+                checkbox.checked = regimes.includes(checkbox.value);
             });
-
-            // Cocher les régimes de l'utilisateur
-            if (user.regime && Array.isArray(user.regime)) {
-                user.regime.forEach((regime) => {
-                    const checkbox = document.querySelector(
-                        `input[name="regime"][value="${regime}"]`,
-                    );
-                    if (checkbox) {
-                        checkbox.checked = true;
-                    }
-                });
-            }
-
-            console.log("✅ Régimes chargés:", user.regime);
         } catch (error) {
             console.error("Erreur lors du chargement des régimes:", error);
         }
     }
 
-    // Gérer la mise à jour des régimes
+    // Gérer la mise à jour du régime
     async function handleRegimeUpdate(e) {
         e.preventDefault();
 
@@ -1749,24 +1729,17 @@ import Layout from "../layouts/Layout.astro";
             submitBtn.disabled = true;
             submitBtn.textContent = "⏳ Sauvegarde...";
 
-            // Récupérer les régimes sélectionnés
             const formData = new FormData(e.target);
             const selectedRegimes = formData.getAll("regime");
 
-            console.log("📝 Régimes sélectionnés:", selectedRegimes);
-
-            // Mettre à jour dans PocketBase
             await pb.collection("users").update(currentUser.id, {
-                regime: selectedRegimes,
+                regimes: selectedRegimes,
             });
 
             showSuccess(
-                "Préférences alimentaires mises à jour avec succès ! 🥗",
+                "Préférences alimentaires mises à jour !",
                 regimeMessage,
             );
-
-            // Déclencher l'événement pour mettre à jour le header
-            document.dispatchEvent(new CustomEvent("userUpdate"));
         } catch (error) {
             console.error("Erreur lors de la mise à jour des régimes:", error);
             showError(
@@ -1775,7 +1748,7 @@ import Layout from "../layouts/Layout.astro";
             );
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = "🥗 Sauvegarder mes préférences";
+            submitBtn.textContent = "Sauvegarder mes préférences";
         }
     }
 
@@ -1793,19 +1766,39 @@ import Layout from "../layouts/Layout.astro";
             noSubscription.classList.add("hidden");
             activeSubscription.classList.add("hidden");
 
-            // Simuler un délai de chargement
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Vérifier le statut d'abonnement
+            const user = await pb.collection("users").getOne(currentUser.id);
 
             subscriptionLoading.classList.add("hidden");
 
-            // Vérifier si l'utilisateur a un abonnement actif (basé sur le champ cookup)
-            if (currentUser?.cookup) {
-                // Simuler les données d'abonnement
-                const subscriptionData = getSimulatedSubscriptionData();
-                displaySubscriptionInfo(subscriptionData);
-                activeSubscription.classList.remove("hidden");
-            } else {
+            if (!user.cookup) {
                 noSubscription.classList.remove("hidden");
+            } else {
+                // Simuler des données d'abonnement
+                const subscriptionData = {
+                    type: "mensuel",
+                    price: "5,99€",
+                    startDate: "15 janvier 2024",
+                    nextBilling: "15 février 2024",
+                    status: "actif",
+                    autoRenewal: true,
+                };
+
+                // Remplir les informations
+                document.getElementById("subscriptionType").textContent =
+                    subscriptionData.type === "mensuel"
+                        ? "Abonnement mensuel"
+                        : "Abonnement annuel";
+                document.getElementById("subscriptionPrice").textContent =
+                    subscriptionData.price;
+                document.getElementById("subscriptionStartDate").textContent =
+                    subscriptionData.startDate;
+                document.getElementById("nextBillingDate").textContent =
+                    subscriptionData.nextBilling;
+                document.getElementById("autoRenewal").textContent =
+                    subscriptionData.autoRenewal ? "Activé" : "Désactivé";
+
+                activeSubscription.classList.remove("hidden");
             }
         } catch (error) {
             console.error("Erreur lors du chargement de l'abonnement:", error);
@@ -1816,93 +1809,175 @@ import Layout from "../layouts/Layout.astro";
         }
     }
 
-    // Simuler les données d'abonnement
-    function getSimulatedSubscriptionData() {
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 2); // Abonnement depuis 2 mois
+    // Fonctions globales pour les actions
+    window.editComment = function (commentId) {
+        // Rediriger vers la recette pour modifier le commentaire
+        alert("Fonctionnalité de modification en cours de développement");
+    };
 
-        const nextBilling = new Date();
-        nextBilling.setMonth(nextBilling.getMonth() + 1); // Prochaine facturation dans 1 mois
+    window.deleteComment = async function (commentId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?"))
+            return;
 
-        return {
-            type: "monthly",
-            price: "5,99€",
-            startDate: startDate.toLocaleDateString("fr-FR"),
-            nextBilling: nextBilling.toLocaleDateString("fr-FR"),
-            status: "active",
-            autoRenewal: true,
-        };
-    }
+        try {
+            await pb.collection("commentaires").delete(commentId);
+            showSuccess("Commentaire supprimé");
+            loadUserComments(); // Recharger la liste
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression du commentaire");
+        }
+    };
 
-    // Afficher les informations d'abonnement
-    function displaySubscriptionInfo(data) {
-        document.getElementById("subscriptionType").textContent =
-            data.type === "monthly"
-                ? "Abonnement mensuel"
-                : "Abonnement annuel";
-        document.getElementById("subscriptionPrice").textContent = data.price;
-        document.getElementById("subscriptionStartDate").textContent =
-            data.startDate;
-        document.getElementById("nextBillingDate").textContent =
-            data.nextBilling;
-        document.getElementById("autoRenewal").textContent = data.autoRenewal
-            ? "Activé"
-            : "Désactivé";
-    }
+    window.editAvis = function (avisId) {
+        // Rediriger vers la page d'avis avec l'ID pour modification
+        window.location.href = `/avis-site?edit=${avisId}`;
+    };
 
-    // Améliorer l'abonnement
-    window.upgradeSubscription = function () {
+    window.deleteAvis = async function (avisId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cet avis ?")) return;
+
+        try {
+            await pb.collection("avis_site").delete(avisId);
+            showSuccess("Avis supprimé");
+            loadUserAvis(); // Recharger la liste
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression de l'avis");
+        }
+    };
+
+    window.editRecipe = function (recipeId) {
+        // Rediriger vers la page de modification de recette
+        alert("Fonctionnalité de modification en cours de développement");
+    };
+
+    window.deleteRecipe = async function (recipeId) {
+        if (!confirm("Êtes-vous sûr de vouloir supprimer cette recette ?"))
+            return;
+
+        try {
+            await pb.collection("recettes").delete(recipeId);
+            showSuccess("Recette supprimée");
+            loadUserRecipes(); // Recharger la liste
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression de la recette");
+        }
+    };
+
+    window.upgradeSubscription = async function () {
         if (
-            confirm(
-                "Voulez-vous passer à l'abonnement annuel et économiser 26% ?",
+            !confirm(
+                "Passer à l'abonnement annuel ? Vous économiserez 26% sur votre facture.",
             )
-        ) {
+        )
+            return;
+
+        try {
             // Simuler la mise à niveau
-            showSuccess(
-                "Mise à niveau programmée ! Votre abonnement passera en annuel lors du prochain renouvellement.",
-            );
-
-            // Mettre à jour l'affichage
+            showSuccess("Abonnement mis à niveau vers l'offre annuelle !");
             setTimeout(() => {
-                document.getElementById("subscriptionType").textContent =
-                    "Abonnement annuel (à partir du prochain cycle)";
+                loadSubscriptionInfo(); // Recharger les infos
             }, 1000);
+        } catch (error) {
+            console.error("Erreur lors de la mise à niveau:", error);
+            showError("Erreur lors de la mise à niveau de l'abonnement");
         }
     };
 
-    // Résilier l'abonnement
-    window.cancelSubscription = function () {
+    window.cancelSubscription = async function () {
         const confirmation = prompt(
-            'Pour confirmer la résiliation de votre abonnement, tapez "RESILIER" :',
+            'Pour confirmer la résiliation, tapez "RESILIER" (en majuscules) :',
         );
+        if (confirmation !== "RESILIER") {
+            alert("Résiliation annulée");
+            return;
+        }
 
-        if (confirmation === "RESILIER") {
-            // Simuler la résiliation
+        try {
+            // Mettre à jour le statut Cookup de l'utilisateur
+            await pb.collection("users").update(currentUser.id, {
+                cookup: false,
+            });
+
             showSuccess(
-                "Abonnement résilié. Vous conserverez l'accès jusqu'à la fin de votre période de facturation actuelle.",
+                "Abonnement résilié. Vous conservez l'accès jusqu'à la fin de votre période de facturation.",
             );
 
-            // Mettre à jour le statut utilisateur
+            // Recharger le profil pour mettre à jour l'affichage
             setTimeout(async () => {
-                try {
-                    // Mettre à jour le statut cookup à false
-                    await pb.collection("users").update(currentUser.id, {
-                        cookup: false,
-                    });
+                await loadUserProfile();
+                loadSubscriptionInfo();
 
-                    // Recharger le profil
-                    await loadUserProfile();
-
-                    // Déclencher l'événement pour mettre à jour le header
-                    document.dispatchEvent(new CustomEvent("userUpdate"));
-
-                    // Recharger l'onglet abonnement
-                    loadSubscriptionInfo();
-                } catch (error) {
-                    console.error("Erreur lors de la résiliation:", error);
-                    showError("Erreur lors de la résiliation de l'abonnement");
-                }
+                // Déclencher l'événement pour mettre à jour le header
+                document.dispatchEvent(new CustomEvent("userUpdate"));
             }, 1000);
+        } catch (error) {
+            console.error("Erreur lors de la résiliation:", error);
+            showError("Erreur lors de la résiliation de l'abonnement");
         }
     };
+
+    window.deleteAccount = async function () {
+        const confirmation = prompt(
+            'Cette action est irréversible. Tapez "SUPPRIMER" pour confirmer :',
+        );
+        if (confirmation !== "SUPPRIMER") {
+            alert("Suppression annulée");
+            return;
+        }
+
+        try {
+            await pb.collection("users").delete(currentUser.id);
+            logout();
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Erreur lors de la suppression:", error);
+            showError("Erreur lors de la suppression du compte");
+        }
+    };
+
+    // Fonctions utilitaires
+    function showSuccess(message, container = null) {
+        const messageDiv = container || document.createElement("div");
+        if (!container) {
+            document.body.appendChild(messageDiv);
+            messageDiv.className = "fixed top-4 right-4 z-50";
+        }
+
+        messageDiv.innerHTML = `
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                ✅ ${message}
+            </div>
+        `;
+        messageDiv.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    }
+
+    function showError(message, container = null) {
+        const messageDiv = container || document.createElement("div");
+        if (!container) {
+            document.body.appendChild(messageDiv);
+            messageDiv.className = "fixed top-4 right-4 z-50";
+        }
+
+        messageDiv.innerHTML = `
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                ❌ ${message}
+            </div>
+        `;
+        messageDiv.classList.remove("hidden");
+
+        if (!container) {
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+    }
 </script>
