@@ -476,7 +476,7 @@ export async function rechercherRecettes(query, filters = {}) {
 }
 
 // ✅ RÉCUPÈRE LES PARTENAIRES
-export async function getPartenaires() {
+export async function getAllPartenaires() {
     try {
         console.log('🏪 Récupération des partenaires...');
 
@@ -551,6 +551,353 @@ function getDemoPartenaires() {
             image: '/placeholder.svg?height=200&width=300&text=Boucherie',
             created: new Date().toISOString(),
             updated: new Date().toISOString()
+        }
+    ];
+}
+
+// ✅ RÉCUPÈRE LES RECETTES COMMENTÉES PAR L'UTILISATEUR CONNECTÉ
+export async function getCommentedRecettes() {
+    try {
+        // Vérifier si l'utilisateur est connecté
+        if (!pb.authStore.isValid) {
+            console.log('👤 Utilisateur non connecté, impossible de récupérer les commentaires');
+            return [];
+        }
+
+        const userId = pb.authStore.model.id;
+        console.log(`💬 Récupération des recettes commentées par l'utilisateur ${userId}`);
+
+        // Récupérer tous les commentaires de l'utilisateur
+        const commentaires = await pb.collection('commentaires').getFullList({
+            filter: `user = "${userId}"`,
+            expand: 'recette,recette.sponsorise',
+            sort: '-created'
+        });
+
+        console.log(`✅ ${commentaires.length} commentaires récupérés`);
+
+        // Extraire les recettes uniques (éviter les doublons si plusieurs commentaires sur la même recette)
+        const recettesMap = new Map();
+
+        commentaires.forEach(commentaire => {
+            const recette = commentaire.expand?.recette;
+            if (recette && !recettesMap.has(recette.id)) {
+                recettesMap.set(recette.id, {
+                    id: recette.id,
+                    nom: recette.nom,
+                    description: recette.description,
+                    image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+                    temps_preparation: recette.temps_preparation,
+                    difficulte: recette.difficulte,
+                    created: recette.created,
+                    updated: recette.updated,
+                    commentDate: commentaire.created,
+                    commentContent: commentaire.contenu,
+                    commentNote: commentaire.note,
+                    expand: {
+                        sponsorise: recette.expand?.sponsorise
+                    },
+                    isFavorite: false // Sera mis à jour ci-dessous
+                });
+            }
+        });
+
+        // Convertir la Map en tableau
+        let recettes = Array.from(recettesMap.values());
+
+        console.log(`📊 ${recettes.length} recettes uniques commentées`);
+
+        // Vérifier le statut favori pour chaque recette
+        if (recettes.length > 0) {
+            const recetteIds = recettes.map(recette => recette.id);
+            const favoriteStatus = await checkFavoriteStatus(recetteIds, userId);
+
+            // Mettre à jour le statut favori
+            recettes = recettes.map(recette => ({
+                ...recette,
+                isFavorite: favoriteStatus[recette.id] || false
+            }));
+        }
+
+        return recettes;
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des recettes commentées:', error);
+        return [];
+    }
+}
+
+// ✅ RÉCUPÈRE LES RECETTES SIMILAIRES À UNE RECETTE DONNÉE
+export async function getRecettesSimilaires(recetteId, limit = 6) {
+    try {
+        console.log(`🔍 Recherche de recettes similaires à ${recetteId}`);
+
+        // D'abord, récupérer la recette de référence
+        const recetteRef = await pb.collection('recettes').getOne(recetteId);
+        console.log(`📖 Recette de référence: ${recetteRef.nom}`);
+
+        // Construire les filtres de similarité
+        const filters = [];
+
+        // 1. Même catégorie (priorité haute)
+        if (recetteRef.categorie) {
+            filters.push(`categorie = "${recetteRef.categorie}"`);
+        }
+
+        // 2. Difficulté similaire
+        if (recetteRef.difficulte) {
+            filters.push(`difficulte = "${recetteRef.difficulte}"`);
+        }
+
+        // 3. Temps de préparation similaire (±30 minutes)
+        if (recetteRef.temps_preparation) {
+            const tempsMin = Math.max(0, recetteRef.temps_preparation - 30);
+            const tempsMax = recetteRef.temps_preparation + 30;
+            filters.push(`temps_preparation >= ${tempsMin} && temps_preparation <= ${tempsMax}`);
+        }
+
+        // 4. Régimes alimentaires similaires
+        if (recetteRef.regime && recetteRef.regime.length > 0) {
+            const regimeFilters = recetteRef.regime.map(regime => `regime ~ "${regime}"`);
+            filters.push(`(${regimeFilters.join(' || ')})`);
+        }
+
+        // Combiner les filtres avec OR pour plus de flexibilité
+        let filter = '';
+        if (filters.length > 0) {
+            filter = `(${filters.join(' || ')}) && id != "${recetteId}"`;
+        } else {
+            filter = `id != "${recetteId}"`;
+        }
+
+        console.log(`🔍 Filtre appliqué: ${filter}`);
+
+        // Récupérer les recettes similaires
+        const recettesSimilaires = await pb.collection('recettes').getList(1, limit * 2, {
+            filter: filter,
+            sort: '-created',
+            fields: 'id,nom,description,image,temps_preparation,difficulte,categorie,regime,created,updated'
+        });
+
+        console.log(`✅ ${recettesSimilaires.items.length} recettes similaires trouvées`);
+
+        // Transformer les données
+        let recettesTransformees = recettesSimilaires.items.map(recette => ({
+            id: recette.id,
+            nom: recette.nom,
+            description: recette.description,
+            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+            temps_preparation: recette.temps_preparation,
+            difficulte: recette.difficulte,
+            categorie: recette.categorie,
+            regime: recette.regime,
+            created: recette.created,
+            updated: recette.updated,
+            isFavorite: false // Sera mis à jour côté client si nécessaire
+        }));
+
+        // Calculer un score de similarité pour chaque recette
+        recettesTransformees = recettesTransformees.map(recette => {
+            let score = 0;
+
+            // Points pour la même catégorie
+            if (recette.categorie === recetteRef.categorie) score += 3;
+
+            // Points pour la même difficulté
+            if (recette.difficulte === recetteRef.difficulte) score += 2;
+
+            // Points pour temps de préparation similaire
+            if (recette.temps_preparation && recetteRef.temps_preparation) {
+                const diffTemps = Math.abs(recette.temps_preparation - recetteRef.temps_preparation);
+                if (diffTemps <= 15) score += 2;
+                else if (diffTemps <= 30) score += 1;
+            }
+
+            // Points pour régimes alimentaires communs
+            if (recette.regime && recetteRef.regime) {
+                const regimesCommuns = recette.regime.filter(regime =>
+                    recetteRef.regime.includes(regime)
+                );
+                score += regimesCommuns.length;
+            }
+
+            return { ...recette, similarityScore: score };
+        });
+
+        // Trier par score de similarité décroissant
+        recettesTransformees.sort((a, b) => b.similarityScore - a.similarityScore);
+
+        // Limiter le nombre de résultats
+        const recettesFiltrees = recettesTransformees.slice(0, limit);
+
+        // Si pas assez de recettes similaires, compléter avec des recettes aléatoires
+        if (recettesFiltrees.length < limit) {
+            console.log(`🎲 Complément avec des recettes aléatoires...`);
+
+            const recettesAleatoires = await pb.collection('recettes').getList(1, limit - recettesFiltrees.length, {
+                filter: `id != "${recetteId}"`,
+                sort: '@random',
+                fields: 'id,nom,description,image,temps_preparation,difficulte,created,updated'
+            });
+
+            const recettesAleatoiresTransformees = recettesAleatoires.items.map(recette => ({
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+                temps_preparation: recette.temps_preparation,
+                difficulte: recette.difficulte,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false,
+                similarityScore: 0
+            }));
+
+            recettesFiltrees.push(...recettesAleatoiresTransformees);
+        }
+
+        console.log(`🍽️ ${recettesFiltrees.length} recettes similaires retournées`);
+        return recettesFiltrees;
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des recettes similaires:', error);
+
+        // En cas d'erreur, retourner des recettes aléatoires
+        try {
+            const recettesAleatoires = await pb.collection('recettes').getList(1, limit, {
+                filter: `id != "${recetteId}"`,
+                sort: '@random',
+                fields: 'id,nom,description,image,temps_preparation,difficulte,created,updated'
+            });
+
+            return recettesAleatoires.items.map(recette => ({
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+                temps_preparation: recette.temps_preparation,
+                difficulte: recette.difficulte,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false
+            }));
+        } catch (fallbackError) {
+            console.error('❌ Erreur lors du fallback:', fallbackError);
+            return [];
+        }
+    }
+}
+
+// ✅ RÉCUPÈRE LES RECETTES SPONSORISÉES 
+export async function getRecettesSponsors() {
+    try {
+        console.log('🎯 Récupération des recettes sponsorisées...');
+
+        const recettesSponsors = await pb.collection('recettes').getFullList({
+            filter: 'sponsorise != ""',
+            sort: '-created',
+            expand: 'sponsorise',
+            fields: 'id,nom,description,image,temps_preparation,difficulte,sponsorise,created,updated,expand'
+        });
+
+        console.log(`✅ ${recettesSponsors.length} recettes sponsorisées récupérées`);
+
+        // Transformer les données pour inclure les informations complètes
+        const recettesTransformees = recettesSponsors.map(recette => ({
+            id: recette.id,
+            nom: recette.nom,
+            description: recette.description,
+            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+            temps_preparation: recette.temps_preparation,
+            difficulte: recette.difficulte,
+            created: recette.created,
+            updated: recette.updated,
+            isFavorite: false, // Sera mis à jour côté client si nécessaire
+            isSponsored: true,
+            sponsor: {
+                id: recette.sponsorise,
+                nom: recette.expand?.sponsorise?.nom || 'Sponsor',
+                logo: recette.expand?.sponsorise?.logo ?
+                    `http://127.0.0.1:8090/api/files/sponsors/${recette.expand.sponsorise.id}/${recette.expand.sponsorise.logo}` :
+                    null,
+                description: recette.expand?.sponsorise?.description || '',
+                url: recette.expand?.sponsorise?.url || '#'
+            }
+        }));
+
+        // Trier par date de création décroissante pour avoir les plus récentes en premier
+        recettesTransformees.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+        console.log(`🍽️ ${recettesTransformees.length} recettes sponsorisées transformées`);
+        return recettesTransformees;
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des recettes sponsorisées:', error);
+
+        // Retourner des données de démonstration en cas d'erreur
+        return getDemoRecettesSponsors();
+    }
+}
+
+// ✅ DONNÉES DE DÉMONSTRATION POUR LES RECETTES SPONSORISÉES
+function getDemoRecettesSponsors() {
+    return [
+        {
+            id: 'demo-sponsor-1',
+            nom: 'Salade Bio Premium',
+            description: 'Une salade fraîche avec des ingrédients bio de qualité supérieure.',
+            image: '/placeholder.svg?height=300&width=400&text=Salade+Bio+Premium',
+            temps_preparation: 15,
+            difficulte: 'Facile',
+            created: new Date().toISOString(),
+            updated: new Date().toISOString(),
+            isFavorite: false,
+            isSponsored: true,
+            sponsor: {
+                id: 'demo-sponsor-bio',
+                nom: 'Bio Market',
+                logo: '/placeholder.svg?height=50&width=100&text=Bio+Market',
+                description: 'Votre magasin bio de confiance',
+                url: '#'
+            }
+        },
+        {
+            id: 'demo-sponsor-2',
+            nom: 'Burger Gourmet',
+            description: 'Un burger artisanal avec des ingrédients de première qualité.',
+            image: '/placeholder.svg?height=300&width=400&text=Burger+Gourmet',
+            temps_preparation: 25,
+            difficulte: 'Moyen',
+            created: new Date().toISOString(),
+            updated: new Date().toISOString(),
+            isFavorite: false,
+            isSponsored: true,
+            sponsor: {
+                id: 'demo-sponsor-burger',
+                nom: 'Burger House',
+                logo: '/placeholder.svg?height=50&width=100&text=Burger+House',
+                description: 'Les meilleurs burgers de la ville',
+                url: '#'
+            }
+        },
+        {
+            id: 'demo-sponsor-3',
+            nom: 'Pâtes Italiennes Authentiques',
+            description: 'Des pâtes fraîches préparées selon la tradition italienne.',
+            image: '/placeholder.svg?height=300&width=400&text=Pâtes+Italiennes',
+            temps_preparation: 30,
+            difficulte: 'Moyen',
+            created: new Date().toISOString(),
+            updated: new Date().toISOString(),
+            isFavorite: false,
+            isSponsored: true,
+            sponsor: {
+                id: 'demo-sponsor-italien',
+                nom: 'Bella Italia',
+                logo: '/placeholder.svg?height=50&width=100&text=Bella+Italia',
+                description: 'L\'authenticité italienne dans votre assiette',
+                url: '#'
+            }
         }
     ];
 }
