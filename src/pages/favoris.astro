@@ -219,13 +219,23 @@ import Layout from "../layouts/Layout.astro";
 <script>
     import { initFavorisButtons } from "../js/favoris.js";
     import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
     // Fonction pour créer une carte de recette
     function createRecipeCard(recette) {
-        const imageUrl = recette.img
-            ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
-            : "/placeholder.svg";
+        // ✅ CORRECTION : Construire l'URL complète si nécessaire
+        let imageUrl = "/placeholder.svg?height=300&width=400";
+
+        if (recette.img) {
+            if (recette.img.startsWith("http")) {
+                // L'URL est déjà complète
+                imageUrl = recette.img;
+            } else {
+                // Construire l'URL complète avec l'ID de la recette
+                imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+            }
+        }
+
+        console.log(`🖼️ Image URL pour ${recette.nom}:`, imageUrl);
 
         const categorieColors = {
             entree: "bg-green-100 text-green-800",
@@ -295,6 +305,9 @@ import Layout from "../layouts/Layout.astro";
         const emptyState = document.getElementById("emptyState");
 
         try {
+            // ✅ CORRECTION : Créer l'instance PocketBase avec la bonne URL
+            const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+
             // Attendre un peu pour que PocketBase soit initialisé
             await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -332,8 +345,14 @@ import Layout from "../layouts/Layout.astro";
                         );
                         return null;
                     }
+
+                    const recette = favori.expand.recette;
+                    console.log(
+                        `📋 Recette ${recette.nom} - ID: ${recette.id}, img: ${recette.img}`,
+                    );
+
                     return {
-                        ...favori.expand.recette,
+                        ...recette,
                         isFavorite: true,
                     };
                 })

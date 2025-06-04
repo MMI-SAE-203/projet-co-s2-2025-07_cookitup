@@ -1,4 +1,4 @@
-import PocketBase from "pocketbase";
+import PocketBase from 'pocketbase';
 const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
 // ✅ RÉCUPÈRE TOUTES LES RECETTES AVEC STATUT FAVORI (VERSION CORRIGÉE)
@@ -17,23 +17,39 @@ export async function getAllRecettes() {
         // Utiliser getFullList() pour récupérer TOUTES les recettes sans limitation
         const result = await pb.collection('recettes').getFullList({
             sort: '-created',
-            fields: 'id,nom,description,image,temps_preparation,difficulte,created,updated'
+            fields: 'id,nom,description,img,temps_preparation,difficulte,created,updated'
         });
 
         console.log(`✅ ${result.length} recettes récupérées depuis PocketBase`);
 
         // Transformer les données pour inclure l'URL complète de l'image
-        const recettes = result.map(recette => ({
-            id: recette.id,
-            nom: recette.nom,
-            description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-            temps_preparation: recette.temps_preparation,
-            difficulte: recette.difficulte,
-            created: recette.created,
-            updated: recette.updated,
-            isFavorite: false // Par défaut, sera mis à jour côté client si l'utilisateur est connecté
-        }));
+        const recettes = result.map(recette => {
+            console.log(`🖼️ Recette ${recette.nom} - img field:`, recette.img);
+
+            // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+            let imageUrl = null;
+            if (recette.img) {
+                if (recette.img.startsWith('http')) {
+                    // L'URL est déjà complète
+                    imageUrl = recette.img;
+                } else {
+                    // Construire l'URL complète
+                    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+                }
+            }
+
+            return {
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                img: imageUrl,
+                temps_preparation: recette.temps_preparation,
+                difficulte: recette.difficulte,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false // Par défaut, sera mis à jour côté client si l'utilisateur est connecté
+            };
+        });
 
         console.log('🍽️ Exemple de recette transformée:', recettes[0]);
 
@@ -59,12 +75,22 @@ export async function getRecetteById(id) {
 
         console.log('✅ Recette trouvée:', recette.nom);
 
+        // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+        let imageUrl = null;
+        if (recette.img) {
+            if (recette.img.startsWith('http')) {
+                imageUrl = recette.img;
+            } else {
+                imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+            }
+        }
+
         // Transformer les données
         const recetteComplete = {
             id: recette.id,
             nom: recette.nom,
             description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+            img: imageUrl,
             temps_preparation: recette.temps_preparation,
             difficulte: recette.difficulte,
             ingredients: recette.ingredients || [],
@@ -107,7 +133,7 @@ export async function getCommentairesByRecette(recetteId) {
                 id: commentaire.expand?.user?.id,
                 pseudo: commentaire.expand?.user?.pseudo || 'Utilisateur anonyme',
                 avatar: commentaire.expand?.user?.avatar ?
-                    `http://127.0.0.1:8090/api/files/users/${commentaire.expand.user.id}/${commentaire.expand.user.avatar}` :
+                    `https://cookit-up.titouan-winkel.fr/api/files/users/${commentaire.expand.user.id}/${commentaire.expand.user.avatar}` :
                     null
             }
         }));
@@ -196,11 +222,21 @@ export async function getFavorisByUser(userId) {
             const recette = favori.expand?.recette;
             if (!recette) return null;
 
+            // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+            let imageUrl = null;
+            if (recette.img) {
+                if (recette.img.startsWith('http')) {
+                    imageUrl = recette.img;
+                } else {
+                    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+                }
+            }
+
             return {
                 id: recette.id,
                 nom: recette.nom,
                 description: recette.description,
-                image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
+                img: imageUrl,
                 temps_preparation: recette.temps_preparation,
                 difficulte: recette.difficulte,
                 created: recette.created,
@@ -260,7 +296,7 @@ function getDemoRecettes() {
             id: 'demo-1',
             nom: 'Pâtes à la Carbonara',
             description: 'Un classique italien avec des œufs, du parmesan et des lardons.',
-            image: '/placeholder.svg?height=300&width=400&text=Carbonara',
+            img: '/placeholder.svg?height=300&width=400&text=Carbonara',
             temps_preparation: 20,
             difficulte: 'Facile',
             created: new Date().toISOString(),
@@ -271,7 +307,7 @@ function getDemoRecettes() {
             id: 'demo-2',
             nom: 'Salade César',
             description: 'Salade fraîche avec croûtons, parmesan et sauce César maison.',
-            image: '/placeholder.svg?height=300&width=400&text=Salade+César',
+            img: '/placeholder.svg?height=300&width=400&text=Salade+César',
             temps_preparation: 15,
             difficulte: 'Facile',
             created: new Date().toISOString(),
@@ -282,7 +318,7 @@ function getDemoRecettes() {
             id: 'demo-3',
             nom: 'Bœuf Bourguignon',
             description: 'Plat traditionnel français mijoté au vin rouge.',
-            image: '/placeholder.svg?height=300&width=400&text=Bœuf+Bourguignon',
+            img: '/placeholder.svg?height=300&width=400&text=Bœuf+Bourguignon',
             temps_preparation: 180,
             difficulte: 'Difficile',
             created: new Date().toISOString(),
@@ -333,17 +369,29 @@ export async function getRecettesByUser(userId) {
         console.log(`✅ ${recettes.length} recettes créées par l'utilisateur`);
 
         // Transformer les données
-        const recettesTransformees = recettes.map(recette => ({
-            id: recette.id,
-            nom: recette.nom,
-            description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-            temps_preparation: recette.temps_preparation,
-            difficulte: recette.difficulte,
-            created: recette.created,
-            updated: recette.updated,
-            isFavorite: false // Sera mis à jour côté client
-        }));
+        const recettesTransformees = recettes.map(recette => {
+            // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+            let imageUrl = null;
+            if (recette.img) {
+                if (recette.img.startsWith('http')) {
+                    imageUrl = recette.img;
+                } else {
+                    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+                }
+            }
+
+            return {
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                img: imageUrl,
+                temps_preparation: recette.temps_preparation,
+                difficulte: recette.difficulte,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false // Sera mis à jour côté client
+            };
+        });
 
         return recettesTransformees;
 
@@ -456,17 +504,29 @@ export async function rechercherRecettes(query, filters = {}) {
         console.log(`✅ ${recettes.length} recettes trouvées`);
 
         // Transformer les données
-        const recettesTransformees = recettes.map(recette => ({
-            id: recette.id,
-            nom: recette.nom,
-            description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-            temps_preparation: recette.temps_preparation,
-            difficulte: recette.difficulte,
-            created: recette.created,
-            updated: recette.updated,
-            isFavorite: false
-        }));
+        const recettesTransformees = recettes.map(recette => {
+            // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+            let imageUrl = null;
+            if (recette.img) {
+                if (recette.img.startsWith('http')) {
+                    imageUrl = recette.img;
+                } else {
+                    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+                }
+            }
+
+            return {
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                img: imageUrl,
+                temps_preparation: recette.temps_preparation,
+                difficulte: recette.difficulte,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false
+            };
+        });
 
         return recettesTransformees;
 
@@ -476,429 +536,77 @@ export async function rechercherRecettes(query, filters = {}) {
     }
 }
 
-// ✅ RÉCUPÈRE LES PARTENAIRES
-export async function getAllPartenaires() {
+// ✅ RÉCUPÈRE LES PARTENAIRES AVEC LES VRAIS NOMS DE CHAMPS
+export async function getPartenaires() {
     try {
-        console.log('🏪 Récupération des partenaires...');
+        console.log('🏪 Récupération des partenaires depuis:', pb.baseUrl);
 
+        // Récupérer tous les partenaires
         const partenaires = await pb.collection('partenaires').getFullList({
             sort: 'nom'
         });
 
-        console.log(`✅ ${partenaires.length} partenaires récupérés`);
+        console.log(`✅ ${partenaires.length} partenaires récupérés depuis PocketBase`);
+        console.log('📊 Premier partenaire brut:', partenaires[0]);
 
-        // Transformer les données pour inclure l'URL complète de l'image
-        const partenairesTransformes = partenaires.map(partenaire => ({
-            id: partenaire.id,
-            nom: partenaire.nom,
-            description: partenaire.description,
-            adresse: partenaire.adresse,
-            ville: partenaire.ville,
-            code_postal: partenaire.code_postal,
-            region: partenaire.region,
-            latitude: partenaire.latitude,
-            longitude: partenaire.longitude,
-            categories: partenaire.categories,
-            promo_code: partenaire.promo_code,
-            promo_description: partenaire.promo_description,
-            image: partenaire.image ? `http://127.0.0.1:8090/api/files/partenaires/${partenaire.id}/${partenaire.image}` : null,
-            created: partenaire.created,
-            updated: partenaire.updated
-        }));
+        // Transformer les données avec les vrais noms de champs
+        const partenairesTransformes = partenaires.map(partenaire => {
+            console.log(`🔄 Transformation du partenaire: ${partenaire.nom}`);
+
+            return {
+                id: partenaire.id,
+                nom: partenaire.nom || '',
+                description: partenaire.description || '',
+                adresse: partenaire.adresse || '',
+                latitude: partenaire.latitude || null,
+                longitude: partenaire.longitude || null,
+                ville: partenaire.ville || '',
+                code_postal: partenaire.code_postal || '',
+                region: partenaire.region || '',
+                telephone: partenaire.telephone || '',
+                horaires: partenaire.horaires || '',
+                reduction: partenaire.reduction || '',
+                code_promo: partenaire.code_promo || '',
+                validite_offre: partenaire.validite_offre || '',
+                categories: partenaire.categories || [],
+                logo: partenaire.logo ? `${pb.baseUrl}/api/files/partenaires/${partenaire.id}/${partenaire.logo}` : null,
+                image: partenaire.image ? `${pb.baseUrl}/api/files/partenaires/${partenaire.id}/${partenaire.image}` : null,
+                created: partenaire.created,
+                updated: partenaire.updated
+            };
+        });
+
+        console.log('🍽️ Premier partenaire transformé:', partenairesTransformes[0]);
 
         return partenairesTransformes;
 
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des partenaires:', error);
-
-        // Retourner des données de démonstration en cas d'erreur
-        return getDemoPartenaires();
-    }
-}
-
-// ✅ DONNÉES DE DÉMONSTRATION POUR LES PARTENAIRES
-function getDemoPartenaires() {
-    return [
-        {
-            id: 'demo-p1',
-            nom: 'Bio Market',
-            description: 'Magasin bio avec des produits frais et locaux',
-            adresse: '123 Rue de la Paix',
-            ville: 'Paris',
-            code_postal: '75001',
-            region: 'Île-de-France',
-            latitude: 48.8566,
-            longitude: 2.3522,
-            categories: ['bio', 'légumes'],
-            promo_code: 'COOKUP10',
-            promo_description: '10% de réduction sur tous les légumes bio',
-            image: '/placeholder.svg?height=200&width=300&text=Bio+Market',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString()
-        },
-        {
-            id: 'demo-p2',
-            nom: 'Boucherie Traditionnelle',
-            description: 'Viandes de qualité, élevage local',
-            adresse: '456 Avenue des Champs',
-            ville: 'Lyon',
-            code_postal: '69001',
-            region: 'Auvergne-Rhône-Alpes',
-            latitude: 45.7640,
-            longitude: 4.8357,
-            categories: ['viande', 'traditionnel'],
-            promo_code: 'VIANDE15',
-            promo_description: '15% sur les viandes premium',
-            image: '/placeholder.svg?height=200&width=300&text=Boucherie',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString()
-        }
-    ];
-}
-
-// ✅ RÉCUPÈRE LES RECETTES COMMENTÉES PAR L'UTILISATEUR CONNECTÉ
-export async function getCommentedRecettes() {
-    try {
-        // Vérifier si l'utilisateur est connecté
-        if (!pb.authStore.isValid) {
-            console.log('👤 Utilisateur non connecté, impossible de récupérer les commentaires');
-            return [];
-        }
-
-        const userId = pb.authStore.model.id;
-        console.log(`💬 Récupération des recettes commentées par l'utilisateur ${userId}`);
-
-        // Récupérer tous les commentaires de l'utilisateur
-        const commentaires = await pb.collection('commentaires').getFullList({
-            filter: `user = "${userId}"`,
-            expand: 'recette,recette.sponsorise',
-            sort: '-created'
+        console.error('Détails de l\'erreur:', {
+            message: error.message,
+            status: error.status,
+            data: error.data
         });
 
-        console.log(`✅ ${commentaires.length} commentaires récupérés`);
-
-        // Extraire les recettes uniques (éviter les doublons si plusieurs commentaires sur la même recette)
-        const recettesMap = new Map();
-
-        commentaires.forEach(commentaire => {
-            const recette = commentaire.expand?.recette;
-            if (recette && !recettesMap.has(recette.id)) {
-                recettesMap.set(recette.id, {
-                    id: recette.id,
-                    nom: recette.nom,
-                    description: recette.description,
-                    image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-                    temps_preparation: recette.temps_preparation,
-                    difficulte: recette.difficulte,
-                    created: recette.created,
-                    updated: recette.updated,
-                    commentDate: commentaire.created,
-                    commentContent: commentaire.contenu,
-                    commentNote: commentaire.note,
-                    expand: {
-                        sponsorise: recette.expand?.sponsorise
-                    },
-                    isFavorite: false // Sera mis à jour ci-dessous
-                });
-            }
-        });
-
-        // Convertir la Map en tableau
-        let recettes = Array.from(recettesMap.values());
-
-        console.log(`📊 ${recettes.length} recettes uniques commentées`);
-
-        // Vérifier le statut favori pour chaque recette
-        if (recettes.length > 0) {
-            const recetteIds = recettes.map(recette => recette.id);
-            const favoriteStatus = await checkFavoriteStatus(recetteIds, userId);
-
-            // Mettre à jour le statut favori
-            recettes = recettes.map(recette => ({
-                ...recette,
-                isFavorite: favoriteStatus[recette.id] || false
-            }));
-        }
-
-        return recettes;
-
-    } catch (error) {
-        console.error('❌ Erreur lors de la récupération des recettes commentées:', error);
+        // En cas d'erreur, retourner un tableau vide au lieu des données de démo
+        // pour voir si le problème vient de la récupération des données
         return [];
     }
 }
 
-// ✅ RÉCUPÈRE LES RECETTES SIMILAIRES À UNE RECETTE DONNÉE
-export async function getRecettesSimilaires(recetteId, limit = 6) {
-    try {
-        console.log(`🔍 Recherche de recettes similaires à ${recetteId}`);
-
-        // D'abord, récupérer la recette de référence
-        const recetteRef = await pb.collection('recettes').getOne(recetteId);
-        console.log(`📖 Recette de référence: ${recetteRef.nom}`);
-
-        // Construire les filtres de similarité
-        const filters = [];
-
-        // 1. Même catégorie (priorité haute)
-        if (recetteRef.categorie) {
-            filters.push(`categorie = "${recetteRef.categorie}"`);
-        }
-
-        // 2. Difficulté similaire
-        if (recetteRef.difficulte) {
-            filters.push(`difficulte = "${recetteRef.difficulte}"`);
-        }
-
-        // 3. Temps de préparation similaire (±30 minutes)
-        if (recetteRef.temps_preparation) {
-            const tempsMin = Math.max(0, recetteRef.temps_preparation - 30);
-            const tempsMax = recetteRef.temps_preparation + 30;
-            filters.push(`temps_preparation >= ${tempsMin} && temps_preparation <= ${tempsMax}`);
-        }
-
-        // 4. Régimes alimentaires similaires
-        if (recetteRef.regime && recetteRef.regime.length > 0) {
-            const regimeFilters = recetteRef.regime.map(regime => `regime ~ "${regime}"`);
-            filters.push(`(${regimeFilters.join(' || ')})`);
-        }
-
-        // Combiner les filtres avec OR pour plus de flexibilité
-        let filter = '';
-        if (filters.length > 0) {
-            filter = `(${filters.join(' || ')}) && id != "${recetteId}"`;
-        } else {
-            filter = `id != "${recetteId}"`;
-        }
-
-        console.log(`🔍 Filtre appliqué: ${filter}`);
-
-        // Récupérer les recettes similaires
-        const recettesSimilaires = await pb.collection('recettes').getList(1, limit * 2, {
-            filter: filter,
-            sort: '-created',
-            fields: 'id,nom,description,image,temps_preparation,difficulte,categorie,regime,created,updated'
-        });
-
-        console.log(`✅ ${recettesSimilaires.items.length} recettes similaires trouvées`);
-
-        // Transformer les données
-        let recettesTransformees = recettesSimilaires.items.map(recette => ({
-            id: recette.id,
-            nom: recette.nom,
-            description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-            temps_preparation: recette.temps_preparation,
-            difficulte: recette.difficulte,
-            categorie: recette.categorie,
-            regime: recette.regime,
-            created: recette.created,
-            updated: recette.updated,
-            isFavorite: false // Sera mis à jour côté client si nécessaire
-        }));
-
-        // Calculer un score de similarité pour chaque recette
-        recettesTransformees = recettesTransformees.map(recette => {
-            let score = 0;
-
-            // Points pour la même catégorie
-            if (recette.categorie === recetteRef.categorie) score += 3;
-
-            // Points pour la même difficulté
-            if (recette.difficulte === recetteRef.difficulte) score += 2;
-
-            // Points pour temps de préparation similaire
-            if (recette.temps_preparation && recetteRef.temps_preparation) {
-                const diffTemps = Math.abs(recette.temps_preparation - recetteRef.temps_preparation);
-                if (diffTemps <= 15) score += 2;
-                else if (diffTemps <= 30) score += 1;
-            }
-
-            // Points pour régimes alimentaires communs
-            if (recette.regime && recetteRef.regime) {
-                const regimesCommuns = recette.regime.filter(regime =>
-                    recetteRef.regime.includes(regime)
-                );
-                score += regimesCommuns.length;
-            }
-
-            return { ...recette, similarityScore: score };
-        });
-
-        // Trier par score de similarité décroissant
-        recettesTransformees.sort((a, b) => b.similarityScore - a.similarityScore);
-
-        // Limiter le nombre de résultats
-        const recettesFiltrees = recettesTransformees.slice(0, limit);
-
-        // Si pas assez de recettes similaires, compléter avec des recettes aléatoires
-        if (recettesFiltrees.length < limit) {
-            console.log(`🎲 Complément avec des recettes aléatoires...`);
-
-            const recettesAleatoires = await pb.collection('recettes').getList(1, limit - recettesFiltrees.length, {
-                filter: `id != "${recetteId}"`,
-                sort: '@random',
-                fields: 'id,nom,description,image,temps_preparation,difficulte,created,updated'
-            });
-
-            const recettesAleatoiresTransformees = recettesAleatoires.items.map(recette => ({
-                id: recette.id,
-                nom: recette.nom,
-                description: recette.description,
-                image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-                temps_preparation: recette.temps_preparation,
-                difficulte: recette.difficulte,
-                created: recette.created,
-                updated: recette.updated,
-                isFavorite: false,
-                similarityScore: 0
-            }));
-
-            recettesFiltrees.push(...recettesAleatoiresTransformees);
-        }
-
-        console.log(`🍽️ ${recettesFiltrees.length} recettes similaires retournées`);
-        return recettesFiltrees;
-
-    } catch (error) {
-        console.error('❌ Erreur lors de la récupération des recettes similaires:', error);
-
-        // En cas d'erreur, retourner des recettes aléatoires
-        try {
-            const recettesAleatoires = await pb.collection('recettes').getList(1, limit, {
-                filter: `id != "${recetteId}"`,
-                sort: '@random',
-                fields: 'id,nom,description,image,temps_preparation,difficulte,created,updated'
-            });
-
-            return recettesAleatoires.items.map(recette => ({
-                id: recette.id,
-                nom: recette.nom,
-                description: recette.description,
-                image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-                temps_preparation: recette.temps_preparation,
-                difficulte: recette.difficulte,
-                created: recette.created,
-                updated: recette.updated,
-                isFavorite: false
-            }));
-        } catch (fallbackError) {
-            console.error('❌ Erreur lors du fallback:', fallbackError);
-            return [];
-        }
-    }
+// ✅ ALIAS POUR RÉCUPÉRER TOUS LES PARTENAIRES
+export async function getAllPartenaires() {
+    return await getPartenaires();
 }
 
-// ✅ RÉCUPÈRE LES RECETTES SPONSORISÉES 
+// ✅ FONCTION POUR RÉCUPÉRER LES RECETTES SPONSORISÉES (FALLBACK)
 export async function getRecettesSponsors() {
     try {
-        console.log('🎯 Récupération des recettes sponsorisées...');
-
-        const recettesSponsors = await pb.collection('recettes').getFullList({
-            filter: 'sponsorise != ""',
-            sort: '-created',
-            expand: 'sponsorise',
-            fields: 'id,nom,description,image,temps_preparation,difficulte,sponsorise,created,updated,expand'
-        });
-
-        console.log(`✅ ${recettesSponsors.length} recettes sponsorisées récupérées`);
-
-        // Transformer les données pour inclure les informations complètes
-        const recettesTransformees = recettesSponsors.map(recette => ({
-            id: recette.id,
-            nom: recette.nom,
-            description: recette.description,
-            image: recette.image ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.image}` : null,
-            temps_preparation: recette.temps_preparation,
-            difficulte: recette.difficulte,
-            created: recette.created,
-            updated: recette.updated,
-            isFavorite: false, // Sera mis à jour côté client si nécessaire
-            isSponsored: true,
-            sponsor: {
-                id: recette.sponsorise,
-                nom: recette.expand?.sponsorise?.nom || 'Sponsor',
-                logo: recette.expand?.sponsorise?.logo ?
-                    `http://127.0.0.1:8090/api/files/sponsors/${recette.expand.sponsorise.id}/${recette.expand.sponsorise.logo}` :
-                    null,
-                description: recette.expand?.sponsorise?.description || '',
-                url: recette.expand?.sponsorise?.url || '#'
-            }
-        }));
-
-        // Trier par date de création décroissante pour avoir les plus récentes en premier
-        recettesTransformees.sort((a, b) => new Date(b.created) - new Date(a.created));
-
-        console.log(`🍽️ ${recettesTransformees.length} recettes sponsorisées transformées`);
-        return recettesTransformees;
-
+        // Pour l'instant, retourner les premières recettes comme "sponsorisées"
+        const recettes = await getAllRecettes();
+        return recettes.slice(0, 6);
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des recettes sponsorisées:', error);
-
-        // Retourner des données de démonstration en cas d'erreur
-        return getDemoRecettesSponsors();
+        return [];
     }
-}
-
-// ✅ DONNÉES DE DÉMONSTRATION POUR LES RECETTES SPONSORISÉES
-function getDemoRecettesSponsors() {
-    return [
-        {
-            id: 'demo-sponsor-1',
-            nom: 'Salade Bio Premium',
-            description: 'Une salade fraîche avec des ingrédients bio de qualité supérieure.',
-            image: '/placeholder.svg?height=300&width=400&text=Salade+Bio+Premium',
-            temps_preparation: 15,
-            difficulte: 'Facile',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-            isFavorite: false,
-            isSponsored: true,
-            sponsor: {
-                id: 'demo-sponsor-bio',
-                nom: 'Bio Market',
-                logo: '/placeholder.svg?height=50&width=100&text=Bio+Market',
-                description: 'Votre magasin bio de confiance',
-                url: '#'
-            }
-        },
-        {
-            id: 'demo-sponsor-2',
-            nom: 'Burger Gourmet',
-            description: 'Un burger artisanal avec des ingrédients de première qualité.',
-            image: '/placeholder.svg?height=300&width=400&text=Burger+Gourmet',
-            temps_preparation: 25,
-            difficulte: 'Moyen',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-            isFavorite: false,
-            isSponsored: true,
-            sponsor: {
-                id: 'demo-sponsor-burger',
-                nom: 'Burger House',
-                logo: '/placeholder.svg?height=50&width=100&text=Burger+House',
-                description: 'Les meilleurs burgers de la ville',
-                url: '#'
-            }
-        },
-        {
-            id: 'demo-sponsor-3',
-            nom: 'Pâtes Italiennes Authentiques',
-            description: 'Des pâtes fraîches préparées selon la tradition italienne.',
-            image: '/placeholder.svg?height=300&width=400&text=Pâtes+Italiennes',
-            temps_preparation: 30,
-            difficulte: 'Moyen',
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-            isFavorite: false,
-            isSponsored: true,
-            sponsor: {
-                id: 'demo-sponsor-italien',
-                nom: 'Bella Italia',
-                logo: '/placeholder.svg?height=50&width=100&text=Bella+Italia',
-                description: 'L\'authenticité italienne dans votre assiette',
-                url: '#'
-            }
-        }
-    ];
 }

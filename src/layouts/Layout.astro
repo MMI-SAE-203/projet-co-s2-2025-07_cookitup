@@ -7,39 +7,76 @@ const { title = "Cookit-UP" } = Astro.props;
 <html lang="fr">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body>
+	<body class="overflow-x-hidden">
 		<!-- Header Cookit-UP -->
 		<header
-			class="bg-white text-black px-6 py-4 flex items-center shadow-md"
+			class="bg-white text-black px-4 sm:px-6 py-4 flex items-center shadow-md relative"
 		>
 			<!-- Logo (à gauche) - Cliquable vers l'accueil -->
 			<a
 				href="/"
-				class="flex items-center space-x-2 hover:opacity-80 transition"
+				class="flex items-center space-x-2 hover:opacity-80 transition flex-shrink-0"
 			>
-				<div class="h-8 w-8 bg-gray-300 rounded-full"></div>
+				<img
+					src="/src/assets/logo_noir.svg"
+					alt="Logo Cookit-UP"
+					class="h-22 w-22"
+				/>
 				<span class="font-bold text-lg">Cookit-UP</span>
 			</a>
 
-			<!-- NAV avec menu déroulant Communauté -->
-			<nav
-				class="flex-1 flex justify-end space-x-6 font-bold text-sm ml-10"
+			<!-- Menu hamburger (mobile uniquement) -->
+			<button
+				id="mobileMenuButton"
+				class="md:hidden ml-auto p-2 rounded-md hover:bg-gray-100 transition"
+				aria-label="Menu"
 			>
-				<a href="/recette-plat" class="hover:underline">RECETTES</a>
-				<a href="/menu-semaine" class="hover:underline"
+				<svg
+					class="w-6 h-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h16M4 18h16"></path>
+				</svg>
+			</button>
+
+			<!-- Navigation desktop -->
+			<nav
+				class="hidden md:flex flex-1 justify-end space-x-6 font-bold text-sm ml-10"
+			>
+				<a
+					href="/recette-plat"
+					class="hover:underline whitespace-nowrap">RECETTES</a
+				>
+				<a
+					href="/menu-semaine"
+					class="hover:underline whitespace-nowrap"
 					>MENU DE LA SEMAINE</a
 				>
-				<a href="/pass-cookup" class="hover:underline">COOKUP</a>
-				<a href="/a-propos" class="hover:underline">A PROPOS</a>
+				<a href="/pass-cookup" class="hover:underline whitespace-nowrap"
+					>COOKUP</a
+				>
+				<a href="/a-propos" class="hover:underline whitespace-nowrap"
+					>A PROPOS</a
+				>
 
 				<!-- Menu déroulant Communauté -->
 				<div class="relative group">
-					<button class="hover:underline flex items-center">
+					<button
+						class="hover:underline flex items-center whitespace-nowrap"
+					>
 						COMMUNAUTE
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -94,8 +131,8 @@ const { title = "Cookit-UP" } = Astro.props;
 				</div>
 			</nav>
 
-			<!-- Icônes à droite (agrandies) -->
-			<div class="flex items-center space-x-4 ml-6">
+			<!-- Icônes à droite (desktop) -->
+			<div class="hidden md:flex items-center space-x-4 ml-6">
 				<!-- Badge Cookup Pass -->
 				<div id="cookupBadge" class="hidden">
 					<div
@@ -105,7 +142,7 @@ const { title = "Cookit-UP" } = Astro.props;
 					</div>
 				</div>
 
-				<!-- Première icône - Menu utilisateur (agrandie) -->
+				<!-- Menu utilisateur -->
 				<div class="relative" id="userMenuContainer">
 					<button
 						id="userMenuButton"
@@ -113,14 +150,12 @@ const { title = "Cookit-UP" } = Astro.props;
 						aria-expanded="false"
 						title="Menu utilisateur"
 					>
-						<!-- Avatar utilisateur (caché par défaut) -->
 						<img
 							id="headerUserAvatar"
 							src="/placeholder.svg"
 							alt="Avatar"
 							class="w-full h-full object-cover rounded-full hidden"
 						/>
-						<!-- Icône par défaut (agrandie) -->
 						<svg
 							id="headerUserIcon"
 							xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +252,6 @@ const { title = "Cookit-UP" } = Astro.props;
 										</p>
 									</div>
 								</div>
-								<!-- Badge Cookup dans le menu -->
 								<div id="userCookupStatus" class="mt-2 hidden">
 									<span
 										class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white"
@@ -344,7 +378,7 @@ const { title = "Cookit-UP" } = Astro.props;
 					</div>
 				</div>
 
-				<!-- Deuxième icône - Favoris (agrandie) -->
+				<!-- Favoris -->
 				<a
 					href="/favoris"
 					class="h-10 w-10 rounded-full border border-black flex items-center justify-center hover:bg-gray-100 hover:border-yellow-500 hover:text-yellow-500 transition-all cursor-pointer"
@@ -368,11 +402,108 @@ const { title = "Cookit-UP" } = Astro.props;
 			</div>
 		</header>
 
+		<!-- Menu mobile (caché par défaut) -->
+		<div
+			id="mobileMenu"
+			class="md:hidden bg-white border-t border-gray-200 hidden"
+		>
+			<div class="px-4 py-2 space-y-1">
+				<!-- Navigation principale -->
+				<a
+					href="/recette-plat"
+					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+					>RECETTES</a
+				>
+				<a
+					href="/menu-semaine"
+					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+					>MENU DE LA SEMAINE</a
+				>
+				<a
+					href="/pass-cookup"
+					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+					>COOKUP</a
+				>
+				<a
+					href="/a-propos"
+					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+					>A PROPOS</a
+				>
+
+				<!-- Communauté -->
+				<div class="border-t border-gray-200 pt-2 mt-2">
+					<p
+						class="px-3 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"
+					>
+						Communauté
+					</p>
+					<a
+						href="/avis-site"
+						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+						>💬 Donner son avis</a
+					>
+					<a
+						href="/forum"
+						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+						>👥 Forum</a
+					>
+					<a
+						href="/evenements"
+						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+						>📅 Événements</a
+					>
+					<a
+						href="/blog"
+						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+						>📝 Blog</a
+					>
+				</div>
+
+				<!-- Actions utilisateur -->
+				<div class="border-t border-gray-200 pt-2 mt-2">
+					<div id="mobileGuestMenu">
+						<a
+							href="/connexion"
+							class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+							>🔐 Se connecter</a
+						>
+						<a
+							href="/inscription"
+							class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+							>📝 S'inscrire</a
+						>
+					</div>
+					<div id="mobileAuthMenu" class="hidden">
+						<a
+							href="/profil"
+							class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+							>👤 Mon profil</a
+						>
+						<a
+							href="/favoris"
+							class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+							>❤️ Mes favoris</a
+						>
+						<a
+							href="/mes-recettes"
+							class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+							>📚 Mes recettes</a
+						>
+						<button
+							id="mobileLogoutButton"
+							class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md"
+							>🚪 Se déconnecter</button
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Barre noire fine sous le header -->
 		<div class="h-px bg-black"></div>
 
 		<!-- Contenu de la page -->
-		<main>
+		<main class="min-h-screen">
 			<slot />
 		</main>
 
@@ -380,26 +511,25 @@ const { title = "Cookit-UP" } = Astro.props;
 		<footer class="bg-black text-white text-sm">
 			<!-- Ligne jaune avec logo et bouton -->
 			<div
-				class="bg-yellow-500 text-white flex justify-between items-center px-6 py-4"
+				class="bg-yellow-500 text-white flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 py-4 gap-4"
 			>
 				<!-- Logo du site -->
 				<a
 					href="/"
 					class="flex items-center space-x-2 hover:opacity-80 transition"
 				>
-					<div
-						class="h-10 w-10 bg-white rounded-full flex items-center justify-center"
-					>
-						<!-- Logo du site ici -->
-						<span class="text-black font-bold">Logo</span>
-					</div>
+					<img
+						src="/src/assets/logo_noir.svg"
+						alt="Logo Cookit-UP"
+						class="h-10 w-10 bg-white rounded-full p-1"
+					/>
 					<span class="text-lg font-semibold">Cookit-UP</span>
 				</a>
 
 				<!-- Lien partenaires -->
 				<a
 					href="/partenaires"
-					class="font-bold uppercase hover:underline"
+					class="font-bold uppercase hover:underline text-center"
 				>
 					Voir nos partenaires
 				</a>
@@ -407,7 +537,7 @@ const { title = "Cookit-UP" } = Astro.props;
 
 			<!-- Menu principal + contact -->
 			<div
-				class="px-6 py-6 md:flex md:justify-between md:items-start bg-black text-white"
+				class="px-4 sm:px-6 py-6 flex flex-col md:flex-row md:justify-between md:items-start bg-black text-white gap-6"
 			>
 				<!-- Navigation -->
 				<div class="space-y-2 font-semibold uppercase tracking-wide">
@@ -424,21 +554,23 @@ const { title = "Cookit-UP" } = Astro.props;
 				</div>
 
 				<!-- Contact -->
-				<div class="mt-6 md:mt-0">
+				<div>
 					<p class="uppercase font-bold mb-1">Nous contactez :</p>
 					<p class="font-semibold">01 23 45 67 89</p>
 					<p class="font-semibold">contact@cookit-up.com</p>
 				</div>
 			</div>
 
-			<hr class="border-gray-700 mx-6" />
+			<hr class="border-gray-700 mx-4 sm:mx-6" />
 
 			<!-- Mentions légales + Réseaux sociaux -->
 			<div
-				class="px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center bg-black text-white text-xs space-y-4 md:space-y-0"
+				class="px-4 sm:px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center bg-black text-white text-xs space-y-4 md:space-y-0"
 			>
 				<!-- Mentions -->
-				<div class="space-x-2">
+				<div
+					class="flex flex-wrap gap-2 justify-center md:justify-start"
+				>
 					<span class="font-bold">© Cookit-UP 2025</span>
 					<a href="/confidentialite" class="hover:underline"
 						>Charte de confidentialité</a
@@ -453,13 +585,12 @@ const { title = "Cookit-UP" } = Astro.props;
 				</div>
 
 				<!-- Icônes réseaux sociaux -->
-				<div class="flex space-x-4">
+				<div class="flex space-x-4 justify-center md:justify-end">
 					<a
 						href="#"
 						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
 						title="Facebook"
 					>
-						<!-- Icône Facebook -->
 						FB
 					</a>
 					<a
@@ -467,7 +598,6 @@ const { title = "Cookit-UP" } = Astro.props;
 						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
 						title="Instagram"
 					>
-						<!-- Icône Instagram -->
 						IG
 					</a>
 					<a
@@ -475,25 +605,26 @@ const { title = "Cookit-UP" } = Astro.props;
 						class="h-8 w-8 rounded-full border border-white flex items-center justify-center hover:bg-gray-800 transition"
 						title="YouTube"
 					>
-						<!-- Icône YouTube -->
 						YT
 					</a>
 				</div>
 			</div>
 		</footer>
 
-		<!-- Script pour la gestion de l'authentification -->
+		<!-- Script pour la gestion de l'authentification et du menu mobile -->
 		<script>
 			import PocketBase from "pocketbase";
 			import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
 
-			// Initialiser PocketBase avec la nouvelle URL
 			const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
-			// Fonction pour mettre à jour l'interface selon l'état de connexion
 			function updateAuthUI() {
 				const guestMenu = document.getElementById("guestMenu");
 				const authMenu = document.getElementById("authMenu");
+				const mobileGuestMenu =
+					document.getElementById("mobileGuestMenu");
+				const mobileAuthMenu =
+					document.getElementById("mobileAuthMenu");
 				const userDisplayName =
 					document.getElementById("userDisplayName");
 				const userEmail = document.getElementById("userEmail");
@@ -510,7 +641,6 @@ const { title = "Cookit-UP" } = Astro.props;
 				if (isLoggedIn()) {
 					const user = getCurrentUser();
 
-					// Afficher le nom et email de l'utilisateur
 					if (userDisplayName) {
 						userDisplayName.textContent =
 							user.pseudo || "Utilisateur";
@@ -519,7 +649,6 @@ const { title = "Cookit-UP" } = Astro.props;
 						userEmail.textContent = user.email;
 					}
 
-					// Gérer l'avatar dans le header
 					if (user.avatar && headerUserAvatar && headerUserIcon) {
 						const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
 						headerUserAvatar.src = avatarUrl;
@@ -530,7 +659,6 @@ const { title = "Cookit-UP" } = Astro.props;
 						headerUserIcon.classList.remove("hidden");
 					}
 
-					// Gérer l'avatar dans le menu
 					if (menuUserAvatar) {
 						if (user.avatar) {
 							const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
@@ -540,41 +668,40 @@ const { title = "Cookit-UP" } = Astro.props;
 						}
 					}
 
-					// Afficher le statut Cookup
 					if (user.cookup) {
-						// Badge dans le header
-						if (cookupBadge) {
-							cookupBadge.classList.remove("hidden");
-						}
-						// Badge dans le menu
-						if (userCookupStatus) {
+						if (cookupBadge) cookupBadge.classList.remove("hidden");
+						if (userCookupStatus)
 							userCookupStatus.classList.remove("hidden");
-						}
 					} else {
-						// Cacher les badges Cookup
-						if (cookupBadge) {
-							cookupBadge.classList.add("hidden");
-						}
-						if (userCookupStatus) {
+						if (cookupBadge) cookupBadge.classList.add("hidden");
+						if (userCookupStatus)
 							userCookupStatus.classList.add("hidden");
-						}
 					}
 
-					// Afficher le menu utilisateur connecté
+					// Desktop
 					if (guestMenu) guestMenu.classList.add("hidden");
 					if (authMenu) authMenu.classList.remove("hidden");
+
+					// Mobile
+					if (mobileGuestMenu)
+						mobileGuestMenu.classList.add("hidden");
+					if (mobileAuthMenu)
+						mobileAuthMenu.classList.remove("hidden");
 				} else {
-					// Afficher le menu invité
+					// Desktop
 					if (guestMenu) guestMenu.classList.remove("hidden");
 					if (authMenu) authMenu.classList.add("hidden");
 
-					// Cacher l'avatar et afficher l'icône
+					// Mobile
+					if (mobileGuestMenu)
+						mobileGuestMenu.classList.remove("hidden");
+					if (mobileAuthMenu) mobileAuthMenu.classList.add("hidden");
+
 					if (headerUserAvatar && headerUserIcon) {
 						headerUserAvatar.classList.add("hidden");
 						headerUserIcon.classList.remove("hidden");
 					}
 
-					// Cacher les badges Cookup
 					if (cookupBadge) cookupBadge.classList.add("hidden");
 					if (userCookupStatus)
 						userCookupStatus.classList.add("hidden");
@@ -586,11 +713,15 @@ const { title = "Cookit-UP" } = Astro.props;
 					document.getElementById("userMenuButton");
 				const userMenu = document.getElementById("userMenu");
 				const logoutButton = document.getElementById("logoutButton");
+				const mobileLogoutButton =
+					document.getElementById("mobileLogoutButton");
+				const mobileMenuButton =
+					document.getElementById("mobileMenuButton");
+				const mobileMenu = document.getElementById("mobileMenu");
 
-				// Initialiser l'interface
 				updateAuthUI();
 
-				// Gérer le clic sur le bouton de menu utilisateur
+				// Menu utilisateur desktop
 				userMenuButton?.addEventListener("click", (e) => {
 					e.stopPropagation();
 					const expanded =
@@ -599,24 +730,43 @@ const { title = "Cookit-UP" } = Astro.props;
 					userMenu?.classList.toggle("hidden");
 				});
 
-				// Fermer le menu si on clique ailleurs
+				// Menu mobile
+				mobileMenuButton?.addEventListener("click", (e) => {
+					e.stopPropagation();
+					mobileMenu?.classList.toggle("hidden");
+				});
+
+				// Fermer les menus si on clique ailleurs
 				document.addEventListener("click", (event) => {
-					const container =
+					const userContainer =
 						document.getElementById("userMenuContainer");
-					if (container && !container.contains(event.target)) {
+					if (
+						userContainer &&
+						!userContainer.contains(event.target)
+					) {
 						userMenu?.classList.add("hidden");
 						userMenuButton?.setAttribute("aria-expanded", "false");
 					}
+
+					if (
+						mobileMenu &&
+						!mobileMenu.contains(event.target) &&
+						!mobileMenuButton?.contains(event.target)
+					) {
+						mobileMenu.classList.add("hidden");
+					}
 				});
 
-				// Gérer la déconnexion
-				logoutButton?.addEventListener("click", (e) => {
+				// Déconnexion
+				const handleLogout = (e) => {
 					e.preventDefault();
 					logout();
 					window.location.href = "/";
-				});
+				};
 
-				// Écouter les événements d'authentification personnalisés
+				logoutButton?.addEventListener("click", handleLogout);
+				mobileLogoutButton?.addEventListener("click", handleLogout);
+
 				document.addEventListener("userLogin", updateAuthUI);
 				document.addEventListener("userLogout", updateAuthUI);
 				document.addEventListener("userUpdate", updateAuthUI);

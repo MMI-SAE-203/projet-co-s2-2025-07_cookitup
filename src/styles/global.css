@@ -3,6 +3,13 @@
 @import "@fontsource/koulen";
 @import "@fontsource/inter";
 
+/* Prévention du défilement horizontal */
+html,
+body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
 /* Police Koulen pour les titres principaux */
 h1,
 h2,
@@ -77,4 +84,78 @@ body {
 .hero-main-text,
 .hero-main-text * {
     font-family: "Koulen", sans-serif !important;
+}
+
+/* Responsive fixes */
+* {
+    box-sizing: border-box;
+}
+
+/* Prévention des débordements sur les conteneurs */
+.container,
+.max-w-7xl,
+.max-w-6xl,
+.max-w-4xl,
+.max-w-3xl,
+.max-w-2xl,
+.max-w-xl {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+
+    .container,
+    .max-w-7xl,
+    .max-w-6xl,
+    .max-w-4xl,
+    .max-w-3xl,
+    .max-w-2xl,
+    .max-w-xl {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Grilles responsives */
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Images responsives */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Texte responsive */
+@media (max-width: 640px) {
+    .text-4xl {
+        font-size: 2rem;
+        line-height: 2.5rem;
+    }
+
+    .text-3xl {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+    }
+
+    .text-2xl {
+        font-size: 1.5rem;
+        line-height: 2rem;
+    }
 }
