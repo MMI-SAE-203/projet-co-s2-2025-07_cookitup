@@ -12,26 +12,27 @@ import image_entree2 from "../assets/img/accueil/image_entree_layout.webp";
 import image_plat from "../assets/img/accueil/image_plat_source.webp";
 import image_dessert from "../assets/img/accueil/image_dessert_source.webp";
 import image_menu_semaine from "../assets/img/accueil/image_menu_semaine_source.webp";
-import pb from "../lib/pocketbase.js";
+import PocketBase from "pocketbase";
+const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
 // Récupérer les avis du site
 let avisSite = [];
 try {
-    avisSite = await pb.collection('avis_site').getFullList({
-        expand: 'user',
-        sort: '-created'
+    avisSite = await pb.collection("avis_site").getFullList({
+        expand: "user",
+        sort: "-created",
     });
 } catch (error) {
-    console.error('Erreur lors de la récupération des avis:', error);
+    console.error("Erreur lors de la récupération des avis:", error);
 }
 
 // Fonction pour générer un avatar par défaut basé sur le pseudo
 function getAvatarUrl(user, userId) {
     if (user?.avatar) {
-        return `http://127.0.0.1:8090/api/files/users/${userId}/${user.avatar}`;
+        return `https://cookit-up.titouan-winkel.fr/api/files/users/${userId}/${user.avatar}`;
     }
     // Avatar par défaut avec initiales
-    const pseudo = user?.pseudo || 'U';
+    const pseudo = user?.pseudo || "U";
     const initials = pseudo.charAt(0).toUpperCase();
     return `https://ui-avatars.com/api/?name=${initials}&background=ef4444&color=fff&size=64&bold=true`;
 }

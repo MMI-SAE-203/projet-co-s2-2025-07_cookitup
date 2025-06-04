@@ -51,8 +51,8 @@ jours.forEach((jour, index) => {
           <!-- Grille des recettes du jour -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {menuSemaine[jour]?.map((recette) => {
-              const imageUrl = recette.img 
-                ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
+              const imageUrl = recette.image 
+                ? recette.image
                 : "/placeholder.svg";
               
               return (
@@ -99,7 +99,7 @@ jours.forEach((jour, index) => {
                       {recette.nom}
                     </h3>
                     <div class="flex items-center text-white/80 text-sm">
-                      <span>⏱️ {recette.temps_prep || "30 min"}</span>
+                      <span>⏱️ {recette.temps_preparation || "30 min"}</span>
                       {recette.categorie && (
                         <span class="ml-2 px-2 py-1 bg-white/20 rounded text-xs uppercase">
                           {recette.categorie}
@@ -160,7 +160,11 @@ jours.forEach((jour, index) => {
 </Layout>
 
 <script>
+  import PocketBase from 'pocketbase';
   import { initFavorisButtons } from "../js/favoris.js";
+
+  // Initialiser PocketBase avec la nouvelle URL
+  const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
   document.addEventListener('DOMContentLoaded', async () => {
     // Initialiser la gestion des favoris
@@ -172,8 +176,6 @@ jours.forEach((jour, index) => {
 
   // Fonction pour initialiser l'état des favoris
   async function initFavoriteStates() {
-    const { default: pb } = await import('../lib/pocketbase.js');
-    
     if (!pb.authStore.isValid) {
       console.log("⚠️ Utilisateur non connecté, pas de favoris à charger");
       return;

@@ -266,7 +266,8 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     import { initFavorisButtons } from "../../js/favoris.js";
     import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
     import { initPagination } from "../../js/recettes/pagination.js";
-    import pb from "../../lib/pocketbase.js";
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
     import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
 
     document.addEventListener("DOMContentLoaded", () => {

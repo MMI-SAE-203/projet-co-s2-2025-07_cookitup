@@ -1,4 +1,5 @@
-import pb from './lib/pocketbase.js';
+import PocketBase from "pocketbase";
+const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
 // ✅ RÉCUPÈRE TOUTES LES RECETTES AVEC STATUT FAVORI (VERSION CORRIGÉE)
 export async function getAllRecettes() {

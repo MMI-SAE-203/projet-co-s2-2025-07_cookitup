@@ -1,4 +1,5 @@
-import pb from "../lib/pocketbase.js"
+import PocketBase from "pocketbase"
+const pb = new PocketBase("https://cookit-up.titouan-winkel.fr")
 
 /**
  * Vérifie si l'utilisateur est connecté

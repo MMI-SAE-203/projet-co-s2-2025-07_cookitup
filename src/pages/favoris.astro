@@ -218,7 +218,8 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
     import { initFavorisButtons } from "../js/favoris.js";
-    import pb from "../lib/pocketbase.js";
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
     // Fonction pour créer une carte de recette
     function createRecipeCard(recette) {

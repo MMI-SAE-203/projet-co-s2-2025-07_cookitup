@@ -341,7 +341,8 @@ import Hero from "../components/Hero.astro";
     <script>
         import { isLoggedIn, getCurrentUser } from "../js/auth.js";
         import { creerRecette } from "../backend.mjs";
-        import pb from "../lib/pocketbase.js";
+        import PocketBase from "pocketbase";
+        const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
         document.addEventListener("DOMContentLoaded", () => {
             // Vérifier si l'utilisateur est connecté

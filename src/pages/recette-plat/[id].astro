@@ -558,7 +558,8 @@ const imageUrl = recette.img
 
 <script>
     import { initFavorisButtons } from "../../js/favoris.js";
-    import pb from "../../lib/pocketbase.js";
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
     import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
 
     let currentRecetteId = "";

@@ -484,7 +484,11 @@ const { title = "Cookit-UP" } = Astro.props;
 
 		<!-- Script pour la gestion de l'authentification -->
 		<script>
+			import PocketBase from "pocketbase";
 			import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
+
+			// Initialiser PocketBase avec la nouvelle URL
+			const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
 			// Fonction pour mettre à jour l'interface selon l'état de connexion
 			function updateAuthUI() {
@@ -517,7 +521,7 @@ const { title = "Cookit-UP" } = Astro.props;
 
 					// Gérer l'avatar dans le header
 					if (user.avatar && headerUserAvatar && headerUserIcon) {
-						const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+						const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
 						headerUserAvatar.src = avatarUrl;
 						headerUserAvatar.classList.remove("hidden");
 						headerUserIcon.classList.add("hidden");
@@ -529,7 +533,7 @@ const { title = "Cookit-UP" } = Astro.props;
 					// Gérer l'avatar dans le menu
 					if (menuUserAvatar) {
 						if (user.avatar) {
-							const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+							const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
 							menuUserAvatar.src = avatarUrl;
 						} else {
 							menuUserAvatar.src = "/placeholder.svg";
