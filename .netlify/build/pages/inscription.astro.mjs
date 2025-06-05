@@ -1,6 +1,6 @@
-import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CmPnL_Nc.mjs';
+import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_218_os4B.mjs';
+import { $ as $$Layout } from '../chunks/Layout_D93dfYMT.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Inscription = createComponent(async ($$result, $$props, $$slots) => {

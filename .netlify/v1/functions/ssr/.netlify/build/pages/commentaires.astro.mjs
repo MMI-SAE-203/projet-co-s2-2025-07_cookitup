@@ -1,7 +1,7 @@
-import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CmPnL_Nc.mjs';
+import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_218_os4B.mjs';
-import { $ as $$Plat } from '../chunks/Plat_D1npN_Vv.mjs';
+import { $ as $$Layout } from '../chunks/Layout_D93dfYMT.mjs';
+import { $ as $$Plat } from '../chunks/Plat_Ll2eTVGW.mjs';
 import { g as getCommentedRecettes } from '../chunks/backend_B6EQEUu_.mjs';
 export { renderers } from '../renderers.mjs';
 

@@ -1,7 +1,7 @@
-import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead, b as renderScript } from '../chunks/astro/server_CmPnL_Nc.mjs';
+import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead, b as renderScript } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_218_os4B.mjs';
-import { $ as $$Hero } from '../chunks/Hero_sNwyMDeS.mjs';
+import { $ as $$Layout } from '../chunks/Layout_D93dfYMT.mjs';
+import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$CreerRecette = createComponent(async ($$result, $$props, $$slots) => {

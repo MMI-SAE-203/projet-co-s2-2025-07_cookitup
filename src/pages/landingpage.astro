@@ -1,225 +1,226 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+import { Image } from "astro:assets";
+import heroImage from "../assets/img/landingpage/hero.webp";
+import duTempsIcon from "../assets/img/landingpage/landing_page_dutemps.png";
+import delArgentIcon from "../assets/img/landingpage/landingpage_delargent.png";
+import personnalisationIcon from "../assets/img/landingpage/landing_page_personnalisation.png";
+import engagementIcon from "../assets/img/landingpage/landing_page_unengagement.png";
+import entreeImage from "../assets/img/landingpage/entree.webp";
+import platImage from "../assets/img/landingpage/plat.webp";
+import dessertImage from "../assets/img/landingpage/dessert.webp";
+import contactImage from "../assets/img/landingpage/amo_fif_sm5rskv1emq_unsplash_1x.webp";
+import melvynImage from "../assets/img/landingpage/melvyn-philippon.png";
+import ethanImage from "../assets/img/landingpage/ethan-omasta-parisot.png";
+import titouanImage from "../assets/img/landingpage/titouan-winkel.png";
 ---
 
 <Layout title="Cookit-UP | Mangez bien, mangez local">
     <!-- Hero Section -->
-    <section class="relative h-[500px] overflow-hidden">
-        <div class="absolute inset-0">
-            <img
-                src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                alt="Plats délicieux"
-                class="w-full h-full object-cover"
-            />
-            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-        </div>
+    <section
+        class="relative h-[500px] md:h-[600px] overflow-hidden flex items-center"
+    >
+        <!-- Image de fond avec composant Astro -->
+        <Image
+            src={heroImage || "/placeholder.svg"}
+            alt="Plats délicieux sur table"
+            class="absolute inset-0 w-full h-full object-cover z-0"
+        />
+        <div class="absolute inset-0 bg-black bg-opacity-40 z-10"></div>
 
         <div
-            class="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24"
+            class="relative z-20 h-full flex items-center px-6 md:px-12 lg:px-24 w-full"
         >
-            <div class="max-w-3xl">
-                <h1
-                    class="text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-2"
+            <div
+                class="flex justify-between items-center w-full max-w-7xl mx-auto"
+            >
+                <!-- Texte à gauche -->
+                <div class="max-w-2xl">
+                    <h1
+                        class="hero-main-text text-white text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight uppercase tracking-wide font-black"
+                    >
+                        <span class="text-white">NE PAS</span><br />
+                        <span class="text-yellow-400">GASPILLER</span>
+                        <span class="text-white">C'EST</span><br />
+                        <span class="text-white">AUSSI BIEN</span>
+                        <span class="text-yellow-400">MANGER</span>
+                    </h1>
+                    <p
+                        class="text-white text-xl md:text-2xl mb-8 max-w-xl font-medium"
+                    >
+                        Des recettes simple et rapide pour satisfaire petits et
+                        grands
+                    </p>
+                </div>
+
+                <!-- Bouton à droite -->
+                <div class="hidden md:block">
+                    <a
+                        href="/inscription"
+                        class="inline-block border-2 border-green-600 text-white bg-transparent px-8 py-4 rounded-full hover:bg-green-600 hover:text-white transition-all duration-300 font-bold text-lg uppercase tracking-wide"
+                    >
+                        Inscrivez-vous
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bouton mobile centré en bas -->
+            <div
+                class="md:hidden absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            >
+                <a
+                    href="/inscription"
+                    class="inline-block border-2 border-green-600 text-white bg-transparent px-8 py-4 rounded-full hover:bg-green-600 hover:text-white transition-all duration-300 font-bold text-lg uppercase tracking-wide"
                 >
-                    <span class="text-yellow-400">NE PAS</span>
-                </h1>
-                <h1
-                    class="text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
-                >
-                    <span class="text-yellow-400">MANGER</span> C'EST<br />
-                    AUSSI BIEN <span class="text-yellow-400">MANGER</span>
-                </h1>
-                <p class="text-white text-sm md:text-base mb-8">
-                    Des traditions locales et ingrédients soigneusement
-                    sélectionnés pour des plats savoureux.
-                </p>
-                <button
-                    class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors"
-                >
-                    Découvrez-nous
-                </button>
+                    Inscrivez-vous
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Why Choose Us Section -->
-    <section id="qualite" class="py-16 px-6 md:px-12 lg:px-24 bg-white">
-        <h2 class="text-3xl font-bold text-center mb-12">
+    <section id="qualite" class="py-16 px-6 md:px-12 lg:px-24 bg-gray-100">
+        <h2
+            class="text-3xl md:text-4xl font-black text-center mb-16 text-black uppercase tracking-wide"
+        >
             POURQUOI CHOISIR COOKIT-UP ?
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto"
+        >
             <!-- DU TEMPS -->
-            <div
-                class="bg-green-600 rounded-lg p-6 text-white flex flex-col items-center"
-            >
+            <div class="bg-white rounded-lg p-6 text-center shadow-lg">
                 <div
-                    class="w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center mb-4"
+                    class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                    <svg
-                        class="w-12 h-12 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6l5.25 3.15.75-1.23-4.5-2.67z"
-                        ></path>
-                    </svg>
+                    <Image
+                        src={duTempsIcon || "/placeholder.svg"}
+                        alt="Du temps"
+                        class="w-8 h-8"
+                    />
                 </div>
-                <h3 class="text-xl font-bold mb-2 text-center">DU TEMPS</h3>
-                <p class="text-sm text-center">
-                    Nous vous facilitons la vie en vous proposant des repas déjà
-                    préparés. Tous les ingrédients sont pesés et préparés, ce
-                    qui vous permet de gagner du temps dans votre cuisine.
+                <h3 class="text-lg font-bold mb-3 text-black uppercase">
+                    DU TEMPS
+                </h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Transformez facilement les ingrédients de votre frigo en
+                    recettes savoureuses. Réduisez le gaspillage alimentaire en
+                    utilisant ce que vous avez sous la main.
                 </p>
             </div>
 
             <!-- DE L'ARGENT -->
-            <div
-                class="bg-green-600 rounded-lg p-6 text-white flex flex-col items-center"
-            >
+            <div class="bg-white rounded-lg p-6 text-center shadow-lg">
                 <div
-                    class="w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center mb-4"
+                    class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                    <svg
-                        class="w-12 h-12 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"
-                        ></path>
-                    </svg>
+                    <Image
+                        src={delArgentIcon || "/placeholder.svg"}
+                        alt="De l'argent"
+                        class="w-8 h-8"
+                    />
                 </div>
-                <h3 class="text-xl font-bold mb-2 text-center">DE L'ARGENT</h3>
-                <p class="text-sm text-center">
-                    Fini le gaspillage! Grâce à l'achat des ingrédients en gros,
-                    nous vous proposons des recettes savoureuses à des prix
-                    abordables, tout en garantissant une qualité exceptionnelle.
-                </p>
-            </div>
-
-            <!-- AIDE -->
-            <div
-                class="bg-green-600 rounded-lg p-6 text-white flex flex-col items-center"
-            >
-                <div
-                    class="w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center mb-4"
-                >
-                    <svg
-                        class="w-12 h-12 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 13h-2v-2h2v2zm0-4h-2V7h2v4z"
-                        ></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2 text-center">AIDE</h3>
-                <p class="text-sm text-center">
-                    Vous cherchez quoi manger ce soir? Nous sommes là pour vous
-                    guider avec des recettes variées et délicieuses. Notre
-                    qualification unique et notre savoir-faire vous garantissent
-                    une expérience culinaire exceptionnelle.
+                <h3 class="text-lg font-bold mb-3 text-black uppercase">
+                    DE L'ARGENT
+                </h3>
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Fini les repas hors de prix ! Cuisinez malin avec des
+                    recettes simples et économiques. Profitez de réductions
+                    exclusives grâce à nos partenariats avec des commerces
+                    locaux.
                 </p>
             </div>
 
             <!-- PERSONNALISATION -->
-            <div
-                class="bg-green-600 rounded-lg p-6 text-white flex flex-col items-center"
-            >
+            <div class="bg-white rounded-lg p-6 text-center shadow-lg">
                 <div
-                    class="w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center mb-4"
+                    class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                    <svg
-                        class="w-12 h-12 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                        ></path>
-                    </svg>
+                    <Image
+                        src={personnalisationIcon || "/placeholder.svg"}
+                        alt="Personnalisation"
+                        class="w-8 h-8"
+                    />
                 </div>
-                <h3 class="text-xl font-bold mb-2 text-center">
+                <h3 class="text-lg font-bold mb-3 text-black uppercase">
                     PERSONNALISATION
                 </h3>
-                <p class="text-sm text-center">
-                    Indiquez vos objectifs et vos contraintes alimentaires, nous
-                    adaptons nos recettes pour répondre parfaitement à vos
-                    besoins et respecter votre régime alimentaire.
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Indiquez vos objectifs et suivez vos calories facilement.
+                    Obtenez des repas équilibrés et adaptés à votre régime
+                    alimentaire.
                 </p>
             </div>
 
             <!-- UN ENGAGEMENT -->
-            <div
-                class="bg-green-600 rounded-lg p-6 text-white flex flex-col items-center"
-            >
+            <div class="bg-white rounded-lg p-6 text-center shadow-lg">
                 <div
-                    class="w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center mb-4"
+                    class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                    <svg
-                        class="w-12 h-12 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75S7 8 17 8z"
-                        ></path>
-                    </svg>
+                    <Image
+                        src={engagementIcon || "/placeholder.svg"}
+                        alt="Un engagement"
+                        class="w-8 h-8"
+                    />
                 </div>
-                <h3 class="text-xl font-bold mb-2 text-center">
+                <h3 class="text-lg font-bold mb-3 text-black uppercase">
                     UN ENGAGEMENT
                 </h3>
-                <p class="text-sm text-center">
-                    Nous privilégions les produits et ingrédients locaux et de
-                    saison pour vous offrir des plats frais, savoureux et
-                    respectueux de l'environnement tout en gardant l'esprit
-                    local.
+                <p class="text-sm text-gray-700 leading-relaxed">
+                    Partagez vos recettes et découvrez celles des autres
+                    étudiants. Rejoignez un mouvement pour mieux manger et
+                    gaspiller moins.
                 </p>
             </div>
         </div>
     </section>
 
     <!-- Recipes Section -->
-    <section class="bg-red-500 py-16 px-6 md:px-12 lg:px-24 text-white">
-        <h2 class="text-2xl font-bold text-center mb-4">
+    <section class="bg-red-400 py-16 px-6 md:px-12 lg:px-24 text-white">
+        <h2
+            class="text-2xl md:text-3xl font-black text-center mb-6 uppercase tracking-wide"
+        >
             UN LARGE CHOIX DE NOURRITURE POUR TOUS
         </h2>
-        <p class="text-center max-w-3xl mx-auto mb-8">
-            Nous identifions rapidement d'une possible d'adaptation à vos goûts,
-            avec une expérience de notre cuisine au moment.
+        <p class="text-center max-w-3xl mx-auto mb-12 text-base">
+            Nous identifions rapidement une possibilité d'adaptation à vos
+            goûts, avec une expérience de notre cuisine au quotidien.
         </p>
 
-        <div class="flex flex-wrap justify-center gap-4 mb-8">
-            <div class="w-full md:w-1/3 h-48">
-                <img
-                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                    alt="Plat délicieux"
-                    class="w-full h-full object-cover rounded-lg"
+        <div
+            class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 max-w-4xl mx-auto"
+        >
+            <div class="relative overflow-hidden rounded-lg">
+                <Image
+                    src={entreeImage || "/placeholder.svg"}
+                    alt="Entrée"
+                    class="w-full h-48 object-cover"
                 />
             </div>
-            <div class="w-full md:w-1/3 h-48">
-                <img
-                    src="https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
-                    alt="Dessert"
-                    class="w-full h-full object-cover rounded-lg"
-                />
-            </div>
-            <div class="w-full md:w-1/3 h-48">
-                <img
-                    src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+
+            <div class="relative overflow-hidden rounded-lg">
+                <Image
+                    src={platImage || "/placeholder.svg"}
                     alt="Plat principal"
-                    class="w-full h-full object-cover rounded-lg"
+                    class="w-full h-48 object-cover"
+                />
+            </div>
+
+            <div class="relative overflow-hidden rounded-lg">
+                <Image
+                    src={dessertImage || "/placeholder.svg"}
+                    alt="Dessert"
+                    class="w-full h-48 object-cover"
                 />
             </div>
         </div>
 
         <div class="flex justify-center">
             <a
-                href="#recettes"
-                class="border-2 border-white text-white rounded-full px-8 py-3 text-center hover:bg-white hover:text-red-500 transition-colors"
+                href="/recette-plat"
+                class="border-2 border-white text-white rounded-full px-8 py-3 text-center hover:bg-white hover:text-red-400 transition-colors font-bold"
             >
                 Consultez nos recettes
             </a>
@@ -227,32 +228,35 @@ import Layout from "../layouts/Layout.astro";
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="flex flex-col md:flex-row">
-        <div class="w-full md:w-1/2">
-            <img
-                src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    <section id="contact" class="flex flex-col lg:flex-row">
+        <div class="w-full lg:w-1/2">
+            <Image
+                src={contactImage || "/placeholder.svg"}
                 alt="Ingrédients de cuisine"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover min-h-[400px]"
             />
         </div>
 
-        <div class="w-full md:w-1/2 bg-white p-8">
-            <h2 class="text-2xl font-bold mb-6">
+        <div class="w-full lg:w-1/2 bg-white p-8 lg:p-12">
+            <h2
+                class="text-2xl md:text-3xl font-black mb-8 text-black uppercase tracking-wide"
+            >
                 CONTACTEZ-NOUS POUR PLUS D'INFORMATIONS
             </h2>
 
-            <form id="contact-form" class="space-y-4">
+            <form id="contact-form" class="space-y-6">
                 <div>
                     <label
                         for="name"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                        >Nom</label
+                        class="block text-sm font-medium text-gray-700 mb-2"
                     >
+                        Nom *
+                    </label>
                     <input
                         type="text"
                         id="name"
                         name="name"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         required
                     />
                 </div>
@@ -260,14 +264,15 @@ import Layout from "../layouts/Layout.astro";
                 <div>
                     <label
                         for="email"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                        >E-mail</label
+                        class="block text-sm font-medium text-gray-700 mb-2"
                     >
+                        E-mail *
+                    </label>
                     <input
                         type="email"
                         id="email"
                         name="email"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         required
                     />
                 </div>
@@ -275,14 +280,15 @@ import Layout from "../layouts/Layout.astro";
                 <div>
                     <label
                         for="message"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                        >Message</label
+                        class="block text-sm font-medium text-gray-700 mb-2"
                     >
+                        Message *
+                    </label>
                     <textarea
                         id="message"
                         name="message"
                         rows="4"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         placeholder="Veuillez nous faire part de votre message ou demande."
                         required></textarea>
                 </div>
@@ -292,12 +298,21 @@ import Layout from "../layouts/Layout.astro";
                         type="checkbox"
                         id="terms"
                         name="terms"
-                        class="mt-1 h-4 w-4 text-green-600 focus:ring-green-600 border-gray-300 rounded"
+                        class="mt-1 h-4 w-4 text-red-500 focus:ring-red-500 border-gray-300 rounded"
                         required
                     />
-                    <label for="terms" class="ml-2 block text-sm text-gray-700">
-                        Je lu et j'accepte les conditions générales et la
-                        politique de confidentialité.
+                    <label for="terms" class="ml-3 block text-sm text-gray-700">
+                        J'ai lu et j'accepte les
+                        <a
+                            href="/mentions-legales"
+                            class="text-red-500 hover:underline"
+                            >conditions générales</a
+                        >
+                        et la <a
+                            href="/confidentialite"
+                            class="text-red-500 hover:underline"
+                            >politique de confidentialité</a
+                        >.
                     </label>
                 </div>
 
@@ -306,22 +321,23 @@ import Layout from "../layouts/Layout.astro";
                         type="checkbox"
                         id="newsletter"
                         name="newsletter"
-                        class="mt-1 h-4 w-4 text-green-600 focus:ring-green-600 border-gray-300 rounded"
+                        class="mt-1 h-4 w-4 text-red-500 focus:ring-red-500 border-gray-300 rounded"
                     />
                     <label
                         for="newsletter"
-                        class="ml-2 block text-sm text-gray-700"
+                        class="ml-3 block text-sm text-gray-700"
                     >
-                        Je m'inscris pour la newsletter.
+                        Je m'inscris à la newsletter pour recevoir nos dernières
+                        recettes.
                     </label>
                 </div>
 
                 <div>
                     <button
                         type="submit"
-                        class="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 transition-colors"
+                        class="w-full bg-black text-white py-4 px-6 rounded-lg hover:bg-gray-800 transition-colors font-bold"
                     >
-                        Envoyez un message
+                        Envoyer le message
                     </button>
                 </div>
             </form>
@@ -331,115 +347,122 @@ import Layout from "../layouts/Layout.astro";
     <!-- Team Section -->
     <section
         id="equipe"
-        class="bg-green-600 py-16 px-6 md:px-12 lg:px-24 text-white"
+        class="bg-green-800 py-12 px-6 md:px-12 lg:px-24 text-white"
     >
-        <h2 class="text-3xl font-bold text-center mb-12">NOTRE ÉQUIPE</h2>
+        <h2
+            class="hero-main-text text-3xl md:text-4xl text-center mb-10 uppercase tracking-wide text-white"
+        >
+            NOTRE ÉQUIPE
+        </h2>
 
-        <div class="space-y-6 max-w-4xl mx-auto">
+        <div class="space-y-4 max-w-3xl mx-auto">
             <!-- Melvyn -->
-            <div
-                class="bg-white rounded-lg p-4 flex flex-col md:flex-row items-center text-black"
-            >
+            <div class="bg-white rounded-lg p-4 flex items-center text-black">
                 <div
-                    class="w-24 h-24 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-6 flex-shrink-0"
+                    class="w-16 h-16 rounded-full overflow-hidden bg-yellow-300 flex-shrink-0 mr-4"
                 >
-                    <img
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+                    <Image
+                        src={melvynImage || "/placeholder.svg"}
                         alt="Melvyn Philippon"
                         class="w-full h-full object-cover"
                     />
                 </div>
 
                 <div class="flex-grow">
-                    <h3 class="text-xl font-bold">Melvyn Philippon</h3>
-                    <p class="text-sm mb-2">
+                    <h3 class="text-lg font-bold">Melvyn Philippon</h3>
+                </div>
+
+                <div class="flex-grow-0 ml-4">
+                    <p class="text-sm">
                         Melvyn est en charge de l'aspect design du projet. Il a
                         contribué à la conception visuelle en assurant une mise
                         en page harmonieuse et une expérience utilisateur
                         optimale.
                     </p>
+                </div>
 
-                    <div class="mt-2">
-                        <p class="font-bold text-sm">Contact :</p>
-                        <a
-                            href="mailto:melvyn.philippon@edu.univ-fcomte.fr"
-                            class="text-sm text-green-600 hover:underline"
-                        >
-                            melvyn.philippon@edu.univ-fcomte.fr
-                        </a>
-                    </div>
+                <div class="flex-grow-0 ml-4 text-right">
+                    <p class="font-bold text-sm">Contact :</p>
+                    <a
+                        href="mailto:melvyn.philippon@edu.univ-fcomte.fr"
+                        class="text-sm text-green-800 hover:underline"
+                    >
+                        melvyn.philippon@edu.univ-fcomte.fr
+                    </a>
                 </div>
             </div>
 
             <!-- Ethan -->
-            <div
-                class="bg-white rounded-lg p-4 flex flex-col md:flex-row items-center text-black"
-            >
+            <div class="bg-white rounded-lg p-4 flex items-center text-black">
                 <div
-                    class="w-24 h-24 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-6 flex-shrink-0"
+                    class="w-16 h-16 rounded-full overflow-hidden bg-green-500 flex-shrink-0 mr-4"
                 >
-                    <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+                    <Image
+                        src={ethanImage || "/placeholder.svg"}
                         alt="Ethan Omasta-Parisot"
                         class="w-full h-full object-cover"
                     />
                 </div>
 
                 <div class="flex-grow">
-                    <h3 class="text-xl font-bold">Ethan Omasta-Parisot</h3>
-                    <p class="text-sm mb-2">
+                    <h3 class="text-lg font-bold">Ethan Omasta-Parisot</h3>
+                </div>
+
+                <div class="flex-grow-0 ml-4">
+                    <p class="text-sm">
                         Ethan s'est occupé de la partie relative du projet, en
                         gérant des aspects essentiels tels que le développement
                         et la mise en place des fonctionnalités. Son travail a
                         permis d'améliorer la visibilité du projet sur le plan
                         juridique et financier.
                     </p>
+                </div>
 
-                    <div class="mt-2">
-                        <p class="font-bold text-sm">Contact :</p>
-                        <a
-                            href="mailto:ethan.omasta@edu.univ-fcomte.fr"
-                            class="text-sm text-green-600 hover:underline"
-                        >
-                            ethan.omasta@edu.univ-fcomte.fr
-                        </a>
-                    </div>
+                <div class="flex-grow-0 ml-4 text-right">
+                    <p class="font-bold text-sm">Contact :</p>
+                    <a
+                        href="mailto:ethan.omasta@edu.univ-fcomte.fr"
+                        class="text-sm text-green-800 hover:underline"
+                    >
+                        ethan.omasta@edu.univ-fcomte.fr
+                    </a>
                 </div>
             </div>
 
             <!-- Titouan -->
-            <div
-                class="bg-white rounded-lg p-4 flex flex-col md:flex-row items-center text-black"
-            >
+            <div class="bg-white rounded-lg p-4 flex items-center text-black">
                 <div
-                    class="w-24 h-24 rounded-full overflow-hidden mb-4 md:mb-0 md:mr-6 flex-shrink-0"
+                    class="w-16 h-16 rounded-full overflow-hidden bg-blue-500 flex-shrink-0 mr-4"
                 >
-                    <img
-                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80"
+                    <Image
+                        src={titouanImage || "/placeholder.svg"}
                         alt="Titouan Winkel"
                         class="w-full h-full object-cover"
                     />
                 </div>
 
                 <div class="flex-grow">
-                    <h3 class="text-xl font-bold">Titouan Winkel</h3>
-                    <p class="text-sm mb-2">
+                    <h3 class="text-lg font-bold">Titouan Winkel</h3>
+                </div>
+
+                <div class="flex-grow-0 ml-4">
+                    <p class="text-sm">
                         Titouan s'est occupé de la partie communication et s'est
                         concentré plus particulièrement sur le site web. Il a
                         travaillé sur les fonctionnalités, la charte graphique
-                        et la mise en place des contenus pour maximiser l'impact
-                        du projet.
+                        et l'optimisation de l'expérience utilisateur afin de
+                        maximiser l'impact du projet.
                     </p>
+                </div>
 
-                    <div class="mt-2">
-                        <p class="font-bold text-sm">Contact :</p>
-                        <a
-                            href="mailto:titouan.winkel@edu.univ-fcomte.fr"
-                            class="text-sm text-green-600 hover:underline"
-                        >
-                            titouan.winkel@edu.univ-fcomte.fr
-                        </a>
-                    </div>
+                <div class="flex-grow-0 ml-4 text-right">
+                    <p class="font-bold text-sm">Contact :</p>
+                    <a
+                        href="mailto:titouan.winkel@edu.univ-fcomte.fr"
+                        class="text-sm text-green-800 hover:underline"
+                    >
+                        titouan.winkel@edu.univ-fcomte.fr
+                    </a>
                 </div>
             </div>
         </div>
@@ -447,12 +470,21 @@ import Layout from "../layouts/Layout.astro";
         <div class="flex justify-center mt-8">
             <a
                 href="#contact"
-                class="border-2 border-white text-white rounded-full px-8 py-3 text-center hover:bg-white hover:text-green-600 transition-colors"
+                class="border-2 border-white text-white rounded-full px-8 py-3 text-center hover:bg-white hover:text-green-800 transition-colors"
             >
                 Rejoignez-nous pour en découvrir plus
             </a>
         </div>
     </section>
+
+    <style>
+        /* Forcer la police Koulen sur le titre du hero */
+        .hero-main-text {
+            font-family: "Koulen", sans-serif !important;
+            letter-spacing: 0.02em !important;
+            font-weight: 400 !important;
+        }
+    </style>
 
     <script>
         // Contact form handling
@@ -470,7 +502,7 @@ import Layout from "../layouts/Layout.astro";
                 e.target.reset();
 
                 // Afficher un message de confirmation
-                alert("Votre message a été envoyé avec succès!");
+                alert("Votre message a été envoyé avec succès !");
             });
 
             // Smooth scrolling for anchor links
