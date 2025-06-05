@@ -1041,8 +1041,10 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
     import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
     import { isLoggedIn, getCurrentUser, logout } from "../js/auth.js";
+
+    // Initialiser PocketBase directement
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
     let currentUser = null;
 
@@ -1100,7 +1102,7 @@ import Layout from "../layouts/Layout.astro";
             // Avatar
             const avatarImg = document.getElementById("profileAvatar");
             if (user.avatar) {
-                avatarImg.src = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+                avatarImg.src = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
             } else {
                 avatarImg.src = "/placeholder.svg";
             }
@@ -1292,7 +1294,7 @@ import Layout from "../layouts/Layout.astro";
                     .update(currentUser.id, formData);
 
                 // Mettre à jour l'affichage
-                profileAvatar.src = `http://127.0.0.1:8090/api/files/users/${updatedUser.id}/${updatedUser.avatar}`;
+                profileAvatar.src = `https://cookit-up.titouan-winkel.fr/api/files/users/${updatedUser.id}/${updatedUser.avatar}`;
 
                 showSuccess("Photo de profil mise à jour !");
 
@@ -1554,7 +1556,7 @@ import Layout from "../layouts/Layout.astro";
         // Générer l'avatar
         let avatarHTML = "";
         if (currentUser?.avatar) {
-            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${currentUser.id}/${currentUser.avatar}`;
+            const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${currentUser.id}/${currentUser.avatar}`;
             avatarHTML = `<img src="${avatarUrl}" alt="Mon avatar" class="w-12 h-12 rounded-full object-cover" />`;
         } else {
             const userName =
@@ -1656,7 +1658,7 @@ import Layout from "../layouts/Layout.astro";
         // Image de la recette
         let imageHTML = "";
         if (recipe.image) {
-            const imageUrl = `http://127.0.0.1:8090/api/files/recettes/${recipe.id}/${recipe.image}`;
+            const imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recipe.id}/${recipe.image}`;
             imageHTML = `<img src="${imageUrl}" alt="${recipe.nom}" class="w-full h-48 object-cover rounded-lg mb-4" />`;
         } else {
             imageHTML = `<div class="w-full h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-500">
@@ -1693,7 +1695,7 @@ import Layout from "../layouts/Layout.astro";
                         </button>
                         <button onclick="deleteRecipe('${recipe.id}')" 
                             class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition">
-                            🗑️ Supprimer
+                                🗑️ Supprimer
                         </button>
                     </div>
                 </div>
