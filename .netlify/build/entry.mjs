@@ -1,6 +1,6 @@
 import { renderers } from './renderers.mjs';
 import { s as serverEntrypointModule } from './chunks/_@astrojs-ssr-adapter_CvSoi7hX.mjs';
-import { manifest } from './manifest_BrkpM9yn.mjs';
+import { manifest } from './manifest_BrUThaDJ.mjs';
 import { createExports } from '@astrojs/netlify/ssr-function.js';
 
 const serverIslandMap = new Map();;
@@ -21,14 +21,15 @@ const _page12 = () => import('./pages/inscription.astro.mjs');
 const _page13 = () => import('./pages/landingpage.astro.mjs');
 const _page14 = () => import('./pages/mentions-legales.astro.mjs');
 const _page15 = () => import('./pages/menu-semaine.astro.mjs');
-const _page16 = () => import('./pages/mot-de-passe-oublie.astro.mjs');
-const _page17 = () => import('./pages/partenaires.astro.mjs');
-const _page18 = () => import('./pages/pass-cookup.astro.mjs');
-const _page19 = () => import('./pages/profil.astro.mjs');
-const _page20 = () => import('./pages/recette-commentee.astro.mjs');
-const _page21 = () => import('./pages/recette-plat/_id_.astro.mjs');
-const _page22 = () => import('./pages/recette-plat.astro.mjs');
-const _page23 = () => import('./pages/index.astro.mjs');
+const _page16 = () => import('./pages/mes-recettes.astro.mjs');
+const _page17 = () => import('./pages/mot-de-passe-oublie.astro.mjs');
+const _page18 = () => import('./pages/partenaires.astro.mjs');
+const _page19 = () => import('./pages/pass-cookup.astro.mjs');
+const _page20 = () => import('./pages/profil.astro.mjs');
+const _page21 = () => import('./pages/recette-commentee.astro.mjs');
+const _page22 = () => import('./pages/recette-plat/_id_.astro.mjs');
+const _page23 = () => import('./pages/recette-plat.astro.mjs');
+const _page24 = () => import('./pages/index.astro.mjs');
 const pageMap = new Map([
     ["node_modules/astro/dist/assets/endpoint/generic.js", _page0],
     ["src/pages/a-propos.astro", _page1],
@@ -46,14 +47,15 @@ const pageMap = new Map([
     ["src/pages/landingpage.astro", _page13],
     ["src/pages/mentions-legales.astro", _page14],
     ["src/pages/menu-semaine.astro", _page15],
-    ["src/pages/mot-de-passe-oublie.astro", _page16],
-    ["src/pages/partenaires.astro", _page17],
-    ["src/pages/pass-cookup.astro", _page18],
-    ["src/pages/profil.astro", _page19],
-    ["src/pages/recette-commentee.astro", _page20],
-    ["src/pages/recette-plat/[id].astro", _page21],
-    ["src/pages/recette-plat/index.astro", _page22],
-    ["src/pages/index.astro", _page23]
+    ["src/pages/mes-recettes.astro", _page16],
+    ["src/pages/mot-de-passe-oublie.astro", _page17],
+    ["src/pages/partenaires.astro", _page18],
+    ["src/pages/pass-cookup.astro", _page19],
+    ["src/pages/profil.astro", _page20],
+    ["src/pages/recette-commentee.astro", _page21],
+    ["src/pages/recette-plat/[id].astro", _page22],
+    ["src/pages/recette-plat/index.astro", _page23],
+    ["src/pages/index.astro", _page24]
 ]);
 
 const _manifest = Object.assign(manifest, {
@@ -64,7 +66,7 @@ const _manifest = Object.assign(manifest, {
     middleware: () => import('./_noop-middleware.mjs')
 });
 const _args = {
-    "middlewareSecret": "5cb29c89-68b4-4175-8f5e-3c286600d455"
+    "middlewareSecret": "22eb704c-d452-42c4-a203-5e8ecbfd4eba"
 };
 const _exports = createExports(_manifest, _args);
 const __astrojsSsrVirtualEntry = _exports.default;

@@ -1,6 +1,6 @@
 import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BngmRMf4.mjs';
 import '@astrojs/internal-helpers/path';
 import '@astrojs/internal-helpers/remote';
 import { $ as $$Image } from '../chunks/_astro_assets_CHQHLvM-.mjs';
@@ -66,19 +66,6 @@ const image_avis = new Proxy({"src":"/_astro/image_partager_avis.BzIVoYg_.webp",
 							}
 							if (name === 'fsPath') {
 								return "C:/Users/titou/GitHub/projet-co-s2-2025-07_cookitup/src/assets/img/accueil/image_partager_avis.webp";
-							}
-							
-							return target[name];
-						}
-					});
-
-const image_robot_ai = new Proxy({"src":"/_astro/image_robot_ia.CUrCrHcH.webp","width":575,"height":831,"format":"webp"}, {
-						get(target, name, receiver) {
-							if (name === 'clone') {
-								return structuredClone(target);
-							}
-							if (name === 'fsPath') {
-								return "C:/Users/titou/GitHub/projet-co-s2-2025-07_cookitup/src/assets/img/accueil/image_robot_ia.webp";
 							}
 							
 							return target[name];
@@ -189,15 +176,7 @@ Fais partie de l'aventure, abonne-toi !
 Compte gratuit
 </a> </div> <ul class="list-disc list-inside space-y-3 text-base"> <li>Trouvez des recettes avec les ingrédients du frigo.</li> <li>Échangez recettes et astuces entre étudiants.</li> <li>Liste de courses automatique selon vos besoins.</li> <li>Repas variés et ajustables chaque semaine.</li> <li>Réutilisez vos restes pour éviter le gaspillage.</li> <li>Profitez de réductions chez nos partenaires locaux.</li> </ul> </div> <!-- Colonne Pass CookUP --> <div class="flex-1 text-left"> <!-- Bouton Pass CookUP aligné à gauche --> <div class="mb-8"> <a href="/cookup" class="inline-block bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-teal-600 transition-all duration-300 text-lg">
 Pass CookUP
-</a> </div> <ul class="list-disc list-inside space-y-3 text-base"> <li>Inclut toutes les fonctionnalités de la version gratuite.</li> <li>Calcul automatique selon ingrédients et quantités.</li> <li>Recommandations adaptées à vos objectifs.</li> <li>Menu optimisé selon régime et préférences.</li> <li>Accédez à des nutritionnistes partenaires.</li> </ul> </div> </div> </section>  <section class="py-16 px-6 md:px-20 bg-white"> <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10"> <!-- Texte --> <div class="flex-1 text-left"> <h2 class="text-emerald-600 text-3xl md:text-4xl font-koulen mb-6">
-L'IA QUI SIMPLIFIE TA VIE
-</h2> <p class="text-black text-base md:text-lg leading-relaxed">
-Notre IA t'accompagne dans ton suivi nutritionnel en créant
-					un planning détaillé de tes repas pour la semaine. Elle optimise
-					tes ingrédients restants et s'adapte à ton budget, tout en
-					te proposant des conseils personnalisés. Plus besoin de
-					te creuser la tête, elle planifie pour toi !
-</p> </div> <!-- Image avec bordure verte en bas --> <div class="flex-1 relative"> <div class="relative rounded-lg overflow-hidden shadow-lg"> ${renderComponent($$result2, "Image", $$Image, { "src": image_robot_ai || "/placeholder.svg", "alt": "Illustration IA robot cuisinier", "class": "w-full h-auto" })} <!-- Bordure verte en bas --> <div class="absolute bottom-0 left-0 right-0 h-2 bg-emerald-600"></div> </div> </div> </div> </section>  <section class="py-12 px-6 bg-white text-center"> <h2 class="text-2xl md:text-3xl font-koulen mb-10">
+</a> </div> <ul class="list-disc list-inside space-y-3 text-base"> <li>Inclut toutes les fonctionnalités de la version gratuite.</li> <li>Calcul automatique selon ingrédients et quantités.</li> <li>Recommandations adaptées à vos objectifs.</li> <li>Menu optimisé selon régime et préférences.</li> <li>Accédez à des nutritionnistes partenaires.</li> </ul> </div> </div> </section>  <section class="py-12 px-6 bg-white text-center"> <h2 class="text-2xl md:text-3xl font-koulen mb-10">
 Découvrez nos recettes
 </h2> <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> <!-- 🥗 Entrée --> <a href="/recette-plat" class="group relative overflow-hidden rounded-xl shadow-lg h-[400px] cursor-pointer transition-shadow duration-300 hover:shadow-2xl"> ${renderComponent($$result2, "Image", $$Image, { "src": image_entree || "/placeholder.svg", "alt": "Entr\xE9e", "class": "w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" })} <!-- Filtre sombre avec animation --> <div class="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300 rounded-xl"></div> <!-- Overlay avec effet de brillance au hover --> <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12 group-hover:translate-x-full"></div> <span class="absolute top-0 left-0 h-full w-full flex items-start justify-start text-white text-4xl font-bold p-4 tracking-widest z-10 transition-all duration-300 group-hover:text-yellow-300"> <span class="leading-tight text-left drop-shadow-lg transform transition-transform duration-300 group-hover:scale-110"> ${`E
 N

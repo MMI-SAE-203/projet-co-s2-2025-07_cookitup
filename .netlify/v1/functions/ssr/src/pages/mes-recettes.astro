@@ -1,0 +1,102 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Plat from "../components/Plat.astro";
+import { isLoggedIn, getCurrentUser } from "../js/auth.js";
+import { getRecettesByUser } from "../backend.mjs";
+
+// Vérifier si l'utilisateur est connecté
+const loggedIn = isLoggedIn();
+let recettes = [];
+let user = null;
+
+if (loggedIn) {
+    user = getCurrentUser();
+    if (user) {
+        recettes = await getRecettesByUser(user.id);
+    }
+}
+---
+
+<Layout title="Mes Recettes | Cookit-UP">
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Mes Recettes</h1>
+            <a
+                href="/creer-recette"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+            >
+                Créer une recette
+            </a>
+        </div>
+
+        {
+            !loggedIn && (
+                <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <h2 class="text-2xl font-bold mb-4">
+                        Connectez-vous pour voir vos recettes
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Vous devez être connecté pour accéder à vos recettes
+                        personnelles.
+                    </p>
+                    <a
+                        href="/connexion"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                    >
+                        Se connecter
+                    </a>
+                </div>
+            )
+        }
+
+        {
+            loggedIn && recettes.length === 0 && (
+                <div class="bg-gray-100 rounded-lg p-8 text-center">
+                    <h2 class="text-2xl font-bold mb-4">
+                        Vous n'avez pas encore créé de recettes
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Partagez vos talents culinaires avec la communauté en
+                        créant votre première recette !
+                    </p>
+                    <a
+                        href="/creer-recette"
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold px-6 py-3 rounded-lg transition"
+                    >
+                        Créer ma première recette
+                    </a>
+                </div>
+            )
+        }
+
+        {
+            loggedIn && recettes.length > 0 && (
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {recettes.map((recette) => (
+                        <Plat
+                            id={recette.id}
+                            nom={recette.nom}
+                            img={recette.img}
+                            temps_prep={recette.temps_prep}
+                            categorie={recette.categorie}
+                            isFavorite={recette.isFavorite}
+                            showFavoriteButton={true}
+                        />
+                    ))}
+                </div>
+            )
+        }
+    </main>
+</Layout>
+
+<script>
+    import { isLoggedIn } from "../js/auth.js";
+
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!isLoggedIn()) {
+            // Redirection optionnelle
+            // window.location.href = "/connexion";
+        }
+    });
+</script>

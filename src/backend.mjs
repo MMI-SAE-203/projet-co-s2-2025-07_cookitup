@@ -125,6 +125,40 @@ export async function getRecetteById(id) {
     }
 }
 
+// ✅ RÉCUPÈRE LES INGRÉDIENTS PAR LEURS IDS
+export async function getIngredientsByIds(ingredientIds) {
+    try {
+        if (!ingredientIds || !Array.isArray(ingredientIds) || ingredientIds.length === 0) {
+            return [];
+        }
+
+        console.log(`🥕 Récupération des ingrédients par IDs: ${ingredientIds.join(', ')}`);
+
+        // Créer un filtre pour tous les IDs
+        const filter = ingredientIds.map(id => `id = "${id}"`).join(' || ');
+
+        const ingredients = await pb.collection('ingredients').getFullList({
+            filter: filter,
+            fields: 'id,nom'
+        });
+
+        console.log(`✅ ${ingredients.length} ingrédients récupérés`);
+
+        // Créer un mapping des IDs aux noms pour préserver l'ordre
+        const ingredientsMap = {};
+        ingredients.forEach(ing => {
+            ingredientsMap[ing.id] = ing.nom;
+        });
+
+        // Retourner les noms dans le même ordre que les IDs
+        return ingredientIds.map(id => ingredientsMap[id] || "Ingrédient inconnu");
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des ingrédients:', error);
+        return ingredientIds.map(() => "Ingrédient");
+    }
+}
+
 // ✅ RÉCUPÈRE LES RECETTES SIMILAIRES À UNE RECETTE DONNÉE
 export async function getRecettesSimilaires(recetteId, limit = 4) {
     try {
@@ -275,6 +309,7 @@ export async function getCommentairesByRecette(recetteId) {
         return [];
     }
 }
+
 export async function ajouterCommentaire(recetteId, userId, contenu, note = null) {
     try {
         console.log(`💬 Ajout d'un commentaire pour la recette ${recetteId}`);
@@ -300,6 +335,7 @@ export async function ajouterCommentaire(recetteId, userId, contenu, note = null
         throw error;
     }
 }
+
 export async function toggleFavori(recetteId, userId) {
     try {
         console.log(`❤️ Toggle favori pour recette ${recetteId} et utilisateur ${userId}`);
@@ -329,6 +365,7 @@ export async function toggleFavori(recetteId, userId) {
         throw error;
     }
 }
+
 export async function getFavorisByUser(userId) {
     try {
         console.log(`❤️ Récupération des favoris pour l'utilisateur ${userId}`);
@@ -361,8 +398,8 @@ export async function getFavorisByUser(userId) {
                 nom: recette.nom,
                 description: recette.description,
                 img: imageUrl,
-                temps_preparation: recette.temps_preparation,
-                difficulte: recette.difficulte,
+                temps_prep: recette.temps_prep,
+                categorie: recette.categorie,
                 created: recette.created,
                 updated: recette.updated,
                 isFavorite: true,
@@ -378,6 +415,7 @@ export async function getFavorisByUser(userId) {
         return [];
     }
 }
+
 export async function checkFavoriteStatus(recetteIds, userId) {
     try {
         if (!userId || !recetteIds || recetteIds.length === 0) {
@@ -410,6 +448,7 @@ export async function checkFavoriteStatus(recetteIds, userId) {
         return {};
     }
 }
+
 export async function getRecettesByUser(userId) {
     try {
         console.log(`👨‍🍳 Récupération des recettes créées par l'utilisateur ${userId}`);
@@ -438,8 +477,8 @@ export async function getRecettesByUser(userId) {
                 nom: recette.nom,
                 description: recette.description,
                 img: imageUrl,
-                temps_preparation: recette.temps_preparation,
-                difficulte: recette.difficulte,
+                temps_prep: recette.temps_prep,
+                categorie: recette.categorie,
                 created: recette.created,
                 updated: recette.updated,
                 isFavorite: false // Sera mis à jour côté client
@@ -453,6 +492,7 @@ export async function getRecettesByUser(userId) {
         return [];
     }
 }
+
 export async function creerRecette(recetteData, userId) {
     try {
         console.log('👨‍🍳 Création d\'une nouvelle recette...');
@@ -471,6 +511,7 @@ export async function creerRecette(recetteData, userId) {
         throw error;
     }
 }
+
 export async function modifierRecette(recetteId, recetteData, userId) {
     try {
         console.log(`✏️ Modification de la recette ${recetteId}...`);
@@ -493,6 +534,7 @@ export async function modifierRecette(recetteId, recetteData, userId) {
         throw error;
     }
 }
+
 export async function supprimerRecette(recetteId, userId) {
     try {
         console.log(`🗑️ Suppression de la recette ${recetteId}...`);
@@ -515,6 +557,7 @@ export async function supprimerRecette(recetteId, userId) {
         throw error;
     }
 }
+
 export async function rechercherRecettes(query, filters = {}) {
     try {
         console.log(`🔍 Recherche de recettes avec la requête: "${query}"`);
@@ -565,8 +608,8 @@ export async function rechercherRecettes(query, filters = {}) {
                 nom: recette.nom,
                 description: recette.description,
                 img: imageUrl,
-                temps_preparation: recette.temps_preparation,
-                difficulte: recette.difficulte,
+                temps_prep: recette.temps_prep,
+                categorie: recette.categorie,
                 created: recette.created,
                 updated: recette.updated,
                 isFavorite: false
@@ -580,6 +623,7 @@ export async function rechercherRecettes(query, filters = {}) {
         return [];
     }
 }
+
 export async function getPartenaires() {
     try {
         console.log('🏪 Récupération des partenaires depuis:', pb.baseUrl);
@@ -636,67 +680,104 @@ export async function getPartenaires() {
         return [];
     }
 }
+
 export async function getAllPartenaires() {
     return await getPartenaires();
 }
 
-// ✅ FONCTION POUR RÉCUPÉRER LES RECETTES SPONSORISÉES
 export async function getRecettesSponsors() {
     try {
-        console.log('🌟 Récupération des recettes sponsorisées...');
-
-        // Récupérer les recettes avec sponsorise = true
-        const recettes = await pb.collection('recettes').getFullList({
-            filter: 'sponsorise = true',
-            sort: '-created',
-            fields: 'id,nom,img,temps_prep,categorie,ingredients,regime,calories,sponsorise,created,updated'
-        });
-
-        console.log(`✅ ${recettes.length} recettes sponsorisées trouvées`);
-
-        // Si aucune recette sponsorisée, retourner les premières recettes
-        if (recettes.length === 0) {
-            console.log('⚠️ Aucune recette sponsorisée, utilisation des recettes récentes...');
-            const recentesRecettes = await pb.collection('recettes').getList(1, 6, {
-                sort: '-created',
-                fields: 'id,nom,img,temps_prep,categorie,ingredients,regime,calories,sponsorise,created,updated'
-            });
-
-            return recentesRecettes.items.map(transformRecette);
-        }
-
-        return recettes.map(transformRecette);
+        // Pour l'instant, retourner les premières recettes comme "sponsorisées"
+        const recettes = await getAllRecettes();
+        return recettes.slice(0, 6);
     } catch (error) {
         console.error('❌ Erreur lors de la récupération des recettes sponsorisées:', error);
         return [];
     }
 }
 
-// Fonction utilitaire pour transformer une recette
-function transformRecette(recette) {
-    let imageUrl = null;
-    if (recette.img) {
-        if (recette.img.startsWith('http')) {
-            imageUrl = recette.img;
-        } else {
-            imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
-        }
-    }
+// ✅ RÉCUPÈRE LES RECETTES COMMENTÉES PAR L'UTILISATEUR CONNECTÉ
+export async function getCommentedRecettes() {
+    try {
+        console.log('💬 Récupération des recettes commentées par l\'utilisateur...');
 
-    return {
-        id: recette.id,
-        nom: recette.nom,
-        img: imageUrl,
-        temps_prep: recette.temps_prep,
-        categorie: recette.categorie,
-        ingredients: recette.ingredients || [],
-        regime: recette.regime || [],
-        calories: recette.calories || 0,
-        sponsorise: recette.sponsorise || false,
-        created: recette.created,
-        updated: recette.updated,
-        isFavorite: false
-    };
+        // Vérifier si un utilisateur est connecté
+        const authData = pb.authStore.model;
+        if (!authData) {
+            console.log('❌ Aucun utilisateur connecté');
+            return [];
+        }
+
+        const userId = authData.id;
+        console.log(`👤 Utilisateur connecté: ${userId}`);
+
+        // Récupérer les commentaires de l'utilisateur
+        const commentaires = await pb.collection('commentaires').getFullList({
+            filter: `user = "${userId}"`,
+            expand: 'recette',
+            sort: '-created'
+        });
+
+        console.log(`✅ ${commentaires.length} commentaires récupérés`);
+
+        // Extraire les recettes uniques des commentaires
+        const recettesMap = new Map();
+
+        commentaires.forEach(commentaire => {
+            if (commentaire.expand?.recette) {
+                const recette = commentaire.expand.recette;
+                // Ne pas ajouter de doublons (si l'utilisateur a commenté plusieurs fois la même recette)
+                if (!recettesMap.has(recette.id)) {
+                    recettesMap.set(recette.id, recette);
+                }
+            }
+        });
+
+        // Transformer les données pour le format attendu par le composant Plat
+        const recettesCommentees = Array.from(recettesMap.values()).map(recette => {
+            // ✅ CORRECTION : Vérifier si l'URL est déjà complète
+            let imageUrl = null;
+            if (recette.img) {
+                if (recette.img.startsWith('http')) {
+                    imageUrl = recette.img;
+                } else {
+                    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+                }
+            }
+
+            return {
+                id: recette.id,
+                nom: recette.nom,
+                description: recette.description,
+                img: imageUrl,
+                temps_prep: recette.temps_prep,
+                categorie: recette.categorie,
+                created: recette.created,
+                updated: recette.updated,
+                isFavorite: false, // Sera mis à jour côté client
+                commentDate: commentaires.find(c => c.recette === recette.id)?.created
+            };
+        });
+
+        console.log(`🍽️ ${recettesCommentees.length} recettes commentées récupérées`);
+
+        // Vérifier le statut favori des recettes si l'utilisateur est connecté
+        if (userId) {
+            const recetteIds = recettesCommentees.map(r => r.id);
+            const favoriteStatus = await checkFavoriteStatus(recetteIds, userId);
+
+            // Mettre à jour le statut favori
+            recettesCommentees.forEach(recette => {
+                recette.isFavorite = favoriteStatus[recette.id] || false;
+            });
+        }
+
+        return recettesCommentees;
+
+    } catch (error) {
+        console.error('❌ Erreur lors de la récupération des recettes commentées:', error);
+        return [];
+    }
 }
 
 // ✅ DONNÉES DE DÉMONSTRATION (FALLBACK)
@@ -707,14 +788,12 @@ function getDemoRecettes() {
             nom: 'Pâtes à la Carbonara',
             description: 'Un classique italien avec des œufs, du parmesan et des lardons.',
             img: '/placeholder.svg?height=300&width=400&text=Carbonara',
-            temps_prep: '20 min',
+            temps_prep: "20 min",
             categorie: 'plat',
             ingredients: ['pâtes', 'lardons', 'œufs', 'parmesan'],
             preparation: 'Faire cuire les pâtes...',
             regime: [],
             calories: 450,
-            commentaire: '',
-            sponsorise: false,
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
             isFavorite: false
@@ -724,14 +803,12 @@ function getDemoRecettes() {
             nom: 'Salade César',
             description: 'Salade fraîche avec croûtons, parmesan et sauce César maison.',
             img: '/placeholder.svg?height=300&width=400&text=Salade+César',
-            temps_prep: '15 min',
+            temps_prep: "15 min",
             categorie: 'entree',
-            ingredients: ['salade', 'poulet', 'parmesan', 'croûtons'],
+            ingredients: ['salade', 'croûtons', 'parmesan', 'sauce césar'],
             preparation: 'Laver la salade...',
-            regime: [],
-            calories: 320,
-            commentaire: '',
-            sponsorise: false,
+            regime: ['végétarien'],
+            calories: 250,
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
             isFavorite: false
@@ -741,14 +818,12 @@ function getDemoRecettes() {
             nom: 'Bœuf Bourguignon',
             description: 'Plat traditionnel français mijoté au vin rouge.',
             img: '/placeholder.svg?height=300&width=400&text=Bœuf+Bourguignon',
-            temps_prep: '180 min',
+            temps_prep: "180 min",
             categorie: 'plat',
-            ingredients: ['bœuf', 'carottes', 'oignons', 'vin rouge'],
-            preparation: 'Faire revenir la viande...',
+            ingredients: ['bœuf', 'vin rouge', 'carottes', 'oignons'],
+            preparation: 'Faire revenir le bœuf...',
             regime: [],
-            calories: 580,
-            commentaire: '',
-            sponsorise: false,
+            calories: 650,
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
             isFavorite: false
@@ -770,13 +845,15 @@ function getDemoRecetteById(id) {
                 '50g de parmesan râpé',
                 'Poivre noir'
             ],
-            instructions: [
-                'Faire cuire les pâtes dans l\'eau bouillante salée.',
-                'Faire revenir les lardons dans une poêle.',
-                'Battre les œufs avec le parmesan.',
-                'Mélanger les pâtes chaudes avec les œufs.',
-                'Ajouter les lardons et servir immédiatement.'
-            ],
+            preparation: `Faire cuire les pâtes dans l'eau bouillante salée.
+
+Faire revenir les lardons dans une poêle.
+
+Battre les œufs avec le parmesan.
+
+Mélanger les pâtes chaudes avec les œufs.
+
+Ajouter les lardons et servir immédiatement.`,
             commentaires: []
         };
     }

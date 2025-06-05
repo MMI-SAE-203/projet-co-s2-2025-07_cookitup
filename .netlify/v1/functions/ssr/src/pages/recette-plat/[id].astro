@@ -44,16 +44,19 @@ let recettesSimilaires = [];
 if (recetteProp) {
     recette = recetteProp;
     console.log("✅ Utilisation des données depuis getStaticPaths");
+    console.log("📝 Données de la recette:", JSON.stringify(recette, null, 2));
 } else {
     console.log("📡 Récupération des données via API...");
     try {
         recette = await getRecetteById(id);
         if (!recette) {
-            return Astro.redirect("/recette-plat", 302);
+            Astro.redirect("/recette-plat", 302);
+            return;
         }
     } catch (error) {
         console.error("❌ Erreur:", error);
-        return Astro.redirect("/recette-plat", 302);
+        Astro.redirect("/recette-plat", 302);
+        return;
     }
 }
 
@@ -63,10 +66,37 @@ try {
     console.error("❌ Erreur recettes similaires:", error);
 }
 
-// ✅ CORRECTION : Utiliser "img" au lieu de "image"
-const imageUrl = recette.img
-    ? `http://127.0.0.1:8090/api/files/recettes/${recette.id}/${recette.img}`
-    : "/placeholder.svg";
+// Construire l'URL de l'image PocketBase
+let imageUrl = "/placeholder.svg";
+if (recette.img) {
+    imageUrl = `https://cookit-up.titouan-winkel.fr/api/files/recettes/${recette.id}/${recette.img}`;
+}
+
+// Gérer les ingrédients
+let ingredientsList = [];
+if (recette.ingredients) {
+    if (Array.isArray(recette.ingredients)) {
+        ingredientsList = recette.ingredients;
+    } else if (typeof recette.ingredients === "string") {
+        ingredientsList = recette.ingredients
+            .split(",")
+            .map((ing) => ing.trim());
+    }
+}
+
+// Gérer le régime
+let regimeList = [];
+if (recette.regime && recette.regime !== "Select -") {
+    if (Array.isArray(recette.regime)) {
+        regimeList = recette.regime;
+    } else if (typeof recette.regime === "string") {
+        regimeList = [recette.regime];
+    }
+}
+
+// Afficher les calories seulement si > 0
+const showCalories =
+    recette.calories && recette.calories !== "0" && recette.calories !== 0;
 ---
 
 <Layout>
@@ -76,6 +106,7 @@ const imageUrl = recette.img
             src={imageUrl || "/placeholder.svg"}
             alt={recette.nom}
             class="w-full h-full object-cover"
+            onerror="this.src='/placeholder.svg'"
         />
         <div
             class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20 flex items-center justify-center"
@@ -88,11 +119,11 @@ const imageUrl = recette.img
                 </h1>
                 <div class="flex justify-center gap-6 text-lg flex-wrap">
                     <span class="bg-black/30 backdrop-blur-sm px-3 py-1 rounded"
-                        >⏱️ {recette.temps_prep}</span
+                        >⏱️ {recette.temps_prep || "30 min"}</span
                     >
 
                     {
-                        recette.calories && (
+                        showCalories && (
                             <span class="bg-orange-500/80 backdrop-blur-sm px-3 py-1 rounded">
                                 🔥 {recette.calories} cal
                             </span>
@@ -102,15 +133,21 @@ const imageUrl = recette.img
                     {
                         recette.categorie && (
                             <span class="bg-blue-500/80 backdrop-blur-sm px-3 py-1 rounded">
-                                📂 {recette.categorie}
+                                📂{" "}
+                                {recette.categorie === "entree"
+                                    ? "Entrée"
+                                    : recette.categorie === "plat"
+                                      ? "Plat"
+                                      : recette.categorie === "dessert"
+                                        ? "Dessert"
+                                        : recette.categorie}
                             </span>
                         )
                     }
 
                     {
-                        recette.regime &&
-                            recette.regime.length > 0 &&
-                            recette.regime.map((regimeType) => {
+                        regimeList.length > 0 &&
+                            regimeList.map((regimeType) => {
                                 const regimeConfig = {
                                     végétarien: {
                                         icon: "🌱",
@@ -129,10 +166,9 @@ const imageUrl = recette.img
                                         color: "bg-purple-500/80",
                                     },
                                 };
-                                const config = regimeConfig[regimeType] || {
-                                    icon: "🍽️",
-                                    color: "bg-gray-500/80",
-                                };
+                                const config = regimeConfig[
+                                    regimeType.toLowerCase()
+                                ] || { icon: "🍽️", color: "bg-gray-500/80" };
 
                                 return (
                                     <span
@@ -153,7 +189,7 @@ const imageUrl = recette.img
                     }
 
                     {
-                        recette.expand?.sponsorise && (
+                        recette.sponsorise && (
                             <span class="bg-yellow-500/80 backdrop-blur-sm px-3 py-1 rounded">
                                 🌟 Sponsorisé
                             </span>
@@ -172,14 +208,13 @@ const imageUrl = recette.img
                 <div class="bg-gray-50 p-6 rounded-lg sticky top-6 space-y-6">
                     <!-- Informations nutritionnelles -->
                     {
-                        (recette.calories ||
-                            (recette.regime && recette.regime.length > 0)) && (
+                        (showCalories || regimeList.length > 0) && (
                             <div>
                                 <h3 class="text-lg font-bold mb-4">
                                     INFORMATIONS NUTRITIONNELLES
                                 </h3>
 
-                                {recette.calories && (
+                                {showCalories && (
                                     <div class="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                                         <div class="flex items-center justify-between">
                                             <span class="font-medium text-orange-800">
@@ -192,65 +227,57 @@ const imageUrl = recette.img
                                     </div>
                                 )}
 
-                                {recette.regime &&
-                                    recette.regime.length > 0 && (
-                                        <div>
-                                            <h4 class="font-medium text-gray-700 mb-2">
-                                                REGIMES COMPATIBLES
-                                            </h4>
-                                            <div class="space-y-2">
-                                                {recette.regime.map(
-                                                    (regimeType) => {
-                                                        const regimeConfig = {
-                                                            végétarien: {
-                                                                icon: "🌱",
-                                                                color: "bg-green-50 border-green-200 text-green-800",
-                                                                label: "VEGETARIEN",
-                                                            },
-                                                            végan: {
-                                                                icon: "🌿",
-                                                                color: "bg-green-50 border-green-200 text-green-800",
-                                                                label: "VEGAN",
-                                                            },
-                                                            "sans-gluten": {
-                                                                icon: "🌾",
-                                                                color: "bg-blue-50 border-blue-200 text-blue-800",
-                                                                label: "SANS GLUTEN",
-                                                            },
-                                                            halal: {
-                                                                icon: "☪️",
-                                                                color: "bg-purple-50 border-purple-200 text-purple-800",
-                                                                label: "Halal",
-                                                            },
-                                                        };
-                                                        const config =
-                                                            regimeConfig[
-                                                                regimeType
-                                                            ] || {
-                                                                icon: "🍽️",
-                                                                color: "bg-gray-50 border-gray-200 text-gray-800",
-                                                                label: regimeType,
-                                                            };
-
-                                                        return (
-                                                            <div
-                                                                class={`p-2 border rounded ${config.color}`}
-                                                            >
-                                                                <span class="font-medium">
-                                                                    {
-                                                                        config.icon
-                                                                    }{" "}
-                                                                    {
-                                                                        config.label
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                        );
+                                {regimeList.length > 0 && (
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">
+                                            REGIMES COMPATIBLES
+                                        </h4>
+                                        <div class="space-y-2">
+                                            {regimeList.map((regimeType) => {
+                                                const regimeConfig = {
+                                                    végétarien: {
+                                                        icon: "🌱",
+                                                        color: "bg-green-50 border-green-200 text-green-800",
+                                                        label: "VEGETARIEN",
                                                     },
-                                                )}
-                                            </div>
+                                                    végan: {
+                                                        icon: "🌿",
+                                                        color: "bg-green-50 border-green-200 text-green-800",
+                                                        label: "VEGAN",
+                                                    },
+                                                    "sans-gluten": {
+                                                        icon: "🌾",
+                                                        color: "bg-blue-50 border-blue-200 text-blue-800",
+                                                        label: "SANS GLUTEN",
+                                                    },
+                                                    halal: {
+                                                        icon: "☪️",
+                                                        color: "bg-purple-50 border-purple-200 text-purple-800",
+                                                        label: "Halal",
+                                                    },
+                                                };
+                                                const config = regimeConfig[
+                                                    regimeType.toLowerCase()
+                                                ] || {
+                                                    icon: "🍽️",
+                                                    color: "bg-gray-50 border-gray-200 text-gray-800",
+                                                    label: regimeType,
+                                                };
+
+                                                return (
+                                                    <div
+                                                        class={`p-2 border rounded ${config.color}`}
+                                                    >
+                                                        <span class="font-medium">
+                                                            {config.icon}{" "}
+                                                            {config.label}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
-                                    )}
+                                    </div>
+                                )}
                             </div>
                         )
                     }
@@ -260,20 +287,14 @@ const imageUrl = recette.img
                         <h2 class="text-2xl font-bold mb-6">INGREDIENTS</h2>
 
                         {
-                            recette.expand?.ingredients &&
-                            recette.expand.ingredients.length > 0 ? (
+                            ingredientsList.length > 0 ? (
                                 <ul class="space-y-3">
-                                    {recette.expand.ingredients.map(
-                                        (ingredient) => (
-                                            <li class="flex items-center">
-                                                <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3" />
-                                                <span>
-                                                    {ingredient.nom ||
-                                                        ingredient.name}
-                                                </span>
-                                            </li>
-                                        ),
-                                    )}
+                                    {ingredientsList.map((ingredient) => (
+                                        <li class="flex items-center">
+                                            <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3" />
+                                            <span>{ingredient}</span>
+                                        </li>
+                                    ))}
                                 </ul>
                             ) : (
                                 <p class="text-gray-500">
@@ -302,15 +323,14 @@ const imageUrl = recette.img
                 </div>
 
                 {
-                    recette.expand?.sponsorise && (
+                    recette.sponsorise && (
                         <div class="mt-12 p-6 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-lg">
                             <h3 class="font-bold text-lg mb-3">
                                 RECETTE SPONSORISEE
                             </h3>
                             <p class="text-gray-700">
-                                Cette recette est sponsorisée par{" "}
-                                {recette.expand.sponsorise.nom ||
-                                    "notre partenaire"}
+                                Cette recette est sponsorisée par notre
+                                partenaire
                             </p>
                         </div>
                     )
@@ -545,8 +565,15 @@ const imageUrl = recette.img
                                 img={recette.img}
                                 temps_prep={recette.temps_prep}
                                 isFavorite={recette.isFavorite}
-                                sponsorise={recette.expand?.sponsorise}
+                                sponsorise={recette.sponsorise}
                                 categorie={recette.categorie}
+                                calories={recette.calories}
+                                regime={recette.regime}
+                                ingredients={
+                                    Array.isArray(recette.ingredients)
+                                        ? recette.ingredients.join(", ")
+                                        : recette.ingredients || ""
+                                }
                             />
                         ))}
                     </div>
@@ -559,8 +586,8 @@ const imageUrl = recette.img
 <script>
     import { initFavorisButtons } from "../../js/favoris.js";
     import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
     import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
+    import { pb } from "../../js/favoris.js";
 
     let currentRecetteId = "";
 
@@ -880,7 +907,7 @@ const imageUrl = recette.img
         // Générer l'avatar
         let avatarHTML = "";
         if (user?.avatar) {
-            const avatarUrl = `http://127.0.0.1:8090/api/files/users/${user.id}/${user.avatar}`;
+            const avatarUrl = `https://cookit-up.titouan-winkel.fr/api/files/users/${user.id}/${user.avatar}`;
             avatarHTML = `<img src="${avatarUrl}" alt="Avatar de ${userName}" class="w-12 h-12 rounded-full object-cover" />`;
         } else {
             const userInitials = userName.substring(0, 2).toUpperCase();

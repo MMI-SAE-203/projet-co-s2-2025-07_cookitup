@@ -1,8 +1,8 @@
 import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, f as defineScriptVars, e as addAttribute, m as maybeRenderHead } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BngmRMf4.mjs';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
-import { b as getAllPartenaires } from '../chunks/backend_B6EQEUu_.mjs';
+import { c as getAllPartenaires } from '../chunks/backend_B2qRaZ9z.mjs';
 export { renderers } from '../renderers.mjs';
 
 var __freeze = Object.freeze;

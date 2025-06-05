@@ -1,19 +1,9 @@
 import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BngmRMf4.mjs';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
-import PocketBase from 'pocketbase';
+import { i as isLoggedIn } from '../chunks/auth_B-95kMeM.mjs';
 export { renderers } from '../renderers.mjs';
-
-const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
-
-/**
- * Vérifie si l'utilisateur est connecté
- * @returns {boolean} True si l'utilisateur est connecté
- */
-function isLoggedIn() {
-    return pb.authStore.isValid
-}
 
 const $$PassCookup = createComponent(($$result, $$props, $$slots) => {
   isLoggedIn();

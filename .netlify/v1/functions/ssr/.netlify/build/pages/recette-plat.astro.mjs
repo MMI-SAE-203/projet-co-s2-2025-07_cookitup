@@ -1,26 +1,40 @@
 import { c as createComponent, d as createAstro, m as maybeRenderHead, e as addAttribute, a as renderTemplate, r as renderComponent, b as renderScript } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
-import { $ as $$Plat } from '../chunks/Plat_Dlb18FV3.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BngmRMf4.mjs';
+import { $ as $$Plat } from '../chunks/Plat_37PDSyej.mjs';
 import 'clsx';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
-import { a as getAllRecettes, e as getRecettesSponsors } from '../chunks/backend_B6EQEUu_.mjs';
+import { a as getAllRecettes, f as getRecettesSponsors } from '../chunks/backend_B2qRaZ9z.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Astro = createAstro();
 const $$PlatFavoris = createComponent(($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
   Astro2.self = $$PlatFavoris;
-  const { id, nom, img, calories = "", regime = "" } = Astro2.props;
+  const {
+    id,
+    nom,
+    img,
+    calories = "",
+    regime = ""
+  } = Astro2.props;
   const imageUrl = img || "/placeholder.svg";
   let regimeIcon = "";
-  if (regime) {
+  if (regime && Array.isArray(regime) && regime.length > 0) {
+    const firstRegime = regime[0];
+    if (typeof firstRegime === "string") {
+      if (firstRegime.toLowerCase().includes("v\xE9g\xE9tarien")) regimeIcon = "\u{1F331}";
+      else if (firstRegime.toLowerCase().includes("v\xE9gan")) regimeIcon = "\u{1F33F}";
+      else if (firstRegime.toLowerCase().includes("sans gluten")) regimeIcon = "\u{1F33E}";
+      else if (firstRegime.toLowerCase().includes("halal")) regimeIcon = "\u262A\uFE0F";
+    }
+  } else if (regime && typeof regime === "string") {
     if (regime.toLowerCase().includes("v\xE9g\xE9tarien")) regimeIcon = "\u{1F331}";
     else if (regime.toLowerCase().includes("v\xE9gan")) regimeIcon = "\u{1F33F}";
     else if (regime.toLowerCase().includes("sans gluten")) regimeIcon = "\u{1F33E}";
     else if (regime.toLowerCase().includes("halal")) regimeIcon = "\u262A\uFE0F";
   }
-  return renderTemplate`${maybeRenderHead()}<div class="relative flex-shrink-0 w-48 sm:w-56 snap-start rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"> <!-- Image avec overlay --> <div class="aspect-square w-full h-36 relative overflow-hidden"> <img${addAttribute(imageUrl, "src")}${addAttribute(nom, "alt")} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"> <!-- Overlay sombre pour meilleure lisibilité --> <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div> <!-- Bouton favori --> <button type="button" class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow js-favori-btn"${addAttribute(id, "data-id")} aria-label="Ajouter aux favoris"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 text-gray-600"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path> </svg> </button> </div> <!-- Informations de la recette --> <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white"> <h3 class="font-bold text-sm mb-1 line-clamp-1">${nom}</h3> <div class="flex flex-wrap items-center text-xs gap-2"> <!-- Calories si disponible --> ${calories && renderTemplate`<div class="flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path> </svg> ${calories} </div>`} <!-- Régime si disponible --> ${regimeIcon && renderTemplate`<div class="flex items-center"> <span class="mr-1">${regimeIcon}</span> <span class="truncate max-w-[80px]">${regime}</span> </div>`} </div> </div> <!-- Lien vers la recette (couvre toute la carte) --> <a${addAttribute(`/recette-plat/${id}`, "href")} class="absolute inset-0 z-10"${addAttribute(`Voir la recette ${nom}`, "aria-label")}></a> </div>`;
+  return renderTemplate`${maybeRenderHead()}<div class="relative flex-shrink-0 w-48 sm:w-56 snap-start rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"> <!-- Image avec overlay --> <div class="aspect-square w-full h-36 relative overflow-hidden"> <img${addAttribute(imageUrl, "src")}${addAttribute(nom, "alt")} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"> <!-- Overlay sombre pour meilleure lisibilité --> <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div> <!-- Bouton favori --> <button type="button" class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow js-favori-btn"${addAttribute(id, "data-id")} aria-label="Ajouter aux favoris"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 text-gray-600"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path> </svg> </button> </div> <!-- Informations de la recette --> <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white"> <h3 class="font-bold text-sm mb-1 line-clamp-1">${nom}</h3> <div class="flex flex-wrap items-center text-xs gap-2"> <!-- Calories si disponible --> ${calories && renderTemplate`<div class="flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path> </svg> ${calories} </div>`} <!-- Régime si disponible --> ${regimeIcon && renderTemplate`<div class="flex items-center"> <span class="mr-1">${regimeIcon}</span> <span class="truncate max-w-[80px]"> ${Array.isArray(regime) && regime.length > 0 ? regime[0] : regime} </span> </div>`} </div> </div> <!-- Lien vers la recette (couvre toute la carte) --> <a${addAttribute(`/recette-plat/${id}`, "href")} class="absolute inset-0 z-10"${addAttribute(`Voir la recette ${nom}`, "aria-label")}></a> </div>`;
 }, "C:/Users/titou/GitHub/projet-co-s2-2025-07_cookitup/src/components/PlatFavoris.astro", void 0);
 
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
@@ -32,11 +46,21 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
     recettes = await getAllRecettes();
     console.log("\u2705 Recettes r\xE9cup\xE9r\xE9es:", recettes.length);
     if (recettes.length > 0) {
-      console.log("\u{1F4DD} Exemple de recette:", {
+      console.log(
+        "\u{1F4DD} Exemple de recette compl\xE8te:",
+        JSON.stringify(recettes[0], null, 2)
+      );
+      console.log("\u{1F4DD} Structure de la premi\xE8re recette:", {
         id: recettes[0].id,
         nom: recettes[0].nom,
         img: recettes[0].img,
-        temps_preparation: recettes[0].temps_preparation
+        temps_prep: recettes[0].temps_prep,
+        categorie: recettes[0].categorie,
+        ingredients: recettes[0].ingredients,
+        calories: recettes[0].calories,
+        regime: recettes[0].regime,
+        sponsorise: recettes[0].sponsorise,
+        preparation: recettes[0].preparation ? recettes[0].preparation.substring(0, 100) + "..." : "Pas de pr\xE9paration"
       });
     }
     console.log("\u{1F31F} R\xE9cup\xE9ration des recettes sponsoris\xE9es...");
@@ -53,7 +77,7 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   console.log("\u{1F4CA} R\xE9sum\xE9:");
   console.log("- Recettes totales:", totalRecettes);
   console.log("- Recettes sponsoris\xE9es:", recettesSponsors.length);
-  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/images/recettes_hero.webp", "stats": [
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/placeholder.svg?height=600&width=1200&text=Nos+Recettes", "stats": [
     { number: totalRecettes.toString(), label: "Recettes", icon: "\u{1F37D}\uFE0F" },
     { number: "12", label: "CATEGORIES", icon: "\u{1F4C2}" },
     { number: "4.8", label: "NOTE MOYENNE", icon: "\u2B50" },
@@ -68,11 +92,11 @@ Recettes en vedette
 </div> </div> <p class="mb-6 text-gray-600">
 Choisissez parmi une grande liste de plats celui qui vous
             correspond, et lancez-vous !
-</p> <!-- Barre de recherche et filtres --> <div class="mb-6 flex flex-col md:flex-row gap-3"> <div class="flex-1"> <input type="text" placeholder="Rechercher une recette..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" id="searchInput"> </div> <div class="flex gap-2 flex-wrap"> <!-- Filtre par catégorie --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="categorieSelect"> <option value="tous">Toutes les catégories</option> <option value="entree">Entrées</option> <option value="plat">Plats</option> <option value="dessert">Desserts</option> </select> <!-- Autres filtres --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="filterSelect"> <option value="tous">Tous les types</option> <option value="sponsorises">Sponsorisés</option> <option value="favoris">Favoris</option> </select> <!-- Tri --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="sortSelect"> <option value="default">Trier par</option> <option value="nom">Nom A-Z</option> <option value="recent">Plus récent</option> <option value="temps">Temps de préparation</option> </select> <!-- Filtre par régime --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="regimeSelect"> <option value="tous">Tous les régimes</option> <option value="végétarien">🌱 Végétarien</option> <option value="végan">🌿 Végan</option> <option value="sans-gluten">🌾 Sans gluten</option> <option value="halal">☪️ Halal</option> </select> </div> </div> <!-- Informations de pagination --> <div class="mb-4 flex justify-between items-center text-sm"> <div class="text-gray-600">
+</p> <!-- Barre de recherche et filtres --> <div class="mb-6 flex flex-col md:flex-row gap-3"> <div class="flex-1"> <input type="text" placeholder="Rechercher par nom ou ingrédients..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" id="searchInput"> </div> <div class="flex gap-2 flex-wrap"> <!-- Filtre par catégorie --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="categorieSelect"> <option value="tous">Toutes les catégories</option> <option value="entree">🥗 Entrées</option> <option value="plat">🍽️ Plats</option> <option value="dessert">🍰 Desserts</option> </select> <!-- Filtre par favoris --> <select class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm" id="favorisSelect"> <option value="tous">Toutes les recettes</option> <option value="favoris">❤️ Mes favoris</option> </select> </div> </div> <!-- Informations de pagination --> <div class="mb-4 flex justify-between items-center text-sm"> <div class="text-gray-600">
 Affichage de <span id="currentRangeStart">1</span>-<span id="currentRangeEnd">12</span>
 sur <span id="totalRecettes">${recettes.length}</span> recettes
 </div> <div class="text-gray-600">
-Page <span id="currentPageDisplay">1</span> sur <span id="totalPagesDisplay">1</span> </div> </div> <!-- Grille des recettes --> <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="recettesGrid"> ${recettes.length > 0 ? recettes.map((plat) => renderTemplate`${renderComponent($$result2, "Plat", $$Plat, { "id": plat.id, "nom": plat.nom, "img": plat.img, "temps_prep": plat.temps_preparation, "isFavorite": plat.isFavorite, "sponsorise": plat.expand?.sponsorise, "categorie": plat.categorie, "calories": plat.calories, "regime": plat.regime })}`) : renderTemplate`<div class="col-span-full text-center py-12 bg-gray-100 rounded-lg"> <h3 class="text-xl font-bold text-gray-800 mb-2">
+Page <span id="currentPageDisplay">1</span> sur <span id="totalPagesDisplay">1</span> </div> </div> <!-- Grille des recettes --> <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="recettesGrid"> ${recettes.length > 0 ? recettes.map((plat) => renderTemplate`${renderComponent($$result2, "Plat", $$Plat, { "id": plat.id, "nom": plat.nom, "img": plat.img, "temps_prep": plat.temps_prep, "isFavorite": plat.isFavorite, "sponsorise": plat.sponsorise, "categorie": plat.categorie, "calories": plat.calories, "regime": plat.regime, "ingredients": Array.isArray(plat.ingredients) ? plat.ingredients.join(", ") : plat.ingredients || "", "preparation": plat.preparation, "commentaire": plat.commentaire })}`) : renderTemplate`<div class="col-span-full text-center py-12 bg-gray-100 rounded-lg"> <h3 class="text-xl font-bold text-gray-800 mb-2">
 Aucune recette trouvée
 </h3> <p class="text-gray-600">
 Vérifiez que PocketBase est démarré et contient des
