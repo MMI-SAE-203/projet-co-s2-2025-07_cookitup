@@ -1,95 +1,229 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
 ---
 
-<Layout>
-    <!-- Section 1 : Titre + image -->
-    <section class="text-center px-6 py-10">
-        <h1 class="text-4xl font-bold mb-6">À propos de CookItUp</h1>
-        <img
-            src="URL de l'image"
-            alt="Image d'introduction"
-            class="mx-auto w-full max-w-md rounded-lg shadow-md"
-        />
-    </section>
+<Layout title="À propos de CookItUp - Cookit-UP">
+    <!-- Hero Section -->
+    <Hero
+        title="À propos de CookItUp"
+        subtitle="Notre mission"
+        description="Rendre la cuisine accessible à tous, sans stress ni dépenses inutiles"
+        backgroundImage="/images/hero_apropos.webp"
+        centered={true}
+    />
 
-    <!-- Barre #1 -->
-    <hr class="border-t-2 border-gray-300 w-3/4 mx-auto my-6" />
-
-    <!-- Section 2 : Texte simple -->
-    <section class="px-6 max-w-4xl mx-auto text-justify mb-10">
-        <p class="text-lg leading-relaxed">
-            Aujourd’hui, bien manger est un véritable défi pour de nombreux
-            jeunes. Entre un emploi du temps chargé, un budget serré et le prix
-            des courses qui ne cesse d’augmenter, il devient de plus en plus
-            difficile de préparer des repas équilibrés sans se ruiner. Trop
-            souvent, cela se traduit par des plats tout prêts, des commandes à
-            emporter ou encore des repas sautés, ce qui impacte non seulement la
-            santé, mais aussi la concentration et l’énergie au quotidien. Face à
-            cette réalité, nous avons décidé d’agir. CookItUp est né d’une idée
-            simple : rendre la cuisine accessible à tous, sans stress ni
-            dépenses inutiles. Notre mission est de permettre aux étudiants et
-            aux jeunes actifs de mieux se nourrir en utilisant au maximum ce
-            qu’ils ont déjà sous la main.
-        </p>
-    </section>
-
-    <!-- Section 3 : image à gauche, texte à droite -->
-    <section
-        class="px-6 flex flex-col md:flex-row items-center gap-8 max-w-6xl mx-auto mb-16"
-    >
-        <img
-            src="URL de l'image"
-            alt="Image interface application"
-            class="w-full md:w-1/2 rounded-lg shadow"
-        />
-        <div class="flex flex-col gap-6 text-justify">
-            <p class="text-lg leading-relaxed">
-                Notre plateforme, entièrement gratuite, a été conçue pour vous
-                accompagner au quotidien. L’idée est simple : entrez les
-                ingrédients que vous avez dans votre frigo, et notre
-                intelligence artificielle vous propose instantanément des
-                recettes adaptées, savoureuses et équilibrées. Fini le
-                casse-tête des repas, fini le gaspillage ! Plus besoin de
-                chercher pendant des heures ou d’acheter des ingrédients
-                supplémentaires. CookItUp vous aide à transformer le peu que
-                vous avez en un plat gourmand et nutritif.
-            </p>
-            <p class="text-lg leading-relaxed">
-                Mais CookItUp, c’est bien plus qu’un simple générateur de
-                recettes. Nous avons à cœur de construire une véritable
-                communauté, où chacun peut partager ses idées, ses astuces et
-                ses propres recettes créées à partir de restes. Car bien manger,
-                ce n’est pas seulement une question de budget, c’est aussi un
-                mode de vie. Nous voulons vous prouver qu’avec un peu de
-                créativité, il est possible de manger mieux, de dépenser moins
-                et de réduire le gaspillage alimentaire.
-            </p>
-        </div>
-    </section>
-
-    <!-- Section 4 : texte à gauche, image à droite sur fond rouge clair -->
-    <section class="bg-red-200 px-6 py-10">
-        <div
-            class="flex flex-col md:flex-row items-center gap-8 max-w-6xl mx-auto"
-        >
-            <div class="md:w-2/3">
-                <p class="text-white text-xl font-medium leading-relaxed">
-                    Bien manger, c’est mieux vivre. Avec CookItUp, profitez
-                    d’une solution simple, gratuite et intuitive pour cuisiner
-                    avec ce que vous avez déjà. Ouvrez votre frigo, laissez
-                    parler votre créativité et adoptez une alimentation plus
-                    saine et responsable !
-                </p>
+    <!-- Section principale : Texte d'introduction -->
+    <section class="px-6 py-16 bg-white">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                    Le défi de bien manger aujourd'hui
+                </h2>
+                <div class="w-24 h-1 bg-emerald-500 mx-auto mb-8"></div>
             </div>
-            <img
-                src="URL de l'image"
-                alt="Icône de chef cuisinier"
-                class="w-24 h-24 md:w-40 md:h-40"
-            />
+
+            <p class="text-lg leading-relaxed text-gray-700 text-justify">
+                Aujourd'hui, bien manger est un véritable défi pour de nombreux
+                jeunes. Entre un emploi du temps chargé, un budget serré et le
+                prix des courses qui ne cesse d'augmenter, il devient de plus en
+                plus difficile de préparer des repas équilibrés sans se ruiner.
+                Trop souvent, cela se traduit par des plats tout prêts, des
+                commandes à emporter ou encore des repas sautés, ce qui impacte
+                non seulement la santé, mais aussi la concentration et l'énergie
+                au quotidien. Face à cette réalité, nous avons décidé d'agir.
+                CookItUp est né d'une idée simple : rendre la cuisine accessible
+                à tous, sans stress ni dépenses inutiles. Notre mission est de
+                permettre aux étudiants et aux jeunes actifs de mieux se nourrir
+                en utilisant au maximum ce qu'ils ont déjà sous la main.
+            </p>
         </div>
     </section>
 
-    <!-- Barre #2 -->
-    <hr class="border-t-2 border-gray-300 w-3/4 mx-auto my-6" />
+    <!-- Barre de séparation -->
+    <div class="bg-gray-50 py-2">
+        <hr class="border-t-2 border-emerald-200 w-3/4 mx-auto" />
+    </div>
+
+    <!-- Section : Notre solution (image à gauche, texte à droite) -->
+    <section class="px-6 py-16 bg-gray-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <!-- Image -->
+                <div class="lg:w-1/2">
+                    <div class="relative">
+                        <img
+                            src="/images/illustration_apropos.webp"
+                            alt="Interface de l'application CookItUp"
+                            class="w-full rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                        />
+                        <div
+                            class="absolute -bottom-4 -right-4 w-24 h-24 bg-emerald-500 rounded-full opacity-20"
+                        >
+                        </div>
+                        <div
+                            class="absolute -top-4 -left-4 w-16 h-16 bg-yellow-400 rounded-full opacity-30"
+                        >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Texte -->
+                <div class="lg:w-1/2 space-y-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                            Notre solution innovante
+                        </h2>
+                        <div class="w-16 h-1 bg-emerald-500 mb-6"></div>
+                    </div>
+
+                    <p class="text-lg leading-relaxed text-gray-700">
+                        Notre plateforme, entièrement gratuite, a été conçue
+                        pour vous accompagner au quotidien. L'idée est simple :
+                        entrez les ingrédients que vous avez dans votre frigo,
+                        et notre intelligence artificielle vous propose
+                        instantanément des recettes adaptées, savoureuses et
+                        équilibrées. Fini le casse-tête des repas, fini le
+                        gaspillage !
+                    </p>
+
+                    <p class="text-lg leading-relaxed text-gray-700">
+                        Plus besoin de chercher pendant des heures ou d'acheter
+                        des ingrédients supplémentaires. CookItUp vous aide à
+                        transformer le peu que vous avez en un plat gourmand et
+                        nutritif.
+                    </p>
+
+                    <div
+                        class="bg-white p-6 rounded-xl shadow-md border-l-4 border-emerald-500"
+                    >
+                        <p class="text-gray-700 font-medium">
+                            💡 <strong>Le saviez-vous ?</strong> En moyenne, nos
+                            utilisateurs réduisent leur gaspillage alimentaire de
+                            40% et économisent 60€ par mois sur leurs courses !
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section : Notre communauté (texte à gauche, image à droite) -->
+    <section class="px-6 py-16 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col lg:flex-row-reverse items-center gap-12">
+                <!-- Image -->
+                <div class="lg:w-1/2">
+                    <div class="text-center">
+                        <div
+                            class="inline-block p-8 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full"
+                        >
+                            <img
+                                src="/images/icone_chef_apropos.webp"
+                                alt="Icône chef cuisinier CookItUp"
+                                class="w-32 h-32 lg:w-40 lg:h-40 mx-auto"
+                                loading="lazy"
+                            />
+                        </div>
+                        <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                            <div class="bg-emerald-50 p-4 rounded-lg">
+                                <div
+                                    class="text-2xl font-bold text-emerald-600"
+                                >
+                                    10k+
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    Utilisateurs
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg">
+                                <div class="text-2xl font-bold text-yellow-600">
+                                    5k+
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    Recettes
+                                </div>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg">
+                                <div class="text-2xl font-bold text-red-600">
+                                    40%
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    Moins de gaspillage
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Texte -->
+                <div class="lg:w-1/2 space-y-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                            Une communauté engagée
+                        </h2>
+                        <div class="w-16 h-1 bg-emerald-500 mb-6"></div>
+                    </div>
+
+                    <p class="text-lg leading-relaxed text-gray-700">
+                        Mais CookItUp, c'est bien plus qu'un simple générateur
+                        de recettes. Nous avons à cœur de construire une
+                        véritable communauté, où chacun peut partager ses idées,
+                        ses astuces et ses propres recettes créées à partir de
+                        restes.
+                    </p>
+
+                    <p class="text-lg leading-relaxed text-gray-700">
+                        Car bien manger, ce n'est pas seulement une question de
+                        budget, c'est aussi un mode de vie. Nous voulons vous
+                        prouver qu'avec un peu de créativité, il est possible de
+                        manger mieux, de dépenser moins et de réduire le
+                        gaspillage alimentaire.
+                    </p>
+
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Call-to-Action finale -->
+    <section
+        class="bg-gradient-to-r from-emerald-600 to-emerald-700 px-6 py-16"
+    >
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl lg:text-4xl font-bold text-white mb-6">
+                Bien manger, c'est mieux vivre
+            </h2>
+            <p
+                class="text-xl text-emerald-100 leading-relaxed mb-8 max-w-3xl mx-auto"
+            >
+                Avec CookItUp, profitez d'une solution simple, gratuite et
+                intuitive pour cuisiner avec ce que vous avez déjà. Ouvrez votre
+                frigo, laissez parler votre créativité et adoptez une
+                alimentation plus saine et responsable !
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                    href="/inscription"
+                    class="bg-white text-emerald-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                >
+                    🚀 Commencer maintenant
+                </a>
+                <a
+                    href="/recette-plat"
+                    class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-emerald-600 transition-colors inline-flex items-center justify-center"
+                >
+                    🍽️ Découvrir les recettes
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Barre de séparation finale -->
+    <div class="bg-gray-50 py-2">
+        <hr class="border-t-2 border-emerald-200 w-3/4 mx-auto" />
+    </div>
 </Layout>
