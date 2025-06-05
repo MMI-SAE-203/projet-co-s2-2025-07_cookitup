@@ -51,9 +51,8 @@ jours.forEach((jour, index) => {
           <!-- Grille des recettes du jour -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {menuSemaine[jour]?.map((recette) => {
-              const imageUrl = recette.image 
-                ? recette.image
-                : "/placeholder.svg";
+              // Utiliser directement l'URL de l'image sans la reconstruire
+              const imageUrl = recette.img || "/placeholder.svg";
               
               return (
                 <div class={`relative rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow group ${joursColors[jour]}`}>

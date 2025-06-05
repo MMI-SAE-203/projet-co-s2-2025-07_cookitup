@@ -7,10 +7,13 @@ import { getAllPartenaires } from "../backend.mjs";
 let partenaires = [];
 let totalPartenaires = 0;
 let reductionMoyenne = 0;
+let errorMessage = null;
 
 try {
     console.log('🏪 Chargement des partenaires depuis PocketBase...');
     partenaires = await getAllPartenaires();
+    console.log('📊 Partenaires récupérés:', partenaires);
+    
     totalPartenaires = partenaires.length;
     
     if (partenaires.length > 0) {
@@ -24,9 +27,12 @@ try {
             : 0;
             
         console.log(`✅ ${totalPartenaires} partenaires chargés, réduction moyenne: ${reductionMoyenne}%`);
+    } else {
+        console.warn('⚠️ Aucun partenaire récupéré');
     }
 } catch (error) {
     console.error('❌ Erreur lors du chargement des partenaires:', error);
+    errorMessage = error.message || "Erreur inconnue";
     
     // Données de fallback en cas d'erreur
     partenaires = [
@@ -56,7 +62,7 @@ try {
 // Fonction pour générer l'URL des images PocketBase
 function getImageUrl(partenaire, field) {
     if (!partenaire[field]) return "/placeholder.svg";
-    return `http://127.0.0.1:8090/api/files/partenaires/${partenaire.id}/${partenaire[field]}`;
+    return partenaire[field]; // L'URL est déjà construite dans le backend
 }
 ---
 
@@ -212,10 +218,12 @@ function getImageUrl(partenaire, field) {
                     >
                         <option value="tous">Toutes les catégories</option>
                         <option value="Épicerie">Épicerie</option>
-                        <option value="Produits frais">Produits frais</option>
                         <option value="Bio">Bio</option>
-                        <option value="Surgelés">Surgelés</option>
-                        <option value="Fruits">Fruits & Légumes</option>
+                        <option value="Boucherie">Boucherie</option>
+                        <option value="Boulangerie">Boulangerie</option>
+                        <option value="Poissonnerie">Poissonnerie</option>
+                        <option value="Fruits et Légumes">Fruits et Légumes</option>
+                        <option value="Traditionnel">Traditionnel</option>
                     </select>
                     
                     <select 
@@ -303,118 +311,128 @@ function getImageUrl(partenaire, field) {
                              data-id={partenaire.id}
                              data-lat={partenaire.latitude}
                              data-lng={partenaire.longitude}>
-                            
-                            <!-- Image du magasin -->
-                            <div class="relative h-48">
-                                <img 
-                                    src={getImageUrl(partenaire, 'image') || "/placeholder.svg"} 
-                                    alt={`Magasin ${partenaire.nom}`}
-                                    class="w-full h-full object-cover"
-                                />
-                                <!-- Badge réduction -->
-                                {partenaire.reduction && (
-                                    <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold">
-                                        -{partenaire.reduction}
-                                    </div>
-                                )}
-                                <!-- Badge Cookup Pass actif -->
-                                <div class="absolute top-4 left-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                                    ✅ ACTIF
-                                </div>
-                            </div>
+        
+        <!-- Image du magasin -->
+        <div class="relative h-48">
+            <img 
+                src={partenaire.image || "/placeholder.svg"} 
+                alt={`Magasin ${partenaire.nom}`}
+                class="w-full h-full object-cover"
+            />
+            <!-- Badge réduction -->
+            {partenaire.reduction && (
+                <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold">
+                    -{partenaire.reduction}
+                </div>
+            )}
+            <!-- Badge Cookup Pass actif -->
+            <div class="absolute top-4 left-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                ✅ ACTIF
+            </div>
+        </div>
 
-                            <div class="p-6">
-                                <!-- Logo et nom -->
-                                <div class="flex items-center mb-4">
-                                    <img 
-                                        src={getImageUrl(partenaire, 'logo') || "/placeholder.svg"} 
-                                        alt={`Logo ${partenaire.nom}`}
-                                        class="h-12 w-auto mr-4"
-                                    />
-                                    <div>
-                                        <h3 class="text-xl font-bold">{partenaire.nom}</h3>
-                                        <p class="text-sm text-gray-500">{partenaire.ville}</p>
-                                    </div>
-                                </div>
+        <div class="p-6">
+            <!-- Logo et nom -->
+            <div class="flex items-center mb-4">
+                {partenaire.logo && (
+                    <img 
+                        src={partenaire.logo || "/placeholder.svg"} 
+                        alt={`Logo ${partenaire.nom}`}
+                        class="h-12 w-auto mr-4"
+                    />
+                )}
+                <div>
+                    <h3 class="text-xl font-bold">{partenaire.nom}</h3>
+                    <p class="text-sm text-gray-500">{partenaire.ville} ({partenaire.code_postal})</p>
+                </div>
+            </div>
 
-                                <!-- Description -->
-                                <p class="text-gray-600 mb-4 text-sm leading-relaxed">
-                                    {partenaire.description}
-                                </p>
+            <!-- Description -->
+            <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+                {partenaire.description}
+            </p>
 
-                                <!-- Offre débloquée -->
-                                {partenaire.reduction && partenaire.code_promo && (
-                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-2xl font-bold text-green-600">
-                                                {partenaire.reduction}
-                                            </span>
-                                            {partenaire.validite_offre && (
-                                                <span class="text-xs text-gray-500">
-                                                    Valide jusqu'au {partenaire.validite_offre}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div class="bg-white border border-dashed border-green-400 rounded p-2 text-center">
-                                            <span class="text-xs text-gray-500">Code promo :</span>
-                                            <span class="font-mono font-bold text-green-600 ml-1 promo-code">
-                                                {partenaire.code_promo}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
+            <!-- Offre débloquée -->
+            {partenaire.reduction && partenaire.code_promo && (
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-2xl font-bold text-green-600">
+                            {partenaire.reduction}
+                        </span>
+                        {partenaire.validite_offre && (
+                            <span class="text-xs text-gray-500">
+                                Valide jusqu'au {partenaire.validite_offre}
+                            </span>
+                        )}
+                    </div>
+                    <div class="bg-white border border-dashed border-green-400 rounded p-2 text-center">
+                        <span class="text-xs text-gray-500">Code promo :</span>
+                        <span class="font-mono font-bold text-green-600 ml-1 promo-code">
+                            {partenaire.code_promo}
+                        </span>
+                    </div>
+                </div>
+            )}
 
-                                <!-- Catégories -->
-                                {Array.isArray(partenaire.categories) && partenaire.categories.length > 0 && (
-                                    <div class="flex flex-wrap gap-1 mb-4">
-                                        {partenaire.categories.map((categorie) => (
-                                            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                                                {categorie}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <!-- Informations pratiques -->
-                                <div class="space-y-2 text-sm text-gray-600 mb-4">
-                                    <div class="flex items-start">
-                                        <span class="mr-2">📍</span>
-                                        <span>{partenaire.adresse}</span>
-                                    </div>
-                                    {partenaire.telephone && (
-                                        <div class="flex items-center">
-                                            <span class="mr-2">📞</span>
-                                            <span>{partenaire.telephone}</span>
-                                        </div>
-                                    )}
-                                    {partenaire.horaires && (
-                                        <div class="flex items-start">
-                                            <span class="mr-2">🕒</span>
-                                            <span>{partenaire.horaires}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <!-- Actions -->
-                                <div class="flex gap-2">
-                                    {partenaire.code_promo && (
-                                        <button 
-                                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition"
-                                            onclick={`copyPromoCode('${partenaire.code_promo}')`}
-                                        >
-                                            📋 Copier le code
-                                        </button>
-                                    )}
-                                    <button 
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
-                                        onclick={`showOnMap('${partenaire.id}')`}
-                                    >
-                                        🗺️
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Catégories -->
+            {Array.isArray(partenaire.categories) && partenaire.categories.length > 0 && (
+                <div class="flex flex-wrap gap-1 mb-4">
+                    {partenaire.categories.map((categorie) => (
+                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                            {categorie}
+                        </span>
                     ))}
+                </div>
+            )}
+
+            <!-- Informations pratiques -->
+            <div class="space-y-2 text-sm text-gray-600 mb-4">
+                <div class="flex items-start">
+                    <span class="mr-2">📍</span>
+                    <span>{partenaire.adresse}</span>
+                </div>
+                {partenaire.telephone && (
+                    <div class="flex items-center">
+                        <span class="mr-2">📞</span>
+                        <a href={`tel:${partenaire.telephone}`} class="hover:text-blue-600">
+                            {partenaire.telephone}
+                        </a>
+                    </div>
+                )}
+                {partenaire.horaires && (
+                    <div class="flex items-start">
+                        <span class="mr-2">🕒</span>
+                        <span>{partenaire.horaires}</span>
+                    </div>
+                )}
+                {partenaire.region && (
+                    <div class="flex items-center">
+                        <span class="mr-2">🗺️</span>
+                        <span>{partenaire.region}</span>
+                    </div>
+                )}
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2">
+                {partenaire.code_promo && (
+                    <button 
+                        class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition"
+                        onclick={`copyPromoCode('${partenaire.code_promo}')`}
+                    >
+                        📋 Copier le code
+                    </button>
+                )}
+                <button 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
+                    onclick={`showOnMap('${partenaire.id}')`}
+                >
+                    🗺️
+                </button>
+            </div>
+        </div>
+    </div>
+))}
                 </div>
 
                 <!-- Message si aucun partenaire -->
@@ -439,10 +457,18 @@ function getImageUrl(partenaire, field) {
     </script>
 </Layout>
 
+{errorMessage && (
+    <div class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 max-w-md">
+        <div class="flex items-center">
+            <span class="mr-2">⚠️</span>
+            <span>Erreur: {errorMessage}</span>
+        </div>
+    </div>
+)}
+
 <script>
     import { isLoggedIn, getCurrentUser } from '../js/auth.js';
-    import PocketBase from "pocketbase";
-const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+    import PocketBase from 'pocketbase';
 
     // Variables globales pour la carte
     let map = null;
@@ -487,13 +513,14 @@ const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
                 return;
             }
             
-            // Récupérer les données utilisateur à jour depuis PocketBase
+            // Récupérer les données utilisateur à jour
             const currentUser = getCurrentUser();
             console.log('👤 Utilisateur connecté:', currentUser?.email);
             
             // Récupérer les données utilisateur fraîches depuis PocketBase
             let freshUserData;
             try {
+                const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
                 freshUserData = await pb.collection('users').getOne(currentUser.id);
                 console.log('📡 Données fraîches de PocketBase:', freshUserData);
             } catch (error) {
@@ -610,10 +637,11 @@ const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
         const categoryColors = {
             'Épicerie': '#ef4444',
             'Bio': '#22c55e',
-            'Produits frais': '#3b82f6',
-            'Surgelés': '#8b5cf6',
-            'Fruits': '#f59e0b',
-            'Légumes': '#10b981'
+            'Boucherie': '#dc2626',
+            'Boulangerie': '#f59e0b',
+            'Poissonnerie': '#3b82f6',
+            'Fruits et Légumes': '#10b981',
+            'Traditionnel': '#8b5cf6'
         };
         
         window.partenairesData.forEach(partenaire => {
@@ -835,4 +863,3 @@ const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
         }, 3000);
     }
 </script>
-</Layout>

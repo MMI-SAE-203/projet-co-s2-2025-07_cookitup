@@ -74,13 +74,13 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     </Hero>
 
     <!-- Section Recettes en vedette -->
-    <section class="bg-[#C2584F] text-white py-12 px-6 relative">
-        <h2 class="text-xl md:text-3xl font-bold uppercase mb-8">
+    <section class="bg-[#C2584F] text-white py-8 px-4 sm:px-6 relative">
+        <h2 class="text-xl md:text-3xl font-bold uppercase mb-6">
             Recettes en vedette
         </h2>
 
         <div
-            class="flex gap-4 overflow-x-auto snap-x pb-4"
+            class="flex gap-3 overflow-x-auto snap-x pb-4 -mx-1 px-1"
             id="vedettesContainer"
         >
             {
@@ -112,7 +112,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     </section>
 
     <!-- Section Autres recettes -->
-    <section id="recettes-section" class="py-12 px-6">
+    <section id="recettes-section" class="py-8 px-4 sm:px-6 max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl md:text-3xl font-bold">Toutes nos recettes</h2>
             <div class="text-sm text-gray-600">
@@ -125,7 +125,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
         </p>
 
         <!-- Barre de recherche et filtres -->
-        <div class="mb-8 flex flex-col md:flex-row gap-4">
+        <div class="mb-6 flex flex-col md:flex-row gap-3">
             <div class="flex-1">
                 <input
                     type="text"
@@ -137,7 +137,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
             <div class="flex gap-2 flex-wrap">
                 <!-- Filtre par catégorie -->
                 <select
-                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
                     id="categorieSelect"
                 >
                     <option value="tous">Toutes les catégories</option>
@@ -148,7 +148,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
 
                 <!-- Autres filtres -->
                 <select
-                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
                     id="filterSelect"
                 >
                     <option value="tous">Tous les types</option>
@@ -158,7 +158,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
 
                 <!-- Tri -->
                 <select
-                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
                     id="sortSelect"
                 >
                     <option value="default">Trier par</option>
@@ -169,7 +169,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
 
                 <!-- Filtre par régime -->
                 <select
-                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
                     id="regimeSelect"
                 >
                     <option value="tous">Tous les régimes</option>
@@ -182,14 +182,14 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
         </div>
 
         <!-- Informations de pagination -->
-        <div class="mb-4 flex justify-between items-center">
-            <div class="text-sm text-gray-600">
+        <div class="mb-4 flex justify-between items-center text-sm">
+            <div class="text-gray-600">
                 Affichage de <span id="currentRangeStart">1</span>-<span
                     id="currentRangeEnd">12</span
                 >
                 sur <span id="totalRecettes">{recettes.length}</span> recettes
             </div>
-            <div class="text-sm text-gray-600">
+            <div class="text-gray-600">
                 Page <span id="currentPageDisplay">1</span> sur <span
                     id="totalPagesDisplay">1</span
                 >
@@ -198,7 +198,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
 
         <!-- Grille des recettes -->
         <div
-            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
             id="recettesGrid"
         >
             {
@@ -237,7 +237,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     </section>
 
     <!-- Section CTA -->
-    <section class="bg-green-600 text-white py-12 px-6 text-center">
+    <section class="bg-green-600 text-white py-8 px-4 sm:px-6 text-center">
         <h2 class="text-2xl md:text-3xl font-bold mb-4">
             DECOUVREZ NOS RECETTES
         </h2>
@@ -267,8 +267,9 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     import { initSearchAndFilters } from "../../js/recettes/search-filters.js";
     import { initPagination } from "../../js/recettes/pagination.js";
     import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
     import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
+
+    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
 
     document.addEventListener("DOMContentLoaded", () => {
         console.log("🚀 Initialisation de la page index des recettes");

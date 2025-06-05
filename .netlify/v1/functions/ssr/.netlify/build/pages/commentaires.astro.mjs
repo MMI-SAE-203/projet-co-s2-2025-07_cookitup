@@ -1,8 +1,8 @@
 import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CmPnL_Nc.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BgUZg3SC.mjs';
-import { $ as $$Plat } from '../chunks/Plat_4doluO7X.mjs';
-import { g as getCommentedRecettes } from '../chunks/backend_C2hqppH8.mjs';
+import { $ as $$Layout } from '../chunks/Layout_218_os4B.mjs';
+import { $ as $$Plat } from '../chunks/Plat_D1npN_Vv.mjs';
+import { g as getCommentedRecettes } from '../chunks/backend_B6EQEUu_.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$Commentaires = createComponent(async ($$result, $$props, $$slots) => {

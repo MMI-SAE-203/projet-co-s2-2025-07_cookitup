@@ -1,6 +1,6 @@
 import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../chunks/astro/server_CmPnL_Nc.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_BgUZg3SC.mjs';
+import { $ as $$Layout } from '../chunks/Layout_218_os4B.mjs';
 import '@astrojs/internal-helpers/path';
 import '@astrojs/internal-helpers/remote';
 import { $ as $$Image } from '../chunks/_astro_assets_C2HuHJv2.mjs';

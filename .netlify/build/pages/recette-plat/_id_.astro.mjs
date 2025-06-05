@@ -1,8 +1,8 @@
 import { c as createComponent, d as createAstro, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../../chunks/astro/server_CmPnL_Nc.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../../chunks/Layout_BgUZg3SC.mjs';
-import { c as getRecetteById, d as getRecettesSimilaires, a as getAllRecettes } from '../../chunks/backend_C2hqppH8.mjs';
-import { $ as $$Plat } from '../../chunks/Plat_4doluO7X.mjs';
+import { $ as $$Layout } from '../../chunks/Layout_218_os4B.mjs';
+import { c as getRecetteById, d as getRecettesSimilaires, a as getAllRecettes } from '../../chunks/backend_B6EQEUu_.mjs';
+import { $ as $$Plat } from '../../chunks/Plat_D1npN_Vv.mjs';
 export { renderers } from '../../renderers.mjs';
 
 const $$Astro = createAstro();
