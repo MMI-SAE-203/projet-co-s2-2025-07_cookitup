@@ -672,7 +672,7 @@ import Layout from "../layouts/Layout.astro";
                             </div>
 
                             <p class="text-xs text-orange-500 mt-4">
-                                À partir de 5,99€/mois • Résiliable à tout
+                                À partir de 6,99€/mois • Résiliable à tout
                                 moment
                             </p>
                         </div>
@@ -700,7 +700,7 @@ import Layout from "../layouts/Layout.astro";
                                             class="text-2xl font-bold"
                                             id="subscriptionPrice"
                                         >
-                                            5,99€
+                                            6,99€
                                         </div>
                                         <div class="text-emerald-100 text-sm">
                                             par mois
@@ -871,7 +871,8 @@ import Layout from "../layouts/Layout.astro";
                                     </h5>
                                     <p class="text-blue-700 text-sm mb-3">
                                         Vous pouvez passer à l'abonnement annuel
-                                        et économiser 26% sur votre facture.
+                                        (79,99€/an) et économiser 26% sur votre
+                                        facture.
                                     </p>
                                     <button
                                         onclick="upgradeSubscription()"
@@ -1694,6 +1695,7 @@ import Layout from "../layouts/Layout.astro";
                             ✏️ Modifier
                         </button>
                         <button onclick="deleteRecipe('${recipe.id}')" 
+                            class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm
                             class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition">
                                 🗑️ Supprimer
                         </button>
@@ -1777,10 +1779,10 @@ import Layout from "../layouts/Layout.astro";
             if (!user.cookup) {
                 noSubscription.classList.remove("hidden");
             } else {
-                // Simuler des données d'abonnement
+                // Données d'abonnement avec les vrais prix
                 const subscriptionData = {
                     type: "mensuel",
-                    price: "5,99€",
+                    price: "6,99€",
                     startDate: "15 janvier 2024",
                     nextBilling: "15 février 2024",
                     status: "actif",

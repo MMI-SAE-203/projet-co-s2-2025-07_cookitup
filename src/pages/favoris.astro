@@ -272,7 +272,7 @@ import Layout from "../layouts/Layout.astro";
                             : ""
                     }
                     
-                    <button type="button" class="absolute top-2 right-2 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full js-favori-btn" data-id="${recette.id}" aria-label="Retirer des favoris">
+                    <button type="button" class="absolute top-2 right-2 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full js-favori-btn" data-id="${recette.id}" aria-label="Retirer des favoris" onclick="event.stopPropagation(); event.preventDefault();">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6" style="color: red;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                     </svg>
@@ -407,6 +407,12 @@ import Layout from "../layouts/Layout.astro";
                 desserts.length > 0
                     ? desserts.map(createRecipeCard).join("")
                     : '<div class="col-span-full text-center py-16 bg-gray-50 rounded-lg"><h2 class="text-xl font-bold mb-2">Aucun dessert favori</h2><p class="text-gray-600">Vous n\'avez pas encore ajouté de desserts à vos favoris.</p></div>';
+
+            // ✅ AJOUT : Réinitialiser les boutons favoris après avoir ajouté le contenu au DOM
+            console.log("🔄 Réinitialisation des boutons favoris...");
+            setTimeout(() => {
+                initFavorisButtons();
+            }, 100);
         } catch (error) {
             console.error("❌ Erreur lors du chargement des favoris:", error);
             loadingState.classList.add("hidden");
@@ -480,10 +486,17 @@ import Layout from "../layouts/Layout.astro";
         // Écouter les changements de favoris
         document.addEventListener("favoriToggled", (event) => {
             console.log("🔄 Rechargement des favoris après modification");
-            // Recharger les favoris après un délai
-            setTimeout(() => {
-                loadFavorites();
-            }, 500);
+            const { recetteId, isFavorite } = event.detail;
+
+            if (!isFavorite) {
+                // Si la recette a été retirée des favoris, recharger la page
+                console.log(
+                    `❌ Recette ${recetteId} retirée des favoris, rechargement...`,
+                );
+                setTimeout(() => {
+                    loadFavorites();
+                }, 500);
+            }
         });
     });
 </script>
