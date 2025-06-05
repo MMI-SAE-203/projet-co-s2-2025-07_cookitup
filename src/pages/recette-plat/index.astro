@@ -20,7 +20,7 @@ try {
             id: recettes[0].id,
             nom: recettes[0].nom,
             img: recettes[0].img,
-            temps_prep: recettes[0].temps_prep,
+            temps_preparation: recettes[0].temps_preparation,
         });
     }
 
@@ -48,7 +48,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
         title="Nos Recettes"
         subtitle="DECOUVREZ"
         description="UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS"
-        backgroundImage="/placeholder.svg?height=600&width=1200"
+        backgroundImage="/placeholder.svg?height=600&width=1200&text=Nos+Recettes"
         stats={[
             { number: totalRecettes.toString(), label: "Recettes", icon: "🍽️" },
             { number: "12", label: "CATEGORIES", icon: "📂" },
@@ -208,7 +208,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
                             id={plat.id}
                             nom={plat.nom}
                             img={plat.img}
-                            temps_prep={plat.temps_prep}
+                            temps_prep={plat.temps_preparation}
                             isFavorite={plat.isFavorite}
                             sponsorise={plat.expand?.sponsorise}
                             categorie={plat.categorie}
@@ -268,8 +268,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
     import { initPagination } from "../../js/recettes/pagination.js";
     import PocketBase from "pocketbase";
     import { isLoggedIn, getCurrentUser } from "../../js/auth.js";
-
-    const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+    import { pb } from "../../js/favoris.js";
 
     document.addEventListener("DOMContentLoaded", () => {
         console.log("🚀 Initialisation de la page index des recettes");
@@ -338,7 +337,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
                         );
                     } else {
                         heartIcon.setAttribute("fill", "none");
-                        heartIcon.style.color = "white";
+                        heartIcon.style.color = "#666";
                     }
                 }
             });

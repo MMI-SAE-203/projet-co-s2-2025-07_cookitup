@@ -1,5 +1,7 @@
-import PocketBase from "pocketbase";
-const pb = new PocketBase("https://cookit-up.titouan-winkel.fr");
+import PocketBase from "pocketbase"
+
+// Initialiser PocketBase directement dans ce fichier
+const pb = new PocketBase("https://cookit-up.titouan-winkel.fr")
 
 /**
  * Vérifie si une recette est dans les favoris de l'utilisateur connecté
@@ -31,27 +33,32 @@ export async function toggleFavori(recetteId) {
     }
 
     try {
+        console.log("🔍 Vérification si la recette est déjà en favori...")
         // Vérifier si la recette est déjà en favori
         const existingFavoris = await pb.collection("favoris").getFullList({
             filter: `user = "${pb.authStore.model.id}" && recette = "${recetteId}"`,
         })
 
+        console.log("📊 Résultat de la recherche:", existingFavoris.length > 0 ? "Déjà en favori" : "Pas encore en favori")
+
         if (existingFavoris.length > 0) {
             // Retirer des favoris
+            console.log("🗑️ Suppression du favori ID:", existingFavoris[0].id)
             await pb.collection("favoris").delete(existingFavoris[0].id)
-            console.log("Recette retirée des favoris")
+            console.log("✅ Recette retirée des favoris")
             return false
         } else {
             // Ajouter aux favoris
-            await pb.collection("favoris").create({
+            console.log("➕ Ajout aux favoris - User:", pb.authStore.model.id, "Recette:", recetteId)
+            const result = await pb.collection("favoris").create({
                 user: pb.authStore.model.id,
                 recette: recetteId,
             })
-            console.log("Recette ajoutée aux favoris")
+            console.log("✅ Recette ajoutée aux favoris, ID:", result.id)
             return true
         }
     } catch (error) {
-        console.error("Erreur lors de la gestion des favoris:", error)
+        console.error("❌ Erreur lors de la gestion des favoris:", error)
         throw error
     }
 }
@@ -95,6 +102,9 @@ export async function getUserFavoriteIds() {
         return []
     }
 }
+
+// Exporter l'instance PocketBase pour l'utiliser dans d'autres fichiers si nécessaire
+export { pb }
 
 // Gestion des événements pour les boutons favoris
 export function initFavorisButtons() {
@@ -142,7 +152,7 @@ export function initFavorisButtons() {
             // Mettre à jour l'icône immédiatement
             if (heartIcon) {
                 heartIcon.setAttribute("fill", isNowFavorite ? "red" : "none")
-                heartIcon.style.color = isNowFavorite ? "red" : "white"
+                heartIcon.style.color = isNowFavorite ? "red" : "#666"
             }
 
             // Animation

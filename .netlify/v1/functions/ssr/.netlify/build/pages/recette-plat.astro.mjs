@@ -1,7 +1,7 @@
 import { c as createComponent, d as createAstro, m as maybeRenderHead, e as addAttribute, a as renderTemplate, r as renderComponent, b as renderScript } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_D93dfYMT.mjs';
-import { $ as $$Plat } from '../chunks/Plat_Ll2eTVGW.mjs';
+import { $ as $$Layout } from '../chunks/Layout_KgNoU2jj.mjs';
+import { $ as $$Plat } from '../chunks/Plat_Dlb18FV3.mjs';
 import 'clsx';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
 import { a as getAllRecettes, e as getRecettesSponsors } from '../chunks/backend_B6EQEUu_.mjs';
@@ -36,7 +36,7 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
         id: recettes[0].id,
         nom: recettes[0].nom,
         img: recettes[0].img,
-        temps_prep: recettes[0].temps_prep
+        temps_preparation: recettes[0].temps_preparation
       });
     }
     console.log("\u{1F31F} R\xE9cup\xE9ration des recettes sponsoris\xE9es...");
@@ -53,7 +53,7 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   console.log("\u{1F4CA} R\xE9sum\xE9:");
   console.log("- Recettes totales:", totalRecettes);
   console.log("- Recettes sponsoris\xE9es:", recettesSponsors.length);
-  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/placeholder.svg?height=600&width=1200", "stats": [
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/placeholder.svg?height=600&width=1200&text=Nos+Recettes", "stats": [
     { number: totalRecettes.toString(), label: "Recettes", icon: "\u{1F37D}\uFE0F" },
     { number: "12", label: "CATEGORIES", icon: "\u{1F4C2}" },
     { number: "4.8", label: "NOTE MOYENNE", icon: "\u2B50" },
@@ -72,7 +72,7 @@ Choisissez parmi une grande liste de plats celui qui vous
 Affichage de <span id="currentRangeStart">1</span>-<span id="currentRangeEnd">12</span>
 sur <span id="totalRecettes">${recettes.length}</span> recettes
 </div> <div class="text-gray-600">
-Page <span id="currentPageDisplay">1</span> sur <span id="totalPagesDisplay">1</span> </div> </div> <!-- Grille des recettes --> <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="recettesGrid"> ${recettes.length > 0 ? recettes.map((plat) => renderTemplate`${renderComponent($$result2, "Plat", $$Plat, { "id": plat.id, "nom": plat.nom, "img": plat.img, "temps_prep": plat.temps_prep, "isFavorite": plat.isFavorite, "sponsorise": plat.expand?.sponsorise, "categorie": plat.categorie, "calories": plat.calories, "regime": plat.regime })}`) : renderTemplate`<div class="col-span-full text-center py-12 bg-gray-100 rounded-lg"> <h3 class="text-xl font-bold text-gray-800 mb-2">
+Page <span id="currentPageDisplay">1</span> sur <span id="totalPagesDisplay">1</span> </div> </div> <!-- Grille des recettes --> <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" id="recettesGrid"> ${recettes.length > 0 ? recettes.map((plat) => renderTemplate`${renderComponent($$result2, "Plat", $$Plat, { "id": plat.id, "nom": plat.nom, "img": plat.img, "temps_prep": plat.temps_preparation, "isFavorite": plat.isFavorite, "sponsorise": plat.expand?.sponsorise, "categorie": plat.categorie, "calories": plat.calories, "regime": plat.regime })}`) : renderTemplate`<div class="col-span-full text-center py-12 bg-gray-100 rounded-lg"> <h3 class="text-xl font-bold text-gray-800 mb-2">
 Aucune recette trouvée
 </h3> <p class="text-gray-600">
 Vérifiez que PocketBase est démarré et contient des

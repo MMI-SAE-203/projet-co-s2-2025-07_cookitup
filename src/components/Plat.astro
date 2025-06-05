@@ -65,27 +65,29 @@ if (regime) {
         {
             categorie && (
                 <div
-                    class={`absolute top-2 right-2 ${badgeClass} text-white text-xs px-2 py-1 rounded-full`}
+                    class={`absolute top-2 right-12 ${badgeClass} text-white text-xs px-2 py-1 rounded-full`}
                 >
                     {categorie}
                 </div>
             )
         }
 
-        <!-- Bouton favori -->
+        <!-- Bouton favori - Positionné en haut à droite avec z-index élevé -->
         <button
             type="button"
-            class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow js-favori-btn"
+            class="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow js-favori-btn z-20"
             data-id={id}
-            aria-label="Ajouter aux favoris"
+            aria-label={isFavorite
+                ? "Retirer des favoris"
+                : "Ajouter aux favoris"}
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill={isFavorite ? "red" : "none"}
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                class="w-5 h-5 text-gray-600"
-                style={isFavorite ? "color: red;" : ""}
+                class="w-5 h-5"
+                style={isFavorite ? "color: red;" : "color: #666;"}
             >
                 <path
                     stroke-linecap="round"
@@ -155,7 +157,7 @@ if (regime) {
         </div>
     </div>
 
-    <!-- Lien vers la recette (couvre toute la carte) -->
+    <!-- Lien vers la recette (couvre toute la carte sauf le bouton favori) -->
     <a
         href={`/recette-plat/${id}`}
         class="absolute inset-0 z-10"
