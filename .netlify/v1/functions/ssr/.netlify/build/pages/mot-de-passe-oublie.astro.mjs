@@ -1,6 +1,6 @@
 import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_KgNoU2jj.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
 export { renderers } from '../renderers.mjs';
 
 const $$MotDePasseOublie = createComponent(async ($$result, $$props, $$slots) => {

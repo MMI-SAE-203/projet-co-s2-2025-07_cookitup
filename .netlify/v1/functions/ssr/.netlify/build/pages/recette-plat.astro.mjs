@@ -1,6 +1,6 @@
 import { c as createComponent, d as createAstro, m as maybeRenderHead, e as addAttribute, a as renderTemplate, r as renderComponent, b as renderScript } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_KgNoU2jj.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
 import { $ as $$Plat } from '../chunks/Plat_Dlb18FV3.mjs';
 import 'clsx';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
@@ -53,7 +53,7 @@ const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   console.log("\u{1F4CA} R\xE9sum\xE9:");
   console.log("- Recettes totales:", totalRecettes);
   console.log("- Recettes sponsoris\xE9es:", recettesSponsors.length);
-  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/placeholder.svg?height=600&width=1200&text=Nos+Recettes", "stats": [
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, {}, { "default": async ($$result2) => renderTemplate`  ${renderComponent($$result2, "Hero", $$Hero, { "title": "Nos Recettes", "subtitle": "DECOUVREZ", "description": "UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS", "backgroundImage": "/images/recettes_hero.webp", "stats": [
     { number: totalRecettes.toString(), label: "Recettes", icon: "\u{1F37D}\uFE0F" },
     { number: "12", label: "CATEGORIES", icon: "\u{1F4C2}" },
     { number: "4.8", label: "NOTE MOYENNE", icon: "\u2B50" },

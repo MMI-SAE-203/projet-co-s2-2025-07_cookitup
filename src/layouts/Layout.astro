@@ -24,7 +24,7 @@ import logo from "../assets/logo_noir.svg";
 				class="flex items-center space-x-2 hover:opacity-80 transition flex-shrink-0"
 			>
 				<Image
-					src={logo}
+					src={logo || "/placeholder.svg"}
 					alt="Logo Cookit-UP"
 					class="h-22 w-22"
 				/>
@@ -66,6 +66,9 @@ import logo from "../assets/logo_noir.svg";
 				>
 				<a href="/pass-cookup" class="hover:underline whitespace-nowrap"
 					>COOKUP</a
+				>
+				<a href="/partenaires" class="hover:underline whitespace-nowrap"
+					>RÉDUCTIONS</a
 				>
 				<a href="/a-propos" class="hover:underline whitespace-nowrap"
 					>A PROPOS</a
@@ -424,6 +427,11 @@ import logo from "../assets/logo_noir.svg";
 					>COOKUP</a
 				>
 				<a
+					href="/partenaires"
+					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+					>RÉDUCTIONS</a
+				>
+				<a
 					href="/a-propos"
 					class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
 					>A PROPOS</a
@@ -518,7 +526,7 @@ import logo from "../assets/logo_noir.svg";
 					class="flex items-center space-x-2 hover:opacity-80 transition"
 				>
 					<Image
-						src={logo}
+						src={logo || "/placeholder.svg"}
 						alt="Logo Cookit-UP"
 						class="h-10 w-10 bg-white rounded-full p-1"
 					/>

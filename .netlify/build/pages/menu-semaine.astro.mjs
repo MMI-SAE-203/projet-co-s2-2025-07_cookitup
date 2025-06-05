@@ -1,6 +1,6 @@
 import { c as createComponent, r as renderComponent, b as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../chunks/astro/server_CfTmU_QD.mjs';
 import 'kleur/colors';
-import { $ as $$Layout } from '../chunks/Layout_KgNoU2jj.mjs';
+import { $ as $$Layout } from '../chunks/Layout_BaAgPpdC.mjs';
 import { $ as $$Hero } from '../chunks/Hero_EQi9n1wd.mjs';
 import { a as getAllRecettes } from '../chunks/backend_B6EQEUu_.mjs';
 export { renderers } from '../renderers.mjs';
