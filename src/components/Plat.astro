@@ -10,32 +10,83 @@ const {
     categorie = "",
     calories = "",
     regime = "",
+    ingredients = "",
+    preparation = "",
+    commentaire = "",
 } = Astro.props;
 
 // Déterminer l'URL de l'image
-const imageUrl = img || "/placeholder.svg";
+const imageUrl =
+    img ||
+    "/placeholder.svg?height=300&width=400&text=" + encodeURIComponent(nom);
 
 // Déterminer la classe de badge selon la catégorie
 let badgeClass = "bg-gray-500";
+let categorieIcon = "";
+let categorieText = "";
+
 if (categorie) {
-    if (categorie.toLowerCase() === "entree") badgeClass = "bg-green-500";
-    else if (categorie.toLowerCase() === "plat") badgeClass = "bg-red-500";
-    else if (categorie.toLowerCase() === "dessert")
+    const cat = categorie.toLowerCase();
+    if (cat === "entree") {
+        badgeClass = "bg-green-500";
+        categorieIcon = "🥗";
+        categorieText = "Entrée";
+    } else if (cat === "plat") {
+        badgeClass = "bg-red-500";
+        categorieIcon = "🍽️";
+        categorieText = "Plat";
+    } else if (cat === "dessert") {
         badgeClass = "bg-purple-500";
+        categorieIcon = "🍰";
+        categorieText = "Dessert";
+    }
 }
 
 // Déterminer l'icône du régime
 let regimeIcon = "";
-if (regime) {
+if (regime && Array.isArray(regime) && regime.length > 0) {
+    // Si regime est un tableau, prendre le premier élément
+    const firstRegime = regime[0];
+    if (typeof firstRegime === "string") {
+        if (firstRegime.toLowerCase().includes("végétarien")) regimeIcon = "🌱";
+        else if (firstRegime.toLowerCase().includes("végan")) regimeIcon = "🌿";
+        else if (firstRegime.toLowerCase().includes("sans gluten"))
+            regimeIcon = "🌾";
+        else if (firstRegime.toLowerCase().includes("halal")) regimeIcon = "☪️";
+    }
+} else if (regime && typeof regime === "string" && regime !== "Select -") {
+    // Si regime est une chaîne (pour compatibilité)
     if (regime.toLowerCase().includes("végétarien")) regimeIcon = "🌱";
     else if (regime.toLowerCase().includes("végan")) regimeIcon = "🌿";
     else if (regime.toLowerCase().includes("sans gluten")) regimeIcon = "🌾";
     else if (regime.toLowerCase().includes("halal")) regimeIcon = "☪️";
 }
+
+// Gérer les ingrédients (peut être un array ou une string)
+let ingredientsText = "";
+if (ingredients) {
+    if (Array.isArray(ingredients)) {
+        ingredientsText = ingredients.join(", ");
+    } else {
+        ingredientsText = ingredients.toString();
+    }
+}
+
+// Afficher les calories seulement si > 0
+const showCalories = calories && calories !== "0" && calories !== 0;
+
+// Debug
+console.log(`🖼️ Plat ${nom} - Image URL:`, imageUrl);
 ---
 
 <div
     class="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group h-full max-h-[360px]"
+    data-categorie={categorie}
+    data-ingredients={ingredientsText}
+    data-calories={calories}
+    data-regime={regime}
+    data-preparation={preparation}
+    data-commentaire={commentaire}
 >
     <!-- Image avec overlay -->
     <div class="aspect-square w-full h-48 relative overflow-hidden">
@@ -44,6 +95,7 @@ if (regime) {
             alt={nom}
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            onerror="this.src='/placeholder.svg?height=300&width=400&text=Image+non+disponible'"
         />
 
         <!-- Overlay sombre pour meilleure lisibilité -->
@@ -61,13 +113,14 @@ if (regime) {
             )
         }
 
-        <!-- Badge catégorie -->
+        <!-- Badge catégorie avec icône -->
         {
             categorie && (
                 <div
-                    class={`absolute top-2 right-12 ${badgeClass} text-white text-xs px-2 py-1 rounded-full`}
+                    class={`absolute top-2 right-12 ${badgeClass} text-white text-xs px-2 py-1 rounded-full flex items-center gap-1`}
                 >
-                    {categorie}
+                    <span>{categorieIcon}</span>
+                    <span>{categorieText}</span>
                 </div>
             )
         }
@@ -80,6 +133,7 @@ if (regime) {
             aria-label={isFavorite
                 ? "Retirer des favoris"
                 : "Ajouter aux favoris"}
+            onclick="event.stopPropagation(); event.preventDefault();"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,9 +176,9 @@ if (regime) {
                 {temps_prep || "30 min"}
             </div>
 
-            <!-- Calories si disponible -->
+            <!-- Calories si disponible et > 0 -->
             {
-                calories && (
+                showCalories && (
                     <div class="flex items-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +194,7 @@ if (regime) {
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                             />
                         </svg>
-                        {calories}
+                        {calories} cal
                     </div>
                 )
             }
@@ -150,7 +204,9 @@ if (regime) {
                 regimeIcon && (
                     <div class="flex items-center">
                         <span class="mr-1">{regimeIcon}</span>
-                        {regime}
+                        {Array.isArray(regime) && regime.length > 0
+                            ? regime[0]
+                            : regime}
                     </div>
                 )
             }

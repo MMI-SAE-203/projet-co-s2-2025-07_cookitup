@@ -1,13 +1,29 @@
 ---
 // Props pour le composant PlatFavoris
-const { id, nom, img, calories = "", regime = "" } = Astro.props;
+const {
+    id,
+    nom,
+    img,
+    calories = "",
+    regime = "",
+} = Astro.props;
 
 // Déterminer l'URL de l'image
 const imageUrl = img || "/placeholder.svg";
 
 // Déterminer l'icône du régime
 let regimeIcon = "";
-if (regime) {
+if (regime && Array.isArray(regime) && regime.length > 0) {
+    // Si regime est un tableau, prendre le premier élément
+    const firstRegime = regime[0];
+    if (typeof firstRegime === 'string') {
+        if (firstRegime.toLowerCase().includes("végétarien")) regimeIcon = "🌱";
+        else if (firstRegime.toLowerCase().includes("végan")) regimeIcon = "🌿";
+        else if (firstRegime.toLowerCase().includes("sans gluten")) regimeIcon = "🌾";
+        else if (firstRegime.toLowerCase().includes("halal")) regimeIcon = "☪️";
+    }
+} else if (regime && typeof regime === 'string') {
+    // Si regime est une chaîne (pour compatibilité)
     if (regime.toLowerCase().includes("végétarien")) regimeIcon = "🌱";
     else if (regime.toLowerCase().includes("végan")) regimeIcon = "🌿";
     else if (regime.toLowerCase().includes("sans gluten")) regimeIcon = "🌾";
@@ -15,9 +31,7 @@ if (regime) {
 }
 ---
 
-<div
-    class="relative flex-shrink-0 w-48 sm:w-56 snap-start rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group"
->
+<div class="relative flex-shrink-0 w-48 sm:w-56 snap-start rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow group">
     <!-- Image avec overlay -->
     <div class="aspect-square w-full h-36 relative overflow-hidden">
         <img
@@ -26,15 +40,12 @@ if (regime) {
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
         />
-
+        
         <!-- Overlay sombre pour meilleure lisibilité -->
-        <div
-            class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
-        >
-        </div>
-
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+        
         <!-- Bouton favori -->
-        <button
+        <button 
             type="button"
             class="absolute top-2 right-2 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow js-favori-btn"
             data-id={id}
@@ -52,56 +63,42 @@ if (regime) {
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                ></path>
+                />
             </svg>
         </button>
     </div>
 
     <!-- Informations de la recette -->
-    <div
-        class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white"
-    >
+    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white">
         <h3 class="font-bold text-sm mb-1 line-clamp-1">{nom}</h3>
-
+        
         <div class="flex flex-wrap items-center text-xs gap-2">
             <!-- Calories si disponible -->
-            {
-                calories && (
-                    <div class="flex items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-3 w-3 mr-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                            />
-                        </svg>
-                        {calories}
-                    </div>
-                )
-            }
-
+            {calories && (
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {calories}
+                </div>
+            )}
+            
             <!-- Régime si disponible -->
-            {
-                regimeIcon && (
-                    <div class="flex items-center">
-                        <span class="mr-1">{regimeIcon}</span>
-                        <span class="truncate max-w-[80px]">{regime}</span>
-                    </div>
-                )
-            }
+            {regimeIcon && (
+                <div class="flex items-center">
+                    <span class="mr-1">{regimeIcon}</span>
+                    <span class="truncate max-w-[80px]">
+                        {Array.isArray(regime) && regime.length > 0 ? regime[0] : regime}
+                    </span>
+                </div>
+            )}
         </div>
     </div>
-
+    
     <!-- Lien vers la recette (couvre toute la carte) -->
-    <a
+    <a 
         href={`/recette-plat/${id}`}
         class="absolute inset-0 z-10"
-        aria-label={`Voir la recette ${nom}`}></a>
+        aria-label={`Voir la recette ${nom}`}
+    ></a>
 </div>

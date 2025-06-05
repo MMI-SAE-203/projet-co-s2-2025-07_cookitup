@@ -16,11 +16,23 @@ try {
     console.log("✅ Recettes récupérées:", recettes.length);
 
     if (recettes.length > 0) {
-        console.log("📝 Exemple de recette:", {
+        console.log(
+            "📝 Exemple de recette complète:",
+            JSON.stringify(recettes[0], null, 2),
+        );
+        console.log("📝 Structure de la première recette:", {
             id: recettes[0].id,
             nom: recettes[0].nom,
             img: recettes[0].img,
-            temps_preparation: recettes[0].temps_preparation,
+            temps_prep: recettes[0].temps_prep,
+            categorie: recettes[0].categorie,
+            ingredients: recettes[0].ingredients,
+            calories: recettes[0].calories,
+            regime: recettes[0].regime,
+            sponsorise: recettes[0].sponsorise,
+            preparation: recettes[0].preparation
+                ? recettes[0].preparation.substring(0, 100) + "..."
+                : "Pas de préparation",
         });
     }
 
@@ -48,7 +60,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
         title="Nos Recettes"
         subtitle="DECOUVREZ"
         description="UNE COLLECTION DE RECETTES DELICIEUSES ET AUTHENTIQUES POUR TOUS LES GOUTS ET TOUTES LES OCCASIONS"
-        backgroundImage="/images/recettes_hero.webp"
+        backgroundImage="/placeholder.svg?height=600&width=1200&text=Nos+Recettes"
         stats={[
             { number: totalRecettes.toString(), label: "Recettes", icon: "🍽️" },
             { number: "12", label: "CATEGORIES", icon: "📂" },
@@ -129,7 +141,7 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
             <div class="flex-1">
                 <input
                     type="text"
-                    placeholder="Rechercher une recette..."
+                    placeholder="Rechercher par nom ou ingrédients..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     id="searchInput"
                 />
@@ -141,42 +153,18 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
                     id="categorieSelect"
                 >
                     <option value="tous">Toutes les catégories</option>
-                    <option value="entree">Entrées</option>
-                    <option value="plat">Plats</option>
-                    <option value="dessert">Desserts</option>
+                    <option value="entree">🥗 Entrées</option>
+                    <option value="plat">🍽️ Plats</option>
+                    <option value="dessert">🍰 Desserts</option>
                 </select>
 
-                <!-- Autres filtres -->
+                <!-- Filtre par favoris -->
                 <select
                     class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
-                    id="filterSelect"
+                    id="favorisSelect"
                 >
-                    <option value="tous">Tous les types</option>
-                    <option value="sponsorises">Sponsorisés</option>
-                    <option value="favoris">Favoris</option>
-                </select>
-
-                <!-- Tri -->
-                <select
-                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
-                    id="sortSelect"
-                >
-                    <option value="default">Trier par</option>
-                    <option value="nom">Nom A-Z</option>
-                    <option value="recent">Plus récent</option>
-                    <option value="temps">Temps de préparation</option>
-                </select>
-
-                <!-- Filtre par régime -->
-                <select
-                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 text-sm"
-                    id="regimeSelect"
-                >
-                    <option value="tous">Tous les régimes</option>
-                    <option value="végétarien">🌱 Végétarien</option>
-                    <option value="végan">🌿 Végan</option>
-                    <option value="sans-gluten">🌾 Sans gluten</option>
-                    <option value="halal">☪️ Halal</option>
+                    <option value="tous">Toutes les recettes</option>
+                    <option value="favoris">❤️ Mes favoris</option>
                 </select>
             </div>
         </div>
@@ -208,12 +196,19 @@ console.log("- Recettes sponsorisées:", recettesSponsors.length);
                             id={plat.id}
                             nom={plat.nom}
                             img={plat.img}
-                            temps_prep={plat.temps_preparation}
+                            temps_prep={plat.temps_prep}
                             isFavorite={plat.isFavorite}
-                            sponsorise={plat.expand?.sponsorise}
+                            sponsorise={plat.sponsorise}
                             categorie={plat.categorie}
                             calories={plat.calories}
                             regime={plat.regime}
+                            ingredients={
+                                Array.isArray(plat.ingredients)
+                                    ? plat.ingredients.join(", ")
+                                    : plat.ingredients || ""
+                            }
+                            preparation={plat.preparation}
+                            commentaire={plat.commentaire}
                         />
                     ))
                 ) : (

@@ -2,10 +2,8 @@
 export function initSearchAndFilters() {
     const searchInput = document.getElementById("searchInput")
     const recettesGrid = document.getElementById("recettesGrid")
-    const filterSelect = document.getElementById("filterSelect")
-    const sortSelect = document.getElementById("sortSelect")
     const categorieSelect = document.getElementById("categorieSelect")
-    const regimeSelect = document.getElementById("regimeSelect")
+    const favorisSelect = document.getElementById("favorisSelect")
 
     let allRecettes = []
 
@@ -15,6 +13,7 @@ export function initSearchAndFilters() {
             element: card,
             nom: card.querySelector("h3")?.textContent.toLowerCase() || "",
             categorie: card.dataset.categorie || "",
+            ingredients: card.dataset.ingredients?.toLowerCase() || "",
             favori: card.querySelector(".bg-red-100") !== null,
             sponsorise: card.querySelector(".bg-yellow-500") !== null,
             temps: card.querySelector('[class*="⏱️"]')?.textContent || "",
@@ -25,42 +24,21 @@ export function initSearchAndFilters() {
 
     function filterRecettes() {
         const searchTerm = searchInput?.value.toLowerCase() || ""
-        const selectedFilter = filterSelect?.value || "tous"
-        const selectedSort = sortSelect?.value || "default"
         const selectedCategorie = categorieSelect?.value || "tous"
-        const selectedRegime = regimeSelect?.value || "tous"
+        const selectedFavoris = favorisSelect?.value || "tous"
 
         const filteredRecettes = allRecettes.filter((recette) => {
-            const matchesSearch = recette.nom.includes(searchTerm)
-
-            // Filtre par type
-            const matchesFilter =
-                selectedFilter === "tous" ||
-                (selectedFilter === "favoris" && recette.favori) ||
-                (selectedFilter === "sponsorises" && recette.sponsorise)
+            // Recherche par nom ou ingrédients
+            const matchesSearch = recette.nom.includes(searchTerm) || recette.ingredients.includes(searchTerm)
 
             // Filtre par catégorie
             const matchesCategorie = selectedCategorie === "tous" || recette.categorie.toLowerCase() === selectedCategorie
 
-            // Filtre par régime
-            const matchesRegime = selectedRegime === "tous" || recette.regime.includes(selectedRegime)
+            // Filtre par favoris
+            const matchesFavoris = selectedFavoris === "tous" || (selectedFavoris === "favoris" && recette.favori)
 
-            return matchesSearch && matchesFilter && matchesCategorie && matchesRegime
+            return matchesSearch && matchesCategorie && matchesFavoris
         })
-
-        // Tri
-        if (selectedSort && selectedSort !== "default") {
-            filteredRecettes.sort((a, b) => {
-                switch (selectedSort) {
-                    case "nom":
-                        return a.nom.localeCompare(b.nom)
-                    case "temps":
-                        return Number.parseInt(a.temps) - Number.parseInt(b.temps)
-                    default:
-                        return 0
-                }
-            })
-        }
 
         // Afficher/masquer les recettes
         allRecettes.forEach((recette) => {
@@ -70,6 +48,13 @@ export function initSearchAndFilters() {
 
         // Afficher un message si aucun résultat
         showNoResultsMessage(filteredRecettes.length === 0)
+
+        // Réinitialiser la pagination après filtrage
+        if (typeof initPagination === "function") {
+            setTimeout(() => {
+                initPagination()
+            }, 100)
+        }
     }
 
     function showNoResultsMessage(show) {
@@ -82,7 +67,7 @@ export function initSearchAndFilters() {
             noResultsMsg.innerHTML = `
                   <div class="text-6xl mb-4">🔍</div>
                   <h3 class="text-xl font-bold mb-2">Aucune recette trouvée</h3>
-                  <p>Essayez de modifier vos critères de recherche</p>
+                  <p>Essayez de modifier vos critères de recherche ou d'utiliser d'autres mots-clés</p>
               `
             recettesGrid?.appendChild(noResultsMsg)
         } else if (!show && noResultsMsg) {
@@ -95,20 +80,12 @@ export function initSearchAndFilters() {
         searchInput.addEventListener("input", debounce(filterRecettes, 300))
     }
 
-    if (filterSelect) {
-        filterSelect.addEventListener("change", filterRecettes)
-    }
-
-    if (sortSelect) {
-        sortSelect.addEventListener("change", filterRecettes)
-    }
-
     if (categorieSelect) {
         categorieSelect.addEventListener("change", filterRecettes)
     }
 
-    if (regimeSelect) {
-        regimeSelect.addEventListener("change", filterRecettes)
+    if (favorisSelect) {
+        favorisSelect.addEventListener("change", filterRecettes)
     }
 }
 
