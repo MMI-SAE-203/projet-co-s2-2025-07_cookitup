@@ -75,62 +75,9 @@ import logo from "../assets/logo_noir.svg";
 				>
 
 				<!-- Menu déroulant Communauté -->
-				<div class="relative group">
-					<button
-						class="hover:underline flex items-center whitespace-nowrap"
-					>
-						COMMUNAUTE
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-4 w-4 ml-1"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M19 9l-7 7-7-7"></path>
-						</svg>
-					</button>
-
-					<!-- Sous-menu -->
-					<div
-						class="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
-					>
-						<div class="py-2">
-							<a
-								href="/avis-site"
-								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-							>
-								<span class="mr-2">💬</span>
-								Donner son avis
-							</a>
-							<a
-								href="/forum"
-								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-							>
-								<span class="mr-2">👥</span>
-								Forum
-							</a>
-							<a
-								href="/evenements"
-								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-							>
-								<span class="mr-2">📅</span>
-								Événements
-							</a>
-							<a
-								href="/blog"
-								class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-							>
-								<span class="mr-2">📝</span>
-								Blog
-							</a>
-						</div>
-					</div>
-				</div>
+				<a href="/avis-site" class="hover:underline whitespace-nowrap"
+					>DONNEZ VOTRE AVIS</a
+				>
 			</nav>
 
 			<!-- Icônes à droite (desktop) -->
@@ -323,37 +270,6 @@ import logo from "../assets/logo_noir.svg";
 								Mes recettes
 							</a>
 
-							<!-- Séparateur Communauté -->
-							<div class="border-t border-gray-200 mt-2 pt-2">
-								<div class="px-4 py-1">
-									<p
-										class="text-xs font-medium text-gray-500 uppercase tracking-wide"
-									>
-										Communauté
-									</p>
-								</div>
-								<a
-									href="/avis-site"
-									class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="h-4 w-4 mr-2"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2"
-											d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-										></path>
-									</svg>
-									Donner mon avis
-								</a>
-							</div>
-
 							<div class="border-t border-gray-200 mt-2 pt-2">
 								<button
 									id="logoutButton"
@@ -437,32 +353,12 @@ import logo from "../assets/logo_noir.svg";
 					>A PROPOS</a
 				>
 
-				<!-- Communauté -->
+				<!-- Donnez votre avis -->
 				<div class="border-t border-gray-200 pt-2 mt-2">
-					<p
-						class="px-3 py-1 text-xs font-medium text-gray-500 uppercase tracking-wide"
-					>
-						Communauté
-					</p>
 					<a
 						href="/avis-site"
-						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-						>💬 Donner son avis</a
-					>
-					<a
-						href="/forum"
-						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-						>👥 Forum</a
-					>
-					<a
-						href="/evenements"
-						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-						>📅 Événements</a
-					>
-					<a
-						href="/blog"
-						class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
-						>📝 Blog</a
+						class="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+						>💬 DONNEZ VOTRE AVIS</a
 					>
 				</div>
 
