@@ -27,7 +27,7 @@ const displayTitle = removeAccents(title).toUpperCase();
 const displaySubtitle = subtitle ? removeAccents(subtitle).toUpperCase() : "";
 ---
 
-<section class="relative w-full h-[500px] md:h-[600px] overflow-hidden">
+<section class="relative w-full h-[400px] md:h-[600px] overflow-hidden">
     <!-- Image de fond -->
     <div class="absolute inset-0">
         <img
@@ -80,9 +80,9 @@ const displaySubtitle = subtitle ? removeAccents(subtitle).toUpperCase() : "";
         </div>
     </div>
 
-    <!-- Indicateur de scroll -->
+    <!-- Indicateur de scroll (supprimé sur mobile) -->
     <div
-        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce"
+        class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block"
     >
         <div
             class="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
