@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 const { title = "Cookit-UP" } = Astro.props;
+import { Image } from "astro:assets";
+import logo from "../assets/logo_noir.svg";
 ---
 
 <!doctype html>
@@ -21,8 +23,8 @@ const { title = "Cookit-UP" } = Astro.props;
 				href="/"
 				class="flex items-center space-x-2 hover:opacity-80 transition flex-shrink-0"
 			>
-				<img
-					src="/src/assets/logo_noir.svg"
+				<Image
+					src={logo}
 					alt="Logo Cookit-UP"
 					class="h-22 w-22"
 				/>
